@@ -292,28 +292,21 @@ public class Constants {
     }
 
     
-    public static final class ClimberConstants {
+    public static final class ArmConstants {
         public static final double kStatorCurrentLimit = 80.0;
                 
-        // comp-specific climber constants
-        public static final int kCompLeftMinHeight = 0; // ticks
-        public static final int kCompLeftMaxHeight = 244984; // ticks
-        public static final int kCompLeftTravelDistance = kCompLeftMaxHeight - kCompLeftMinHeight + 500; // ticks
-        public static final int kCompLeftPartialTravelDistance = 182106; // kLeftTravelDistance * 0.75
-        
-        public static final int kCompRightMinHeight = 0; // ticks
-        public static final int kCompRightMaxHeight = 261898; // ticks
-        public static final int kCompRightTravelDistance = kCompRightMaxHeight - kCompRightMinHeight + 500; // ticks
-        public static final int kCompRightPartialTravelDistance = 180437; // kRightTravelDistance * 0.75
-        
+        // arm constants
+        public static final int kMinHeight = 0; // ticks
+        public static final int kMaxHeight = 244984; // ticks
+        public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; // ticks
 
+        //TODO I have no idea the max height ticks
+        public static final int kHybridTravelDistance = 182106; // kLeftTravelDistance * 0.75
+        public static final int kMidTravelDistance = 182106; // kLeftTravelDistance * 0.75
+        public static final int kHighTravelDistance = 182106; // kLeftTravelDistance * 0.75
+        
 
         /* GENERAL CLIMBER CONSTANTS USED */
-
-        public static final int kLeftTravelDistance = kCompLeftTravelDistance;
-        public static final int kLeftPartialTravelDistance = kCompLeftPartialTravelDistance;
-        public static final int kRightTravelDistance = kCompRightTravelDistance;
-        public static final int kRightPartialTravelDistance = kCompRightPartialTravelDistance;
 
         public static final double kBarContactAngleEpsilon = 2.0;
 
