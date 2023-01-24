@@ -77,7 +77,7 @@ public class Superstructure extends Subsystem {
 
     // // aiming parameter vars
     private Optional<AimingParameters> real_aiming_params_ = Optional.empty();
-     private int mTrackId = -1;
+    private int mTrackId = -1;
     private double mTargetAngle = 0.0;
     public double mCorrectedDistanceToTarget = 0.0;
 
@@ -123,43 +123,43 @@ public class Superstructure extends Subsystem {
      * GET REAL AIMING PARAMETERS
      * called in updateVisionAimingSetpoints()
      */
-    public Optional<AimingParameters> getRealAimingParameters() {
-        Optional<AimingParameters> aiming_params = RobotState.getInstance().getAimingParameters(mTrackId,
-                Constants.VisionConstants.kMaxGoalTrackAge);
-        if (aiming_params.isPresent()) {
-            return aiming_params;
-        } else {
-            Optional<AimingParameters> default_aiming_params = RobotState.getInstance().getDefaultAimingParameters();
-            return default_aiming_params;
-        }
-    }
+    // public Optional<AimingParameters> getRealAimingParameters() {
+    //     Optional<AimingParameters> aiming_params = RobotState.getInstance().getAimingParameters(mTrackId,
+    //             Constants.VisionConstants.kMaxGoalTrackAge);
+    //     if (aiming_params.isPresent()) {
+    //         return aiming_params;
+    //     } else {
+    //         Optional<AimingParameters> default_aiming_params = RobotState.getInstance().getDefaultAimingParameters();
+    //         return default_aiming_params;
+    //     }
+    // }
 
     // /*** UPDATE VISION AIMING PARAMETERS FROM GOAL TRACKING ***/
-    public void updateVisionAimingParameters() {
-        // get aiming parameters from either vision-assisted goal tracking or
-        // odometry-only tracking
-        real_aiming_params_ = getRealAimingParameters();
+    // public void updateVisionAimingParameters() {
+    //     // get aiming parameters from either vision-assisted goal tracking or
+    //     // odometry-only tracking
+    //     real_aiming_params_ = getRealAimingParameters();
 
-        // predicted pose and target
-        Pose2d predicted_field_to_vehicle = mRobotState
-                .getPredictedFieldToVehicle(Constants.VisionConstants.kLookaheadTime);
-        Pose2d predicted_vehicle_to_goal = predicted_field_to_vehicle.inverse()
-                .transformBy(real_aiming_params_.get().getFieldToGoal());
+    //     // predicted pose and target
+    //     Pose2d predicted_field_to_vehicle = mRobotState
+    //             .getPredictedFieldToVehicle(Constants.VisionConstants.kLookaheadTime);
+    //     Pose2d predicted_vehicle_to_goal = predicted_field_to_vehicle.inverse()
+    //             .transformBy(real_aiming_params_.get().getFieldToGoal());
 
-        // update align delta from target and distance from target
-        mTrackId = real_aiming_params_.get().getTrackId();
-        mTargetAngle = predicted_vehicle_to_goal.getTranslation().direction().getRadians() + Math.PI;
+    //     // update align delta from target and distance from target
+    //     mTrackId = real_aiming_params_.get().getTrackId();
+    //     mTargetAngle = predicted_vehicle_to_goal.getTranslation().direction().getRadians() + Math.PI;
 
-        // send vision aligning target delta to swerve
-        mSwerve.acceptLatestGoalTrackVisionAlignGoal(mTargetAngle);
+    //     // send vision aligning target delta to swerve
+    //     mSwerve.acceptLatestGoalTrackVisionAlignGoal(mTargetAngle);
 
-        // update distance to target
-        if (mLimelight.hasTarget() && mLimelight.getLimelightDistanceToTarget().isPresent()) {
-            mCorrectedDistanceToTarget = mLimelight.getLimelightDistanceToTarget().get();
-        } else {
-            mCorrectedDistanceToTarget = predicted_vehicle_to_goal.getTranslation().norm();
-        }
-    }
+    //     // update distance to target
+    //     if (mLimelight.hasTarget() && mLimelight.getLimelightDistanceToTarget().isPresent()) {
+    //         mCorrectedDistanceToTarget = mLimelight.getLimelightDistanceToTarget().get();
+    //     } else {
+    //         mCorrectedDistanceToTarget = predicted_vehicle_to_goal.getTranslation().norm();
+    //     }
+    // }
 
 
     // /*** UPDATE STATUS LEDS ON ROBOT ***/
