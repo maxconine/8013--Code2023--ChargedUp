@@ -37,12 +37,8 @@ public class Superstructure extends Subsystem {
     private final ControlBoard mControlBoard = ControlBoard.getInstance();
     private final Swerve mSwerve = Swerve.getInstance();
     //private final Intake mIntake = Intake.getInstance();
-    //private final Indexer mIndexer = Indexer.getInstance();
     //private final ColorSensor mColorSensor = ColorSensor.getInstance();
-    //private final Shooter mShooter = Shooter.getInstance();
-    //private final Trigger mTrigger = Trigger.getInstance();
-    //private final Hood mHood = Hood.getInstance();
-    //private final Climber mClimber = Climber.getInstance();
+    //private final Arm mArm = Arm.getInstance();
     private final Limelight mLimelight = Limelight.getInstance();
     //private final LEDs mLEDs = LEDs.getInstance();
     private final Pigeon mPigeon = Pigeon.getInstance();
