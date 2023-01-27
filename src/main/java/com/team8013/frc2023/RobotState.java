@@ -29,8 +29,8 @@ public class RobotState {
     }
 
     private static final int kObservationBufferSize = 1;
-    public static final Pose2d kDefaultFieldRelativeGoalLocation = new Pose2d(8.2296, 4.12155, new Rotation2d());
-    public static final Pose2d kFiveBallStartingLocation = new Pose2d(8.597, 1.529, new Rotation2d());
+    // public static final Pose2d kDefaultFieldRelativeGoalLocation = new Pose2d(8.2296, 4.12155, new Rotation2d());
+    // public static final Pose2d kFiveBallStartingLocation = new Pose2d(8.597, 1.529, new Rotation2d());
 
     /*
      * RobotState keeps track of the poses of various coordinate frames throughout
@@ -181,6 +181,8 @@ public class RobotState {
         double z = xz_plane_translation.y();
 
         // find intersection with the goal
+        // if target detected by limelight is in the positive y values and the target corner height is above the limelight
+        //scaling = diff height divided by y value
         double differential_height = targetCornerHeight - cameraHeight;
         if ((z > 0.0) == (differential_height > 0.0)) {
             double scaling = differential_height / z;
@@ -259,17 +261,17 @@ public class RobotState {
         return getFieldToVehicle(timestamp).inverse().transformBy(fieldToVisionTarget);
     }
 
-    public synchronized Optional<AimingParameters> getDefaultAimingParameters() {
-        double timestamp = Timer.getFPGATimestamp();
+    // public synchronized Optional<AimingParameters> getDefaultAimingParameters() {
+    //     double timestamp = Timer.getFPGATimestamp();
 
-        Pose2d vehicleToGoal = getFieldToVehicle(timestamp).inverse().transformBy(kDefaultFieldRelativeGoalLocation);
-        vehicleToGoal = new Pose2d(vehicleToGoal.getTranslation().rotateBy(getFieldToVehicle(timestamp).getRotation()), vehicleToGoal.getRotation());
+    //     Pose2d vehicleToGoal = getFieldToVehicle(timestamp).inverse().transformBy(kDefaultFieldRelativeGoalLocation);
+    //     vehicleToGoal = new Pose2d(vehicleToGoal.getTranslation().rotateBy(getFieldToVehicle(timestamp).getRotation()), vehicleToGoal.getRotation());
 
-        AimingParameters params = new AimingParameters(vehicleToGoal, kDefaultFieldRelativeGoalLocation,
-                kDefaultFieldRelativeGoalLocation.getRotation(), 0, 0, -1);
+    //     AimingParameters params = new AimingParameters(vehicleToGoal, kDefaultFieldRelativeGoalLocation,
+    //             kDefaultFieldRelativeGoalLocation.getRotation(), 0, 0, -1);
 
-        return Optional.of(params);
-    }
+    //     return Optional.of(params);
+    // }
 
     public synchronized Optional<AimingParameters> getAimingParameters(int prev_track_id, double max_track_age) {
         GoalTracker tracker = goal_tracker_;

@@ -261,7 +261,7 @@ public class Constants {
 
         public static final int kDefaultPipeline = 0;
         public static final double kGoalHeight = 2.63; // meters
-        public static final double kGoalRadius = 0.678; // meters
+        public static final double kGoalRadius = Units.inchesToMeters(.5); // meters
 	}
 
     /*** SUBSYSTEM CONSTANTS ***/

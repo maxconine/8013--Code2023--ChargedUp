@@ -144,9 +144,18 @@ public class SwerveModule {
         return new SwerveModulePosition(
             Conversions.falconToMeters(mDriveMotor.getSensorCollection().getIntegratedSensorPosition(), 
             Constants.SwerveConstants.driveGearRatio, Constants.SwerveConstants.wheelCircumference)
-            , new Rotation2d((angleEncoder.getPosition())*Math.PI/180));
+            , Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), Constants.SwerveConstants.angleGearRatio)));
     //Potential Breaking Point^
     }
+
+
+    // public double getDriveDistance() {
+    //     return getStateDistance();
+    // }
+
+    // default SwerveModulePosition getPosition() {
+    //     return new SwerveModulePosition(getDriveDistance(), Rotation2d.fromRadians(angleEncoder.getPosition()));
+    // }
 
     
 }

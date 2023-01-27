@@ -1,6 +1,6 @@
 package com.team8013.frc2023.drivers;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.team8013.frc2023.Ports;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,12 +17,12 @@ public class Pigeon {
     }
 
     // Actual pigeon object
-    private final Pigeon2 mGyro;
+    private final WPI_Pigeon2 mGyro;
 
     // Configs
 
     private Pigeon(int port) {        
-        mGyro = new Pigeon2(port, "canivore1");
+        mGyro = new WPI_Pigeon2(port, "canivore1");
     }
 
     public Rotation2d getYaw() {

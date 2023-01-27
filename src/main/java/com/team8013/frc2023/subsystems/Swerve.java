@@ -83,7 +83,6 @@ public class Swerve extends Subsystem {
 
     public Swerve() {        
 
-        //Line Above changed ^
 
         snapPIDController = new ProfiledPIDController(Constants.SnapConstants.kP,
                                                       Constants.SnapConstants.kI, 
@@ -108,6 +107,8 @@ public class Swerve extends Subsystem {
 
         swerveOdometry = new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, mPigeon.getYaw()
         , getPositions(), new Pose2d(0, 0, new Rotation2d()));
+        
+        //^getPositions() might not work
     }
 
     @Override
@@ -271,6 +272,7 @@ public class Swerve extends Subsystem {
         }
         return states;
     }
+
 
     public SwerveModulePosition[] getPositions() {
         SwerveModulePosition[] positions = new SwerveModulePosition[4];

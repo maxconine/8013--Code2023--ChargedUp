@@ -42,12 +42,9 @@ public class ShuffleBoardInteractions {
                 new SuperstructureTab(),
                 new VisionTab()
                 // new ColorSensorTab(),
-                // new ShooterTab(),
-                // new ClimberTab(),
-                // new IndexerTab(),
+                // new ArmTab(),
                 // new IntakeTab(),
                 // new LedTab(),
-                // new ManualShooterTab()
             );
             mTabs.addAll(optionalTabs);
         } else {
