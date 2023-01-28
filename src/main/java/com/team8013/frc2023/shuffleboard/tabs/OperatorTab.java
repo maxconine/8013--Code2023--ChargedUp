@@ -26,11 +26,11 @@ public class OperatorTab extends ShuffleboardTabBase {
     public void createEntries() {
         mTab = Shuffleboard.getTab("Operator");
 
-        mOperatorVisionAimed = mTab
-                .add("Vision Aimed", false)
-                .withSize(6, 2)
-                .withPosition(2, 3)
-                .getEntry();
+        // mOperatorVisionAimed = mTab
+        //         .add("Vision Aimed", false)
+        //         .withSize(6, 2)
+        //         .withPosition(2, 3)
+        //         .getEntry();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class OperatorTab extends ShuffleboardTabBase {
         // mOperatorSpunup.setBoolean(mSuperstructure.isSpunUp());
         // mOperatorSpit.setBoolean(mSuperstructure.getWantsSpit());
         // mOperatorFender.setBoolean(mSuperstructure.getWantsFender());
-         mOperatorVisionAimed.setBoolean(mLimelight.isAimed());
+        // mOperatorVisionAimed.setBoolean(mLimelight.isAimed());
         // mOperatorClimbMode.setBoolean(mSuperstructure.getInClimbMode());
         // mOperatorAutoClimb.setBoolean(mSuperstructure.isAutoClimb());
 

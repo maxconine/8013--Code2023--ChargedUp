@@ -114,7 +114,7 @@ public class TalonFXFactory {
 
         talon.selectProfileSlot(0, 0);
 
-        talon.configVelocityMeasurementPeriod(config.VELOCITY_MEASUREMENT_PERIOD, kTimeoutMs);
+       //talon.configVelocityMeasurementPeriod(config.VELOCITY_MEASUREMENT_PERIOD, kTimeoutMs);
         talon.configVelocityMeasurementWindow(config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW,
                 kTimeoutMs);
 

@@ -12,6 +12,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.team254.lib.wpilib.TimedRobot;
 import com.team8013.frc2023.auto.AutoModeExecutor;
 import com.team8013.frc2023.auto.AutoModeSelector;
@@ -82,6 +84,7 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
 		CrashTracker.logRobotConstruction();
+		System.out.println("robots construction");
 	}
 
 	@Override
@@ -224,8 +227,10 @@ public class Robot extends TimedRobot {
 			// far left switch up
 			if (mControlBoard.getBrake()) {
 				mSwerve.setLocked(true);
+				SmartDashboard.putBoolean("Brake On", true);
 			} else {
 				mSwerve.setLocked(false);
+				SmartDashboard.putBoolean("Brake On", false);
 			}
 
 			if (mControlBoard.zeroGyro()) {
@@ -240,11 +245,13 @@ public class Robot extends TimedRobot {
 					mControlBoard.getSwerveTranslation().y());
 			double swerveRotation = mControlBoard.getSwerveRotation();
 
-			if (mControlBoard.getVisionAlign()) {
-				mSwerve.visionAlignDrive(swerveTranslation, true);
-			} else {
+			// if (mControlBoard.getVisionAlign()) {
+			// 	mSwerve.visionAlignDrive(swerveTranslation, true);
+			// 	SmartDashboard.putBoolean("trying to vision allign drive", true);
+			// } else {
 				mSwerve.drive(swerveTranslation, swerveRotation, true, true);
-			}
+				SmartDashboard.putBoolean("trying to vision allign drive", false);
+			// }
 
 		} catch (Throwable t) {
 			t.printStackTrace();

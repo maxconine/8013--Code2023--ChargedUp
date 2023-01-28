@@ -28,7 +28,8 @@ public class AutoModeSelector {
         mModeChooser.addOption("2023 Path Mode", DesiredMode.NEW_2023_MODE);
         // mModeChooser.addOption("Five Ball Mode", DesiredMode.FIVE_BALL_AUTO);
         
-        ShuffleBoardInteractions.getInstance().getOperatorTab().add("Auto Mode", mModeChooser).withSize(2, 1);
+        SmartDashboard.putData(mModeChooser);
+        //ShuffleBoardInteractions.getInstance().getOperatorTab().add("Auto Mode", mModeChooser).withSize(2, 1);
     }
 
     public void updateModeCreator() {

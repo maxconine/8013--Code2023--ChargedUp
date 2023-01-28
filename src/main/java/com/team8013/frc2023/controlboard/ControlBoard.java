@@ -3,9 +3,11 @@ package com.team8013.frc2023.controlboard;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team8013.frc2023.Constants;
+import com.team8013.frc2023.Ports;
 import com.team8013.frc2023.controlboard.CustomXboxController.Button;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ControlBoard {
     private final double kSwerveDeadband = Constants.stickDeadband;
@@ -30,8 +32,8 @@ public class ControlBoard {
     public final CustomXboxController operator;
 
     private ControlBoard() {
-        m_driver = new GenericHID(Constants.kDriveControllerPort);;
-        operator = new CustomXboxController(Constants.kOperatorControllerPort);
+        m_driver = new GenericHID(Ports.DRIVER_PORT);;
+        operator = new CustomXboxController(Ports.OPERATOR_PORT);
     }
 
     
@@ -49,6 +51,9 @@ public class ControlBoard {
 
         Translation2d tAxes = new Translation2d(forwardAxis, strafeAxis);
 
+        SmartDashboard.putNumber("foreward Axis", forwardAxis);
+        SmartDashboard.putNumber("strafe Axis", strafeAxis);
+
         if (Math.abs(tAxes.norm()) < kSwerveDeadband) {
             return new Translation2d();
         } else {
@@ -57,13 +62,18 @@ public class ControlBoard {
 
             double scaled_x = tAxes.x() - (deadband_vector.x()) / (1 - deadband_vector.x());
             double scaled_y = tAxes.y() - (deadband_vector.y()) / (1 - deadband_vector.y());
+            SmartDashboard.putNumber("scaled x Axis", scaled_x);
+            SmartDashboard.putNumber("scaled y Axis", scaled_y);
             return new Translation2d(scaled_x, scaled_y).scale(Constants.SwerveConstants.maxSpeed);
         }
+        
+
     }
 
     public double getSwerveRotation() {
         double rotAxis = getXAxisLeft();
         rotAxis = Constants.SwerveConstants.invertRAxis ? rotAxis : -rotAxis;
+        SmartDashboard.putNumber("rot Axis", rotAxis);
 
         if (Math.abs(rotAxis) < kSwerveDeadband) {
             return 0.0;

@@ -7,7 +7,7 @@ import com.team8013.frc2023.shuffleboard.tabs.SuperstructureTab;
 import com.team8013.frc2023.shuffleboard.tabs.SwerveTab;
 import com.team8013.frc2023.shuffleboard.tabs.SystemsTab;
 import com.team8013.frc2023.shuffleboard.tabs.VisionTab;
-import com.team8013.frc2023.shuffleboard.tabs.OperatorTab;
+//import com.team8013.frc2023.shuffleboard.tabs.OperatorTab;
 
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -28,12 +28,12 @@ public class ShuffleBoardInteractions {
 
     private ArrayList<ShuffleboardTabBase> mTabs = new ArrayList<ShuffleboardTabBase>();
 
-    private OperatorTab mOperatorTab;
+    //private OperatorTab mOperatorTab;
     private FieldView mFieldView = new FieldView();
 
     // instantiate subsystems, tabs, and widgets
     public ShuffleBoardInteractions() {
-        mOperatorTab = new OperatorTab();
+        //mOperatorTab = new OperatorTab();
         // mTabs.add(mOperatorTab);
 
         if (mDebug) {
@@ -63,8 +63,8 @@ public class ShuffleBoardInteractions {
         mFieldView.update();
     }
 
-    public ShuffleboardTab getOperatorTab() {
-         return mOperatorTab.getTab();
-    }
+    // public ShuffleboardTab getOperatorTab() {
+    //      return mOperatorTab.getTab();
+    // }
 }
  

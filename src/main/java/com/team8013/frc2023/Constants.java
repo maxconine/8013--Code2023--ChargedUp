@@ -23,10 +23,7 @@ public class Constants {
 	/* Control Board */
 	public static final double kTriggerThreshold = 0.2;
 
-	public static final int kDriveControllerPort = 1;
-	public static final int kOperatorControllerPort = 2;
-
-    public static final double stickDeadband = 0.05;
+    public static final double stickDeadband = 0.02;
     public static final int leftXAxis = 0; //?? TODO: is this right?
     public static final int leftYAxis = 1;
     public static final int rightXAxis = 3;
@@ -46,8 +43,13 @@ public class Constants {
         public static final double openLoopRamp = 0.25;
         public static final double closedLoopRamp = 0.0;
 
-        public static final double driveGearRatio = 6.75; //flipped gear ratio https://docs.wcproducts.com/wcp-swervex/general-info/ratio-options
-        public static final double angleGearRatio = 15.43; //8:32:24--14:72 = 15.43 ratio
+
+        //TODO: this is for the comp bot
+        // public static final double driveGearRatio = 6.75; //flipped gear ratio https://docs.wcproducts.com/wcp-swervex/general-info/ratio-options
+        // public static final double angleGearRatio = 15.43; //8:32:24--14:72 = 15.43 ratio
+
+        public static final double driveGearRatio = 6.55;
+        public static final double angleGearRatio = 10.29; // 72:14:24:12
 
 
         public static final Translation2d m_frontLeftLocation = new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
@@ -106,42 +108,42 @@ public class Constants {
 
         /* Controller Invert */
         public static final boolean invertYAxis = false;
-        public static final boolean invertRAxis = false;
-        public static final boolean invertXAxis = false; 
+        public static final boolean invertRAxis = true;
+        public static final boolean invertXAxis = true; 
 
 
         /*** MODULE SPECIFIC CONSTANTS ***/
 
-        /* Front Left Module - Module 0 */
+        /* Front Left Module - Module 0 */ //BACK LEFT
         public static final class Mod0 {
-            public static final double compAngleOffset = 3.2; 
+            public static final double compAngleOffset = 2.7; //183.2; 
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.FL_DRIVE, Ports.FL_ROTATION, Ports.FL_CANCODER,
                         compAngleOffset);
             }
         }
-        /* Front Right Module - Module 1 */
-        public static final class Mod1 {
-            public static final double compAngleOffset = 168.2; 
+        /* Front Right Module - Module 1 */  //BACK RIGHT
+        public static final class Mod1 { 
+            public static final double compAngleOffset = 346; //166;
             
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.FR_DRIVE, Ports.FR_ROTATION, Ports.FR_CANCODER,
                         compAngleOffset);
             }
         }
-        /* Back Left Module - Module 2 */
+        /* Back Left Module - Module 2 */ //front left
         public static final class Mod2 {
-            public static final double compAngleOffset = 98.3;
+            public static final double compAngleOffset = 100; //100;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.BL_DRIVE, Ports.BL_ROTATION, Ports.BL_CANCODER,
                         compAngleOffset);
             }
         }
-        /* Back Right Module - Module 3 */
+        /* Back Right Module - Module 3 */ //front right on practice bot
         public static final class Mod3 {
-            public static final double compAngleOffset = 129.5;
+            public static final double compAngleOffset = 129.5; //129.5;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.BR_DRIVE, Ports.BR_ROTATION, Ports.BR_CANCODER,
