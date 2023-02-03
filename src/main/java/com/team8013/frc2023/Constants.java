@@ -186,8 +186,8 @@ public class Constants {
         public static final double kSlowSpeedMetersPerSecond = 1.7;
         public static final double kSlowAccelerationMetersPerSecondSquared = 2.0;
 
-        public static final double kMaxSpeedMetersPerSecond = 2.2; 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2.3;
+        public static final double kMaxSpeedMetersPerSecond = 2.2;  //og 2.2
+        public static final double kMaxAccelerationMetersPerSecondSquared = 2.3; //og 2.3
         
         public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.8 * Math.PI;
         public static final double kSlowMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kSlowMaxAngularSpeedRadiansPerSecond, 2);
@@ -195,9 +195,9 @@ public class Constants {
         public static final double kMaxAngularSpeedRadiansPerSecond = 1.2 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 5;
+        public static final double kPXController = 0.2; //og 1
+        public static final double kPYController = 0.2; // og 1
+        public static final double kPThetaController = 0.5; // og 5
 
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
@@ -241,7 +241,7 @@ public class Constants {
                 kLimelightConstants.kName = "Limelight";
                 kLimelightConstants.kTableName = "limelight";
                 kLimelightConstants.kHeight = 0.79; // meters
-                kLimelightConstants.kHorizontalPlaneToLens = Rotation2d.fromDegrees(34.0);
+                kLimelightConstants.kHorizontalPlaneToLens = Rotation2d.fromDegrees(0.0);
             }
 
 		public static final double kHorizontalFOV = 59.6; // degrees

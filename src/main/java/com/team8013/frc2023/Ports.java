@@ -3,7 +3,7 @@ package com.team8013.frc2023;
 public class Ports {
 
     public static final int DRIVER_PORT = 2;
-    public static final int OPERATOR_PORT = 2;
+    public static final int OPERATOR_PORT = 1;
 
 
     /*** SWERVE MODULE PORTS ***/

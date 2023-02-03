@@ -38,10 +38,11 @@ public class SwerveModule {
         angleOffset = moduleConstants.angleOffset;
         
         /* Angle Encoder Config */
+        //TODO: 
         angleEncoder = new CANCoder(moduleConstants.cancoderID, "canivore1");
         configAngleEncoder();
-        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 255);
-        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 255);
+        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); //originally 255
+        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300); //originally 55
 
         /* Angle Motor Config */
         mAngleMotor = TalonFXFactory.createDefaultTalon(moduleConstants.angleMotorID);

@@ -1,5 +1,6 @@
 package com.team8013.frc2023.auto.modes;
 
+
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.auto.AutoModeEndedException;
 import com.team8013.frc2023.auto.AutoTrajectoryReader;
@@ -13,18 +14,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
-public class TestPathMode extends AutoModeBase {
+public class DriveForward extends AutoModeBase {
     
     // Swerve instance 
     private final Swerve mSwerve = Swerve.getInstance();
 
     // required PathWeaver trajectory paths
-    String path = "paths/test.path";
+    String path = "paths/DriveForward.path";
     
 	// trajectories
 	SwerveTrajectoryAction testTrajectoryAction;
 
-    public TestPathMode() {
+    public DriveForward() {
 
         var thetaController =
             new ProfiledPIDController(
@@ -48,7 +49,7 @@ public class TestPathMode extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running test mode auto!");
+        System.out.println("Running drive forward auto!");
 
         // reset odometry at the start of the trajectory
         runAction(new LambdaAction(() -> mSwerve.resetOdometry(testTrajectoryAction.getInitialPose())));

@@ -3,7 +3,7 @@
   "exportUnit": "Always Meters",
   "maxVelocity": 2.5,
   "maxAcceleration": 3.0,
-  "trackWidth": 20.75,
-  "gameName": "Rapid React",
-  "outputDir": ""
+  "trackWidth": 20.25,
+  "gameName": "Charged Up",
+  "outputDir": "../../../GitHub/8013--Code2023--ChargedUp"
 }
