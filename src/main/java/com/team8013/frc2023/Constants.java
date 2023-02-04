@@ -24,7 +24,7 @@ public class Constants {
 	public static final double kTriggerThreshold = 0.2;
 
     public static final double stickDeadband = 0.02;
-    public static final int leftXAxis = 0; //?? TODO: is this right?
+    public static final int leftXAxis = 0;
     public static final int leftYAxis = 1;
     public static final int rightXAxis = 3;
     public static final int rightYAxis = 4;
@@ -355,14 +355,14 @@ public class Constants {
         public static final double ControllerTwoLeftYawLow = 0.890625;
 
         //Controller 2 right side:
-        public static final double ControllerTwoRightThrottleZero = -0.070313;
+        public static final double ControllerTwoRightThrottleZero = -0.054688; //high 0.007874
         public static final double ControllerTwoRightYawZero = 0.062992;
 
         public static final double ControllerTwoRightYawHigh = 0.866142;
         public static final double ControllerTwoRightYawLow = 0.664063;
 
         public static final double ControllerTwoRightThrottleHigh = 0.669291;
-        public static final double ControllerTwoRightThrottleLow = 0.75;
+        public static final double ControllerTwoRightThrottleLow = 0.664063;
 
         //Controller left side:
         public static final double ControllerLeftThrottleZero = isControllerOne ? ControllerOneLeftThrottleZero : ControllerTwoLeftThrottleZero;
@@ -371,7 +371,7 @@ public class Constants {
         public static final double ControllerLeftThrottleHigh = isControllerOne ? ControllerOneLeftThrottleHigh : ControllerTwoLeftThrottleHigh;
         public static final double ControllerLeftThrottleLow = isControllerOne ? ControllerOneLeftThrottleLow : ControllerTwoLeftThrottleLow;
 
-        public static final double ControllerLeftYawHigh = isControllerOne ? ControllerOneRightYawHigh : ControllerTwoLeftThrottleHigh;
+        public static final double ControllerLeftYawHigh = isControllerOne ? ControllerOneLeftYawHigh : ControllerTwoLeftYawHigh;
         public static final double ControllerLeftYawLow = isControllerOne ? ControllerOneLeftYawLow : ControllerTwoLeftYawLow;
 
         //Controller right side:
