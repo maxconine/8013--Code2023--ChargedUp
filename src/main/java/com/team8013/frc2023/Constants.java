@@ -48,7 +48,7 @@ public class Constants {
         // public static final double driveGearRatio = 6.75; //flipped gear ratio https://docs.wcproducts.com/wcp-swervex/general-info/ratio-options
         // public static final double angleGearRatio = 15.43; //8:32:24--14:72 = 15.43 ratio
 
-        public static final double driveGearRatio = 6.55;
+        public static final double driveGearRatio = 6.525; //6.55
         public static final double angleGearRatio = 10.29; // 72:14:24:12
 
         //43.75 - number to divide driven distance by

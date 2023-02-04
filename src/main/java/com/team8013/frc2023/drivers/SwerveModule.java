@@ -149,7 +149,7 @@ public class SwerveModule {
 
     public double getDrivePosition(){
         return Conversions.falconToMeters(mDriveMotor.getSensorCollection().getIntegratedSensorPosition(), 
-        Constants.SwerveConstants.driveGearRatio, Constants.SwerveConstants.wheelCircumference)/44.5;
+        1/Constants.SwerveConstants.driveGearRatio, Constants.SwerveConstants.wheelCircumference);  // old: divide by 44.5;
     }
 
 
