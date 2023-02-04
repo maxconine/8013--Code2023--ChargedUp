@@ -28,11 +28,11 @@ public class ControlBoard {
         return mInstance;
     }
 
-    private final GenericHID m_driver;;
+    private final GenericHID m_driver;
     public final CustomXboxController operator;
 
     private ControlBoard() {
-        m_driver = new GenericHID(Ports.DRIVER_PORT);;
+        m_driver = new GenericHID(Ports.DRIVER_PORT);
         operator = new CustomXboxController(Ports.OPERATOR_PORT);
     }
 
@@ -43,8 +43,8 @@ public class ControlBoard {
 
     /* DRIVER METHODS */
     public Translation2d getSwerveTranslation() {
-        double forwardAxis = getYAxisRight();
-        double strafeAxis = getXAxisRight();
+        double forwardAxis = getRightThrottle();
+        double strafeAxis = getRightYaw();
 
         forwardAxis = Constants.SwerveConstants.invertYAxis ? forwardAxis : -forwardAxis;
         strafeAxis = Constants.SwerveConstants.invertXAxis ? strafeAxis :-strafeAxis;
@@ -71,7 +71,7 @@ public class ControlBoard {
     }
 
     public double getSwerveRotation() {
-        double rotAxis = getXAxisLeft();
+        double rotAxis = getLeftYaw();
         rotAxis = Constants.SwerveConstants.invertRAxis ? rotAxis : -rotAxis;
         SmartDashboard.putNumber("rot Axis", rotAxis);
 
@@ -140,47 +140,63 @@ public class ControlBoard {
     //     return operator.getTrigger(CustomXboxController.Side.LEFT);
     // }
     
-
-    private double getXAxisLeft() { //beutiful precision
-        double XAxisLeft;
-        if (m_driver.getRawAxis(Constants.leftXAxis) > 0) {
-            XAxisLeft = m_driver.getRawAxis(Constants.leftXAxis) / 0.826;
+    
+    //Returns positions from -1 to 1 
+    private double getLeftYaw() {
+        double leftYaw;
+        if (m_driver.getRawAxis(Constants.leftXAxis) > Constants.ControllerConstants.ControllerLeftYawZero) {
+            leftYaw = m_driver.getRawAxis(Constants.leftXAxis) / Constants.ControllerConstants.ControllerLeftYawHigh;
         } else
-        XAxisLeft = m_driver.getRawAxis(Constants.leftXAxis) / 0.807;
+        leftYaw = m_driver.getRawAxis(Constants.leftXAxis) / Constants.ControllerConstants.ControllerLeftYawLow;
 
-        XAxisLeft = XAxisLeft - 0.03937007;
-        //SmartDashboard.putNumber("remote XAxisLeft", XAxisLeft);
-        return XAxisLeft;
-
+        if (m_driver.getRawAxis(Constants.leftXAxis) != 0){
+            leftYaw = leftYaw - Constants.ControllerConstants.ControllerLeftYawZero;
+        }
+        SmartDashboard.putNumber("remote leftYaw", leftYaw);
+        return 0;
     }
 
-    private double getYAxisRight() {
-        double YAxisRight;
-        YAxisRight = m_driver.getRawAxis(Constants.rightYAxis);
-        if (m_driver.getRawAxis(Constants.rightYAxis) > 0) {
-             YAxisRight = m_driver.getRawAxis(Constants.rightYAxis) / 0.7052;
-         } else { // negative value
-           YAxisRight = m_driver.getRawAxis(Constants.rightYAxis) / 0.6449;
-         }
+    //Returns positions from -1 to 1 
+    private double getLeftThrottle() {
+        double leftThrottle;
+        if (m_driver.getRawAxis(Constants.leftYAxis) > Constants.ControllerConstants.ControllerLeftThrottleZero) {
+            leftThrottle = m_driver.getRawAxis(Constants.leftYAxis) / Constants.ControllerConstants.ControllerLeftThrottleHigh;
+        } else
+        leftThrottle = m_driver.getRawAxis(Constants.leftYAxis) / Constants.ControllerConstants.ControllerLeftThrottleLow;
 
-        YAxisRight = YAxisRight - 0.047244; 
-        //SmartDashboard.putNumber("remote YAxisRight", YAxisRight);
-        return YAxisRight;
+        if (m_driver.getRawAxis(Constants.leftYAxis) != 0){
+            leftThrottle = leftThrottle - Constants.ControllerConstants.ControllerLeftThrottleZero;
+        }
+        //SmartDashboard.putNumber("remote XAxisLeft", leftThrottle);
+        return leftThrottle;
     }
 
-    private double getXAxisRight() {
-        double XAxisRight;
-        XAxisRight = m_driver.getRawAxis(Constants.rightXAxis);
-         if (m_driver.getRawAxis(Constants.rightXAxis) > 0) {
-             XAxisRight = m_driver.getRawAxis(Constants.rightXAxis) / 0.8443;
-         } else {
-             XAxisRight = m_driver.getRawAxis(Constants.rightXAxis) / 0.8193;
-         }
-        
-        XAxisRight = XAxisRight - 0.055118;
+    private double getRightThrottle() {
+        double rightThrottle;
+        if (m_driver.getRawAxis(Constants.rightYAxis) > Constants.ControllerConstants.ControllerRightThrottleZero) {
+            rightThrottle = m_driver.getRawAxis(Constants.rightYAxis) / Constants.ControllerConstants.ControllerRightThrottleHigh;
+        } else
+        rightThrottle = m_driver.getRawAxis(Constants.rightYAxis) / Constants.ControllerConstants.ControllerRightThrottleLow;
 
-        //SmartDashboard.putNumber("remote XAxisRight", XAxisRight);
-        return XAxisRight;
+        if (m_driver.getRawAxis(Constants.rightYAxis) != 0){
+            rightThrottle = rightThrottle - Constants.ControllerConstants.ControllerRightThrottleZero;
+        }
+        SmartDashboard.putNumber("remote rightThrottle", rightThrottle);
+        return 0;
+    }
+
+    private double getRightYaw() {
+        double rightYaw;
+        if (m_driver.getRawAxis(Constants.rightXAxis) > Constants.ControllerConstants.ControllerRightYawZero) {
+            rightYaw = m_driver.getRawAxis(Constants.rightXAxis) / Constants.ControllerConstants.ControllerRightYawHigh;
+        } else
+        rightYaw = m_driver.getRawAxis(Constants.rightXAxis) / Constants.ControllerConstants.ControllerRightYawLow;
+
+        if (m_driver.getRawAxis(Constants.rightXAxis) != 0){
+            rightYaw = rightYaw - Constants.ControllerConstants.ControllerRightYawZero;
+        }
+        SmartDashboard.putNumber("remote rightYaw", rightYaw);
+        return 0;
     }
 }
 

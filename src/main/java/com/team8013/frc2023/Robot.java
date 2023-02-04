@@ -245,6 +245,10 @@ public class Robot extends TimedRobot {
 
 			if (mControlBoard.getSwerveSnap() != SwerveCardinal.NONE) {
 				mSwerve.startSnap(mControlBoard.getSwerveSnap().degrees);
+				SmartDashboard.putNumber("Snapping Drgrees", mControlBoard.getSwerveSnap().degrees);
+			}
+			else{
+				SmartDashboard.putNumber("Snapping Drgrees", -1);
 			}
 
 			Translation2d swerveTranslation = new Translation2d(mControlBoard.getSwerveTranslation().x(),

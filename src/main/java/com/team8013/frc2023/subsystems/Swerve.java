@@ -188,6 +188,9 @@ public class Swerve extends Subsystem {
         for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
+
+        SmartDashboard.putNumber("rotation", rotation);
+        SmartDashboard.putBoolean("snappint" , isSnapping);
     }
 
     public void acceptLatestGoalTrackVisionAlignGoal(double vision_goal) {
