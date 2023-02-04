@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.lib.util.CTREConfigs;
 
+import edu.wpi.first.math.estimator.MerweScaledSigmaPoints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -257,6 +258,7 @@ public class Robot extends TimedRobot {
 				mSwerve.drive(swerveTranslation, swerveRotation, true, true);
 				SmartDashboard.putBoolean("trying to vision allign drive", false);
 			// }
+			SmartDashboard.putNumber("1 position", mSwerve.getPositions()[1].distanceMeters);
 
 		} catch (Throwable t) {
 			t.printStackTrace();

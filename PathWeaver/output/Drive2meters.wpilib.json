@@ -1,0 +1,347 @@
+[
+{
+"acceleration": -2.9999999999999725,
+"curvature": null,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 0.5,
+"y": 8.01213303358521
+}
+},
+"time": 0.0,
+"velocity": 3.464101615137754
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 0.5321044921875,
+"y": 8.01213303358521
+}
+},
+"time": 0.009305262266386368,
+"velocity": 3.436185828338595
+},
+{
+"acceleration": -2.999999999999992,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 0.5975379943847656,
+"y": 8.01213303358521
+}
+},
+"time": 0.02850872356994047,
+"velocity": 3.378575444427933
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 0.70703125,
+"y": 8.01213303358521
+}
+},
+"time": 0.06139705809575778,
+"velocity": 3.279910440850481
+},
+{
+"acceleration": -2.9999999999999893,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 0.7783521413803101,
+"y": 8.01213303358521
+}
+},
+"time": 0.08336247825080018,
+"velocity": 3.214014180385354
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 0.8600120544433594,
+"y": 8.01213303358521
+}
+},
+"time": 0.10907857177862568,
+"velocity": 3.1368658998018777
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 0.9510918855667114,
+"y": 8.01213303358521
+}
+},
+"time": 0.13852859937375414,
+"velocity": 3.0485158170164923
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.0504150390625,
+"y": 8.01213303358521
+}
+},
+"time": 0.17164917962003934,
+"velocity": 2.9491540762776367
+},
+{
+"acceleration": -3.000000000000008,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.1565903425216675,
+"y": 8.01213303358521
+}
+},
+"time": 0.20833568362243618,
+"velocity": 2.839094564270446
+},
+{
+"acceleration": -2.999999999999996,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.2680549621582031,
+"y": 8.01213303358521
+}
+},
+"time": 0.24844632906790648,
+"velocity": 2.718762627934035
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.3831173181533813,
+"y": 8.01213303358521
+}
+},
+"time": 0.29180514810044583,
+"velocity": 2.588686170836417
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.5,
+"y": 8.01213303358521
+}
+},
+"time": 0.33820395745152554,
+"velocity": 2.449489742783178
+},
+{
+"acceleration": -2.999999999999996,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.6168826818466187,
+"y": 8.01213303358521
+}
+},
+"time": 0.38740341289987057,
+"velocity": 2.301891376438143
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.7319450378417969,
+"y": 8.01213303358521
+}
+},
+"time": 0.4391331820536558,
+"velocity": 2.1467020689767873
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.8434096574783325,
+"y": 8.01213303358521
+}
+},
+"time": 0.49309121633606495,
+"velocity": 1.9848279661295598
+},
+{
+"acceleration": -3.000000000000002,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 1.9495849609375,
+"y": 8.01213303358521
+}
+},
+"time": 0.5489420391611226,
+"velocity": 1.817275497654387
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 2.0489081144332886,
+"y": 8.01213303358521
+}
+},
+"time": 0.6063138830792334,
+"velocity": 1.6451599659000544
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 2.1399879455566406,
+"y": 8.01213303358521
+}
+},
+"time": 0.6647943878814517,
+"velocity": 1.4697184514933994
+},
+{
+"acceleration": -2.9999999999999982,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 2.22164785861969,
+"y": 8.01213303358521
+}
+},
+"time": 0.7239243850774003,
+"velocity": 1.2923284599055536
+},
+{
+"acceleration": -2.999999999999999,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 2.29296875,
+"y": 8.01213303358521
+}
+},
+"time": 0.7831889862932723,
+"velocity": 1.114534656257938
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 2.4024620056152344,
+"y": 8.01213303358521
+}
+},
+"time": 0.899699892125475,
+"velocity": 0.76500193876133
+},
+{
+"acceleration": -3.0,
+"curvature": 0.0,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 2.4678955078125,
+"y": 8.01213303358521
+}
+},
+"time": 1.0084029143668751,
+"velocity": 0.43889287203712934
+},
+{
+"acceleration": -3.0,
+"curvature": null,
+"pose": {
+"rotation": {
+"radians": 0.0
+},
+"translation": {
+"x": 2.5,
+"y": 8.01213303358521
+}
+},
+"time": 1.1547005383792515,
+"velocity": 0.0
+}
+]

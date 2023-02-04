@@ -51,6 +51,7 @@ public class Constants {
         public static final double driveGearRatio = 6.55;
         public static final double angleGearRatio = 10.29; // 72:14:24:12
 
+        //43.75 - number to divide driven distance by
 
         public static final Translation2d m_frontLeftLocation = new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
         public static final Translation2d m_frontRightLocation = new Translation2d(wheelBase / 2.0, -trackWidth / 2.0);
@@ -183,11 +184,11 @@ public class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double kSlowSpeedMetersPerSecond = 1.7;
-        public static final double kSlowAccelerationMetersPerSecondSquared = 2.0;
+        public static final double kSlowSpeedMetersPerSecond = 1.7; //1.7
+        public static final double kSlowAccelerationMetersPerSecondSquared = 2.0; //2.0
 
-        public static final double kMaxSpeedMetersPerSecond = 2.2;  //og 2.2
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2.3; //og 2.3
+        public static final double kMaxSpeedMetersPerSecond = 1.5;  //og 2.2
+        public static final double kMaxAccelerationMetersPerSecondSquared = 1.5; //og 2.3
         
         public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.8 * Math.PI;
         public static final double kSlowMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kSlowMaxAngularSpeedRadiansPerSecond, 2);
@@ -197,7 +198,7 @@ public class Constants {
 
         public static final double kPXController = 0.2; //og 1
         public static final double kPYController = 0.2; // og 1
-        public static final double kPThetaController = 0.5; // og 5
+        public static final double kPThetaController = 0.3; // og 5
 
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =

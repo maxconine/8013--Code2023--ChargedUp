@@ -6,6 +6,7 @@ import com.team8013.frc2023.auto.AutoModeEndedException;
 import com.team8013.frc2023.auto.AutoTrajectoryReader;
 import com.team8013.frc2023.auto.actions.LambdaAction;
 import com.team8013.frc2023.auto.actions.SwerveTrajectoryAction;
+import com.team8013.frc2023.auto.actions.WaitAction;
 import com.team8013.frc2023.subsystems.Swerve;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -20,7 +21,7 @@ public class DriveForward extends AutoModeBase {
     private final Swerve mSwerve = Swerve.getInstance();
 
     // required PathWeaver trajectory paths
-    String path = "paths/DriveForward.path";
+    String path = "paths/Drive2meters.path";
     
 	// trajectories
 	SwerveTrajectoryAction testTrajectoryAction;
@@ -50,6 +51,9 @@ public class DriveForward extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running drive forward auto!");
+
+        // wait 2 sec
+        runAction(new WaitAction(2));
 
         // reset odometry at the start of the trajectory
         runAction(new LambdaAction(() -> mSwerve.resetOdometry(testTrajectoryAction.getInitialPose())));

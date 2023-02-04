@@ -42,7 +42,7 @@ public class SwerveModule {
         angleEncoder = new CANCoder(moduleConstants.cancoderID, "canivore1");
         configAngleEncoder();
         angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); //originally 255
-        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300); //originally 55
+        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300); //originally 255
 
         /* Angle Motor Config */
         mAngleMotor = TalonFXFactory.createDefaultTalon(moduleConstants.angleMotorID);
@@ -142,11 +142,14 @@ public class SwerveModule {
      * @return The current position of the module.
      */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(
-            Conversions.falconToMeters(mDriveMotor.getSensorCollection().getIntegratedSensorPosition(), 
-            Constants.SwerveConstants.driveGearRatio, Constants.SwerveConstants.wheelCircumference)
+        return new SwerveModulePosition(getDrivePosition()
             , Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), Constants.SwerveConstants.angleGearRatio)));
     //Potential Breaking Point^
+    }
+
+    public double getDrivePosition(){
+        return Conversions.falconToMeters(mDriveMotor.getSensorCollection().getIntegratedSensorPosition(), 
+        Constants.SwerveConstants.driveGearRatio, Constants.SwerveConstants.wheelCircumference)/44.5;
     }
 
 

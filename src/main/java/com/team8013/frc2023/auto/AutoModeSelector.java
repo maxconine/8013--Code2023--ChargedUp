@@ -34,7 +34,7 @@ public class AutoModeSelector {
         // mModeChooser.addOption("Five Ball Mode", DesiredMode.FIVE_BALL_AUTO);
         
         SmartDashboard.putData(mModeChooser);
-        //ShuffleBoardInteractions.getInstance().getOperatorTab().add("Auto Mode", mModeChooser).withSize(2, 1);
+        System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
     }
 
     public void updateModeCreator() {

@@ -20,7 +20,7 @@ public class CurvyPathMode extends AutoModeBase {
     private final Swerve mSwerve = Swerve.getInstance();
 
     // required PathWeaver trajectory paths
-    String path = "paths/CurvyPath.path";
+    String path = "paths/Turn2x2m.path";
     
 	// trajectories
 	SwerveTrajectoryAction testTrajectoryAction;
@@ -41,7 +41,7 @@ public class CurvyPathMode extends AutoModeBase {
                                                             new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                                             new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                                                             thetaController,
-                                                            () -> Rotation2d.fromDegrees(0.0),
+                                                            () -> Rotation2d.fromDegrees(-90),
                                                             mSwerve::getWantAutoVisionAim,
                                                             mSwerve::setModuleStates);
 		
