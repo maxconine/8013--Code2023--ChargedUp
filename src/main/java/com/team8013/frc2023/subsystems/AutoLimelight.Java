@@ -40,31 +40,13 @@ public class Limelight extends Subsystem {
 
   private final Field2d field = new Field2d();
 
-  private boolean forceOff = true;
-
   public Limelight() {
-    setForceOff(false);
     SmartDashboard.putData("Field2", field);
   }
-
-  public double getDistance() {
-    return tY.getDouble(0.0);
-  }
-
-  public double getHorizontalAngle() {
-    return tX.getDouble(0.0);
-  }
-
-  public double getVertAngle() {
-    return tY.getDouble(0.0);
-  }
-
+  
+  // Returns true if LL has target
   public boolean hasTarget(){
     return tV.getDouble(0.0) == 1.0;
-  }
-
-  public void setForceOff(boolean value) {
-    forceOff = value;
   }
 
   public double getLatency() {
@@ -73,14 +55,18 @@ public class Limelight extends Subsystem {
   }
 
   public Pair<Pose2d, Double> getBotPose() {
-
+    // If LL does not have target return null
     if (!hasTarget()) {
       return null;
     }
 
+    // Current time accounting for latency
     double currentTime = Timer.getFPGATimestamp() - getLatency();
+
+    // LL pose array
     double[] limelightBotPoseArray = tBotPose.getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
 
+    // Ensuring the 
     if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) {
       return null;
     }
@@ -102,8 +88,9 @@ public class Limelight extends Subsystem {
     return new Pair<Pose2d, Double> (pose, currentTime);
   }
 
+  // Setting periodic pipeline
   @Override
   public void periodic() {
-    tPipeline.setNumber(forceOff ? 0 : controls.getLimelightPipeline());
+    tPipeline.setNumber(0);
   }
 }
