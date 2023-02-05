@@ -184,21 +184,21 @@ public class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double kSlowSpeedMetersPerSecond = 1.7; //1.7
-        public static final double kSlowAccelerationMetersPerSecondSquared = 2.0; //2.0
+        public static final double kSlowSpeedMetersPerSecond = 2.2; //1.7
+        public static final double kSlowAccelerationMetersPerSecondSquared = 2.3; //2.0
 
-        public static final double kMaxSpeedMetersPerSecond = 1.5;  //og 2.2
-        public static final double kMaxAccelerationMetersPerSecondSquared = 1.5; //og 2.3
+        public static final double kMaxSpeedMetersPerSecond = 2.2;  //og 2.2
+        public static final double kMaxAccelerationMetersPerSecondSquared = 2.3; //og 2.3
         
-        public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.8 * Math.PI;
+        public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.4 * Math.PI; //og 0.8
         public static final double kSlowMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kSlowMaxAngularSpeedRadiansPerSecond, 2);
 
-        public static final double kMaxAngularSpeedRadiansPerSecond = 1.2 * Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 0.6 * Math.PI; //0g
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
-        public static final double kPXController = 0.2; //og 1
-        public static final double kPYController = 0.2; // og 1
-        public static final double kPThetaController = 0.3; // og 5
+        public static final double kPXController = 1; //og 1 0.2 works
+        public static final double kPYController = 1; // og 1 0.3 works
+        public static final double kPThetaController = 0.8; // og 5
 
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
