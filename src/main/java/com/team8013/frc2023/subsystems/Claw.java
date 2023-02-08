@@ -27,7 +27,7 @@ import com.team254.lib.util.Util;
 
 //import edu.wpi.first.wpiutil.math.MathUtil;
 
-public class Claw extends Subsystems {
+public class Claw extends Subsystem {
     
     private static Claw mInstance;
     
