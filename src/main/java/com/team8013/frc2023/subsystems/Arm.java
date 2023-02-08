@@ -24,14 +24,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 public class Arm extends Subsystem {
     
-    private static Arm mInstance;
-    
-    public static synchronized Arm getInstance() {
-        if (mInstance == null) {
-            mInstance = new Arm();
-        } 
-        return mInstance;
-    }
     
     TalonFX motor;
 
