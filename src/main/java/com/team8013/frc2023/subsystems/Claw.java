@@ -27,7 +27,17 @@ import com.team254.lib.util.Util;
 
 //import edu.wpi.first.wpiutil.math.MathUtil;
 
-public class Claw {
+public class Claw extends Subsystems {
+    
+    private static Claw mInstance;
+    
+    public static synchronized Arm getInstance() {
+        if (mInstance == null) {
+            mInstance = new Claw();
+        } 
+        return mInstance;
+    }
+    
     // Pivot2 mPivot;
     double setPos;
     double curPos = 0;
