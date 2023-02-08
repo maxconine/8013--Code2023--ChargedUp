@@ -24,7 +24,7 @@ public class Constants {
 	public static final double kTriggerThreshold = 0.2;
 
     public static final double stickDeadband = 0.02;
-    public static final int leftXAxis = 0; //?? TODO: is this right?
+    public static final int leftXAxis = 0;
     public static final int leftYAxis = 1;
     public static final int rightXAxis = 3;
     public static final int rightYAxis = 4;
@@ -48,9 +48,10 @@ public class Constants {
         // public static final double driveGearRatio = 6.75; //flipped gear ratio https://docs.wcproducts.com/wcp-swervex/general-info/ratio-options
         // public static final double angleGearRatio = 15.43; //8:32:24--14:72 = 15.43 ratio
 
-        public static final double driveGearRatio = 6.55;
+        public static final double driveGearRatio = 6.525; //6.55
         public static final double angleGearRatio = 10.29; // 72:14:24:12
 
+        //43.75 - number to divide driven distance by
 
         public static final Translation2d m_frontLeftLocation = new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
         public static final Translation2d m_frontRightLocation = new Translation2d(wheelBase / 2.0, -trackWidth / 2.0);
@@ -153,15 +154,15 @@ public class Constants {
     }
 	
 	public static final class SnapConstants {
-        public static final double kP = 5.0; 
-        public static final double kI = 0;
-        public static final double kD = 0.0;
+        public static final double kP = 5.95; //og 5.0 //6.0 seems to work with 0.15 kD
+        public static final double kI = 0.0; //og 0
+        public static final double kD = 0.15; // og 0
         public static final double kTimeout = 0.25;
-        public static final double kEpsilon = 1.0;
+        public static final double kEpsilon = 15.0; // og 1.0
 
         // Constraints for the profiled angle controller
-        public static final double kMaxAngularSpeedRadiansPerSecond = 2.0 * Math.PI;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
+        public static final double kMaxAngularSpeedRadiansPerSecond = 2.0 * Math.PI; //og 2.0 * pi
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = 10.0 * Math.PI; //og Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
                 new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
@@ -183,21 +184,21 @@ public class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double kSlowSpeedMetersPerSecond = 1.7;
-        public static final double kSlowAccelerationMetersPerSecondSquared = 2.0;
+        public static final double kSlowSpeedMetersPerSecond = 2.2; //1.7
+        public static final double kSlowAccelerationMetersPerSecondSquared = 2.3; //2.0
 
-        public static final double kMaxSpeedMetersPerSecond = 2.2; 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2.3;
+        public static final double kMaxSpeedMetersPerSecond = 2.2;  //og 2.2
+        public static final double kMaxAccelerationMetersPerSecondSquared = 2.3; //og 2.3
         
-        public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.8 * Math.PI;
+        public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.4 * Math.PI; //og 0.8
         public static final double kSlowMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kSlowMaxAngularSpeedRadiansPerSecond, 2);
 
-        public static final double kMaxAngularSpeedRadiansPerSecond = 1.2 * Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 0.6 * Math.PI; //0g
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 5;
+        public static final double kPXController = 1; //og 1 0.2 works
+        public static final double kPYController = 1; // og 1 0.3 works
+        public static final double kPThetaController = 0.8; // og 5
 
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
@@ -241,7 +242,7 @@ public class Constants {
                 kLimelightConstants.kName = "Limelight";
                 kLimelightConstants.kTableName = "limelight";
                 kLimelightConstants.kHeight = 0.79; // meters
-                kLimelightConstants.kHorizontalPlaneToLens = Rotation2d.fromDegrees(34.0);
+                kLimelightConstants.kHorizontalPlaneToLens = Rotation2d.fromDegrees(0.0);
             }
 
 		public static final double kHorizontalFOV = 59.6; // degrees
@@ -315,6 +316,73 @@ public class Constants {
         public static final int kSafetyMinimum = -7000; // minimum outside 0 ticks
 
         public static final double kTravelDistanceEpsilon = 20000;
+
+    }
+
+    public static final class ControllerConstants {
+        public static final boolean isControllerOne = true;
+
+
+        //Controller 1 left side:
+        public static final double ControllerOneLeftThrottleZero = -0.125;
+        public static final double ControllerOneLeftYawZero = 0.039370;
+
+        public static final double ControllerOneLeftThrottleHigh = 0.787402;
+        public static final double ControllerOneLeftThrottleLow = 0.968750;
+
+        public static final double ControllerOneLeftYawHigh = 0.86612;
+        public static final double ControllerOneLeftYawLow = 0.77338;
+
+        //Controller 1 right side:
+        public static final double ControllerOneRightThrottleZero = 0.055118;
+        public static final double ControllerOneRightYawZero = 0.055118;
+
+        public static final double ControllerOneRightYawHigh = 0.866142;
+        public static final double ControllerOneRightYawLow = 0.765625;
+
+        public static final double ControllerOneRightThrottleHigh = 0.732283;
+        public static final double ControllerOneRightThrottleLow = 0.601563;
+
+
+        //Controller 2 left side:
+        public static final double ControllerTwoLeftThrottleZero = -0.023438;
+        public static final double ControllerTwoLeftYawZero = -0.078125;
+
+        public static final double ControllerTwoLeftThrottleHigh = 0.834646;
+        public static final double ControllerTwoLeftThrottleLow = 0.867188;
+
+        public static final double ControllerTwoLeftYawHigh = 0.748031;
+        public static final double ControllerTwoLeftYawLow = 0.890625;
+
+        //Controller 2 right side:
+        public static final double ControllerTwoRightThrottleZero = -0.054688; //high 0.007874
+        public static final double ControllerTwoRightYawZero = 0.062992;
+
+        public static final double ControllerTwoRightYawHigh = 0.866142;
+        public static final double ControllerTwoRightYawLow = 0.664063;
+
+        public static final double ControllerTwoRightThrottleHigh = 0.669291;
+        public static final double ControllerTwoRightThrottleLow = 0.664063;
+
+        //Controller left side:
+        public static final double ControllerLeftThrottleZero = isControllerOne ? ControllerOneLeftThrottleZero : ControllerTwoLeftThrottleZero;
+        public static final double ControllerLeftYawZero = isControllerOne ? ControllerOneLeftYawZero : ControllerTwoLeftYawZero;
+
+        public static final double ControllerLeftThrottleHigh = isControllerOne ? ControllerOneLeftThrottleHigh : ControllerTwoLeftThrottleHigh;
+        public static final double ControllerLeftThrottleLow = isControllerOne ? ControllerOneLeftThrottleLow : ControllerTwoLeftThrottleLow;
+
+        public static final double ControllerLeftYawHigh = isControllerOne ? ControllerOneLeftYawHigh : ControllerTwoLeftYawHigh;
+        public static final double ControllerLeftYawLow = isControllerOne ? ControllerOneLeftYawLow : ControllerTwoLeftYawLow;
+
+        //Controller right side:
+        public static final double ControllerRightThrottleZero = isControllerOne ? ControllerOneRightThrottleZero :  ControllerTwoRightThrottleZero;
+        public static final double ControllerRightYawZero = isControllerOne ? ControllerOneRightYawZero : ControllerTwoRightYawZero;
+
+        public static final double ControllerRightYawHigh = isControllerOne ? ControllerOneRightYawHigh : ControllerTwoRightYawHigh;
+        public static final double ControllerRightYawLow = isControllerOne ? ControllerOneRightYawLow : ControllerTwoRightYawLow;
+
+        public static final double ControllerRightThrottleHigh = isControllerOne ? ControllerOneRightThrottleHigh : ControllerTwoRightThrottleHigh;
+        public static final double ControllerRightThrottleLow = isControllerOne ? ControllerOneRightThrottleLow : ControllerTwoRightThrottleLow;
 
     }
 

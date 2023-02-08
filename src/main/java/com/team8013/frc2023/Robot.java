@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.lib.util.CTREConfigs;
 
+import edu.wpi.first.math.estimator.MerweScaledSigmaPoints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -150,8 +151,12 @@ public class Robot extends TimedRobot {
 			if (autoMode.isPresent()) {
 				mSwerve.resetOdometry(autoMode.get().getStartingPose());
 			}
+			
+			System.out.println("Before starting auto mode executor");
 
 			mAutoModeExecutor.start();
+
+			System.out.println("After starting auto mode executor");
 
 			mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
 
@@ -159,6 +164,7 @@ public class Robot extends TimedRobot {
 			// mLEDs.setChampsAutoAnimation();	
 
 		} catch (Throwable t) {
+			System.out.println("crash tracker for auto");
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
@@ -239,6 +245,10 @@ public class Robot extends TimedRobot {
 
 			if (mControlBoard.getSwerveSnap() != SwerveCardinal.NONE) {
 				mSwerve.startSnap(mControlBoard.getSwerveSnap().degrees);
+				SmartDashboard.putNumber("Snapping Drgrees", mControlBoard.getSwerveSnap().degrees);
+			}
+			else{
+				SmartDashboard.putNumber("Snapping Drgrees", -1);
 			}
 
 			Translation2d swerveTranslation = new Translation2d(mControlBoard.getSwerveTranslation().x(),
@@ -252,6 +262,7 @@ public class Robot extends TimedRobot {
 				mSwerve.drive(swerveTranslation, swerveRotation, true, true);
 				SmartDashboard.putBoolean("trying to vision allign drive", false);
 			// }
+			SmartDashboard.putNumber("1 position", mSwerve.getPositions()[1].distanceMeters);
 
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -288,6 +299,7 @@ public class Robot extends TimedRobot {
 		mAutoModeSelector.reset();
 		mAutoModeSelector.updateModeCreator();
 		mAutoModeExecutor = new AutoModeExecutor();
+
 
 	}
 

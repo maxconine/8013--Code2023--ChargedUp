@@ -63,8 +63,8 @@ public class ShuffleBoardInteractions {
         mFieldView.update();
     }
 
-    // public ShuffleboardTab getOperatorTab() {
-    //      return mOperatorTab.getTab();
-    // }
+    //  public ShuffleboardTab getSwerveTab() {
+    //       return mSwerveTab.getTab();
+    //  }
 }
  

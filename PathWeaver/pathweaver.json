@@ -4,6 +4,6 @@
   "maxVelocity": 2.5,
   "maxAcceleration": 3.0,
   "trackWidth": 20.25,
-  "gameName": "Rapid React",
-  "outputDir": ""
+  "gameName": "Charged Up",
+  "outputDir": "../../../GitHub/8013--Code2023--ChargedUp"
 }
