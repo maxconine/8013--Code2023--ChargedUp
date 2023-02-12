@@ -118,7 +118,7 @@ public class Constants {
 
         /* Front Left Module - Module 0 */ //BACK LEFT
         public static final class Mod0 {
-            public static final double compAngleOffset = 2.7; //183.2; 
+            public static final double compAngleOffset = 339.86;//2.7;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.FL_DRIVE, Ports.FL_ROTATION, Ports.FL_CANCODER,
@@ -127,7 +127,7 @@ public class Constants {
         }
         /* Front Right Module - Module 1 */  //BACK RIGHT
         public static final class Mod1 { 
-            public static final double compAngleOffset = 346; //166;
+            public static final double compAngleOffset = 1.1;//346;
             
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.FR_DRIVE, Ports.FR_ROTATION, Ports.FR_CANCODER,
@@ -136,7 +136,7 @@ public class Constants {
         }
         /* Back Left Module - Module 2 */ //front left
         public static final class Mod2 {
-            public static final double compAngleOffset = 100; //100;
+            public static final double compAngleOffset = 30.93;//100;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.BL_DRIVE, Ports.BL_ROTATION, Ports.BL_CANCODER,
@@ -145,7 +145,7 @@ public class Constants {
         }
         /* Back Right Module - Module 3 */ //front right on practice bot
         public static final class Mod3 {
-            public static final double compAngleOffset = 129.5; //129.5;
+            public static final double compAngleOffset = 30.22; //129.5;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.BR_DRIVE, Ports.BR_ROTATION, Ports.BR_CANCODER,

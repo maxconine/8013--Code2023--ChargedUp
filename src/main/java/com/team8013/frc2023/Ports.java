@@ -13,7 +13,8 @@ public class Ports {
     public static final int ARM = 17;
 
     public static final int INTAKE_DEPLOY = 18;
-    public static final int INTAKE_ROLLER = 19;
+    public static final int INTAKE_ROLLER_TOP = 19;
+    public static final int INTAKE_ROLLER_BOTTOM = 19;
 
     public static final int CANDLE = 20;
 
