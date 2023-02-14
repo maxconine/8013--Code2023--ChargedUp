@@ -25,6 +25,7 @@ import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.CrashTracker;
 import com.team8013.frc2023.loops.Looper;
 import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
+import com.team8013.frc2023.subsystems.Arm;
 import com.team8013.frc2023.subsystems.Limelight;
 import com.team8013.frc2023.subsystems.RobotStateEstimator;
 import com.team8013.frc2023.subsystems.Superstructure;
@@ -46,7 +47,6 @@ public class Robot extends TimedRobot {
 	 * initialization code.
 	 */
 
-	 
 	// instantiate enabled and disabled loopers
 	private final Looper mEnabledLooper = new Looper();
 	private final Looper mDisabledLooper = new Looper();
@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
 	// private final Trigger mTrigger = Trigger.getInstance();
 	// private final Hood mHood = Hood.getInstance();
 	// private final ColorSensor mColorSensor = ColorSensor.getInstance();
-	// private final Climber mClimber = Climber.getInstance();
+	private final Arm mArm = Arm.getInstance();
 	private final Limelight mLimelight = Limelight.getInstance();
 	// private final LEDs mLEDs = LEDs.getInstance();
 
@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
 		try {
 			CrashTracker.logRobotInit();
 
-			mSubsystemManager.setSubsystems(			
+			mSubsystemManager.setSubsystems(
 					mRobotStateEstimator,
 					mSwerve,
 					mSuperstructure,
@@ -107,16 +107,16 @@ public class Robot extends TimedRobot {
 					// mTrigger,
 					// mHood,
 					// mColorSensor,
-					// mClimber,
+					mArm,
 					mLimelight
-					//mLEDs
+			// mLEDs
 			);
 
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
-			
+
 			mSubsystemManager.registerLoggingSystems(mLogger);
-            mLogger.registerLoops(mLoggingLooper);
+			mLogger.registerLoops(mLoggingLooper);
 
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), new com.team254.lib.geometry.Pose2d());
 			mSwerve.resetOdometry(new Pose2d());
@@ -151,7 +151,7 @@ public class Robot extends TimedRobot {
 			if (autoMode.isPresent()) {
 				mSwerve.resetOdometry(autoMode.get().getStartingPose());
 			}
-			
+
 			System.out.println("Before starting auto mode executor");
 
 			mAutoModeExecutor.start();
@@ -161,7 +161,7 @@ public class Robot extends TimedRobot {
 			mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
 
 			// set champs pride automation
-			// mLEDs.setChampsAutoAnimation();	
+			// mLEDs.setChampsAutoAnimation();
 
 		} catch (Throwable t) {
 			System.out.println("crash tracker for auto");
@@ -183,8 +183,8 @@ public class Robot extends TimedRobot {
 		try {
 
 			if (mAutoModeExecutor != null) {
-                mAutoModeExecutor.stop();
-            }
+				mAutoModeExecutor.stop();
+			}
 
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
@@ -197,7 +197,7 @@ public class Robot extends TimedRobot {
 			// mSuperstructure.setEjectDisable(false);
 
 			mLimelight.setLed(Limelight.LedMode.ON);
-            mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
+			mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
 
 			// clear any previous automation from auto
 			// mLEDs.clearAnimation();
@@ -216,8 +216,8 @@ public class Robot extends TimedRobot {
 		try {
 
 			if (mAutoModeExecutor != null) {
-                mAutoModeExecutor.stop();
-            }
+				mAutoModeExecutor.stop();
+			}
 
 			mLimelight.setLed(Limelight.LedMode.ON);
 			mLimelight.outputTelemetry();
@@ -228,7 +228,6 @@ public class Robot extends TimedRobot {
 
 			// mLEDs.updateState();
 
-			
 			/* SWERVE DRIVE */
 			// far left switch up
 			if (mControlBoard.getBrake()) {
@@ -246,8 +245,7 @@ public class Robot extends TimedRobot {
 			if (mControlBoard.getSwerveSnap() != SwerveCardinal.NONE) {
 				mSwerve.startSnap(mControlBoard.getSwerveSnap().degrees);
 				SmartDashboard.putNumber("Snapping Drgrees", mControlBoard.getSwerveSnap().degrees);
-			}
-			else{
+			} else {
 				SmartDashboard.putNumber("Snapping Drgrees", -1);
 			}
 
@@ -256,13 +254,33 @@ public class Robot extends TimedRobot {
 			double swerveRotation = mControlBoard.getSwerveRotation();
 
 			// if (mControlBoard.getVisionAlign()) {
-			// 	mSwerve.visionAlignDrive(swerveTranslation, true);
-			// 	SmartDashboard.putBoolean("trying to vision allign drive", true);
+			// mSwerve.visionAlignDrive(swerveTranslation, true);
+			// SmartDashboard.putBoolean("trying to vision allign drive", true);
 			// } else {
-				mSwerve.drive(swerveTranslation, swerveRotation, true, true);
-				SmartDashboard.putBoolean("trying to vision allign drive", false);
+			mSwerve.drive(swerveTranslation, swerveRotation, true, true);
+			SmartDashboard.putBoolean("trying to vision allign drive", false);
 			// }
-			SmartDashboard.putNumber("1 position", mSwerve.getPositions()[1].distanceMeters);
+
+			// SmartDashboard.putNumber("1 position",
+			// mSwerve.getPositions()[1].distanceMeters);
+
+			if (mControlBoard.getArmDown()) {
+				// mArm.setArmPosition(-182000);
+				mArm.setArmDown();
+			}
+			if (mControlBoard.getHybrid()) {
+				mArm.setExtendForHybrid();
+			}
+			if (mControlBoard.getMid()) {
+				mArm.setExtendForMid();
+			}
+			if (mControlBoard.getHigh()) {
+				mArm.setExtendForHigh();
+			}
+			if (mControlBoard.getArmZero()) {
+				mArm.resetClimberPosition();
+			}
+			mArm.outputTelemetry();
 
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -284,7 +302,7 @@ public class Robot extends TimedRobot {
 			mLoggingLooper.stop();
 
 			mLimelight.setLed(Limelight.LedMode.ON);
-            mLimelight.triggerOutputs();
+			mLimelight.triggerOutputs();
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -300,7 +318,6 @@ public class Robot extends TimedRobot {
 		mAutoModeSelector.updateModeCreator();
 		mAutoModeExecutor = new AutoModeExecutor();
 
-
 	}
 
 	@Override
@@ -310,15 +327,15 @@ public class Robot extends TimedRobot {
 			mDisabledLooper.outputToSmartDashboard();
 
 			mAutoModeSelector.updateModeCreator();
-			
+
 			mSwerve.resetAnglesToAbsolute();
 
 			// update alliance color from driver station while disabled
 			// mColorSensor.updateAllianceColor();
 			// update linear offset for rb ratio
-			//mColorSensor.updateColorOffset();
+			// mColorSensor.updateColorOffset();
 
-			//mLEDs.updateColor(mColorSensor.getAllianceColor());
+			// mLEDs.updateColor(mColorSensor.getAllianceColor());
 
 			mLimelight.setLed(Limelight.LedMode.ON);
 			mLimelight.writePeriodicOutputs();

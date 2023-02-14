@@ -11,7 +11,6 @@ import com.team8013.frc2023.loops.ILooper;
 import com.team8013.frc2023.loops.Loop;
 import com.team254.lib.geometry.Pose2d;
 
-
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.ArrayList;
@@ -36,11 +35,11 @@ public class Superstructure extends Subsystem {
     /*** REQUIRED INSTANCES ***/
     private final ControlBoard mControlBoard = ControlBoard.getInstance();
     private final Swerve mSwerve = Swerve.getInstance();
-    //private final Intake mIntake = Intake.getInstance();
-    //private final ColorSensor mColorSensor = ColorSensor.getInstance();
-    //private final Arm mArm = Arm.getInstance();
+    // private final Intake mIntake = Intake.getInstance();
+    // private final ColorSensor mColorSensor = ColorSensor.getInstance();
+    // private final Arm mArm = Arm.getInstance();
     private final Limelight mLimelight = Limelight.getInstance();
-    //private final LEDs mLEDs = LEDs.getInstance();
+    // private final LEDs mLEDs = LEDs.getInstance();
     private final Pigeon mPigeon = Pigeon.getInstance();
 
     // robot state
@@ -68,7 +67,7 @@ public class Superstructure extends Subsystem {
         public double dt;
     }
 
-    //     // OUTPUTS
+    // // OUTPUTS
     double mRoll = 0;
 
     // // aiming parameter vars
@@ -88,8 +87,7 @@ public class Superstructure extends Subsystem {
             public void onLoop(double timestamp) {
                 final double start = Timer.getFPGATimestamp();
 
-
-                //updateVisionAimingParameters();
+                // updateVisionAimingParameters();
 
                 // setGoals();
                 // updateRumble();
@@ -108,79 +106,82 @@ public class Superstructure extends Subsystem {
         });
     }
 
-
     /*** RUMBLE OPERATOR CONTROLLERS ***/
     public void updateRumble() {
-            mControlBoard.setOperatorRumble(false);
+        mControlBoard.setOperatorRumble(false);
     }
-    
 
     /***
      * GET REAL AIMING PARAMETERS
      * called in updateVisionAimingSetpoints()
      */
     // public Optional<AimingParameters> getRealAimingParameters() {
-    //     Optional<AimingParameters> aiming_params = RobotState.getInstance().getAimingParameters(mTrackId,
-    //             Constants.VisionConstants.kMaxGoalTrackAge);
-    //     if (aiming_params.isPresent()) {
-    //         return aiming_params;
-    //     } else {
-    //         Optional<AimingParameters> default_aiming_params = RobotState.getInstance().getDefaultAimingParameters();
-    //         return default_aiming_params;
-    //     }
+    // Optional<AimingParameters> aiming_params =
+    // RobotState.getInstance().getAimingParameters(mTrackId,
+    // Constants.VisionConstants.kMaxGoalTrackAge);
+    // if (aiming_params.isPresent()) {
+    // return aiming_params;
+    // } else {
+    // Optional<AimingParameters> default_aiming_params =
+    // RobotState.getInstance().getDefaultAimingParameters();
+    // return default_aiming_params;
+    // }
     // }
 
     // /*** UPDATE VISION AIMING PARAMETERS FROM GOAL TRACKING ***/
     // public void updateVisionAimingParameters() {
-    //     // get aiming parameters from either vision-assisted goal tracking or
-    //     // odometry-only tracking
-    //     real_aiming_params_ = getRealAimingParameters();
+    // // get aiming parameters from either vision-assisted goal tracking or
+    // // odometry-only tracking
+    // real_aiming_params_ = getRealAimingParameters();
 
-    //     // predicted pose and target
-    //     Pose2d predicted_field_to_vehicle = mRobotState
-    //             .getPredictedFieldToVehicle(Constants.VisionConstants.kLookaheadTime);
-    //     Pose2d predicted_vehicle_to_goal = predicted_field_to_vehicle.inverse()
-    //             .transformBy(real_aiming_params_.get().getFieldToGoal());
+    // // predicted pose and target
+    // Pose2d predicted_field_to_vehicle = mRobotState
+    // .getPredictedFieldToVehicle(Constants.VisionConstants.kLookaheadTime);
+    // Pose2d predicted_vehicle_to_goal = predicted_field_to_vehicle.inverse()
+    // .transformBy(real_aiming_params_.get().getFieldToGoal());
 
-    //     // update align delta from target and distance from target
-    //     mTrackId = real_aiming_params_.get().getTrackId();
-    //     mTargetAngle = predicted_vehicle_to_goal.getTranslation().direction().getRadians() + Math.PI;
+    // // update align delta from target and distance from target
+    // mTrackId = real_aiming_params_.get().getTrackId();
+    // mTargetAngle =
+    // predicted_vehicle_to_goal.getTranslation().direction().getRadians() +
+    // Math.PI;
 
-    //     // send vision aligning target delta to swerve
-    //     mSwerve.acceptLatestGoalTrackVisionAlignGoal(mTargetAngle);
+    // // send vision aligning target delta to swerve
+    // mSwerve.acceptLatestGoalTrackVisionAlignGoal(mTargetAngle);
 
-    //     // update distance to target
-    //     if (mLimelight.hasTarget() && mLimelight.getLimelightDistanceToTarget().isPresent()) {
-    //         mCorrectedDistanceToTarget = mLimelight.getLimelightDistanceToTarget().get();
-    //     } else {
-    //         mCorrectedDistanceToTarget = predicted_vehicle_to_goal.getTranslation().norm();
-    //     }
+    // // update distance to target
+    // if (mLimelight.hasTarget() &&
+    // mLimelight.getLimelightDistanceToTarget().isPresent()) {
+    // mCorrectedDistanceToTarget = mLimelight.getLimelightDistanceToTarget().get();
+    // } else {
+    // mCorrectedDistanceToTarget =
+    // predicted_vehicle_to_goal.getTranslation().norm();
     // }
-
+    // }
 
     // /*** UPDATE STATUS LEDS ON ROBOT ***/
     // public void updateLEDs() {
-    //     if (mLEDs.getUsingSmartdash()) {
-    //         return;
-    //     }
+    // if (mLEDs.getUsingSmartdash()) {
+    // return;
+    // }
 
-    //     State topState = State.OFF;
-    //     State bottomState = State.OFF;
+    // State topState = State.OFF;
+    // State bottomState = State.OFF;
 
-    //     if (hasEmergency) {
-    //         topState = State.EMERGENCY;
-    //         bottomState = State.EMERGENCY;
-            // else{
-            //         State topState = State.OFF;
-    //         State bottomState = State.OFF;
-    //      }
+    // if (hasEmergency) {
+    // topState = State.EMERGENCY;
+    // bottomState = State.EMERGENCY;
+    // else{
+    // State topState = State.OFF;
+    // State bottomState = State.OFF;
+    // }
 
-    //     mLEDs.applyStates(topState, bottomState);
+    // mLEDs.applyStates(topState, bottomState);
     // }
 
     // // get vision align delta from goal
     // public double getVisionAlignGoal() {
-    //     return mTargetAngle;
+    // return mTargetAngle;
     // }
 
     // check if our limelight sees a vision target
@@ -188,9 +189,10 @@ public class Superstructure extends Subsystem {
         return mLimelight.hasTarget();
     }
 
-    // // checked if we are vision aligned to the target within an acceptable horiz. error
+    // // checked if we are vision aligned to the target within an acceptable horiz.
+    // error
     // public boolean isAimed() {
-    //     return mLimelight.isAimed();
+    // return mLimelight.isAimed();
     // }
 
     @Override
@@ -223,13 +225,12 @@ public class Superstructure extends Subsystem {
     /* Superstructure getters for action and goal statuses */
     // get actions
     // public boolean getIntaking() {
-    //     return mPeriodicIO.INTAKE;
+    // return mPeriodicIO.INTAKE;
     // }
 
     // public boolean getReversing() {
-    //     return mPeriodicIO.REVERSE;
+    // return mPeriodicIO.REVERSE;
     // }
-
 
     // included to continue logging while disabled
     @Override
@@ -268,7 +269,5 @@ public class Superstructure extends Subsystem {
         // send data to logging storage
         mStorage.addData(items);
     }
-
-
 
 }

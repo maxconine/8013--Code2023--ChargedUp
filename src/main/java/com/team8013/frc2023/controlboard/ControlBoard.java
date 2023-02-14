@@ -19,8 +19,6 @@ public class ControlBoard {
 
     private static ControlBoard mInstance = null;
 
-
-
     public static ControlBoard getInstance() {
         if (mInstance == null) {
             mInstance = new ControlBoard();
@@ -36,7 +34,6 @@ public class ControlBoard {
         operator = new CustomXboxController(Ports.OPERATOR_PORT);
     }
 
-    
     public void setOperatorRumble(boolean on) {
         operator.setRumble(on);
     }
@@ -47,7 +44,7 @@ public class ControlBoard {
         double strafeAxis = getRightYaw();
 
         forwardAxis = Constants.SwerveConstants.invertYAxis ? forwardAxis : -forwardAxis;
-        strafeAxis = Constants.SwerveConstants.invertXAxis ? strafeAxis :-strafeAxis;
+        strafeAxis = Constants.SwerveConstants.invertXAxis ? strafeAxis : -strafeAxis;
 
         Translation2d tAxes = new Translation2d(forwardAxis, strafeAxis);
 
@@ -66,7 +63,6 @@ public class ControlBoard {
             SmartDashboard.putNumber("scaled y Axis", scaled_y);
             return new Translation2d(scaled_x, scaled_y).scale(Constants.SwerveConstants.maxSpeed);
         }
-        
 
     }
 
@@ -78,15 +74,16 @@ public class ControlBoard {
         if (Math.abs(rotAxis) < kSwerveDeadband) {
             return 0.0;
         } else {
-            return Constants.SwerveConstants.maxAngularVelocity * (rotAxis - (Math.signum(rotAxis) * kSwerveDeadband)) / (1 - kSwerveDeadband);
+            return Constants.SwerveConstants.maxAngularVelocity * (rotAxis - (Math.signum(rotAxis) * kSwerveDeadband))
+                    / (1 - kSwerveDeadband);
         }
     }
 
     public boolean zeroGyro() {
         return m_driver.getRawButtonPressed(13);
     }
-    
-        public enum SwerveCardinal {
+
+    public enum SwerveCardinal {
         NONE(0),
 
         FORWARDS(0),
@@ -101,7 +98,7 @@ public class ControlBoard {
         }
     }
 
-     public SwerveCardinal getSwerveSnap() {
+    public SwerveCardinal getSwerveSnap() {
         // CARDINAL SNAPS
 
         switch (operator.getController().getPOV()) {
@@ -116,135 +113,163 @@ public class ControlBoard {
             default:
                 return SwerveCardinal.NONE;
         }
-            
-    }
 
+    }
 
     // Align swerve drive with target
     public boolean getVisionAlign() {
         return operator.getButton(Button.RB);
     }
 
-
     // // Locks wheels in X formation
     public boolean getBrake() {
-        return m_driver.getRawButton(4); //far left switch
+        return m_driver.getRawButton(4); // far left switch
+    }
+
+    public boolean getArmDown() {
+        return operator.getButton(Button.A);
+    }
+
+    public boolean getHybrid() {
+        return operator.getButton(Button.B);
+    }
+
+    public boolean getMid() {
+        return operator.getButton(Button.X);
+    }
+
+    public boolean getHigh() {
+        return operator.getButton(Button.Y);
+    }
+
+    public boolean getArmZero() {
+        return operator.getButton(Button.START);
     }
 
     // // Intake Controls
     // public boolean getIntake() {
-    //     return operator.getTrigger(CustomXboxController.Side.RIGHT);
+    // return operator.getTrigger(CustomXboxController.Side.RIGHT);
     // }
 
     // public boolean getReject() {
-    //     return operator.getTrigger(CustomXboxController.Side.LEFT);
+    // return operator.getTrigger(CustomXboxController.Side.LEFT);
     // }
-    
-    
-    //Returns positions from -1 to 1 
+
+    // Returns positions from -1 to 1
     private double getLeftYaw() {
         double leftYaw = m_driver.getRawAxis(Constants.leftXAxis);
 
-        if (leftYaw != 0){
+        if (leftYaw != 0) {
             leftYaw = leftYaw - Constants.ControllerConstants.ControllerLeftYawZero;
         }
 
-        if (leftYaw > kSwerveDeadband){
-            leftYaw = (leftYaw / (Constants.ControllerConstants.ControllerLeftYawHigh + (Constants.ControllerConstants.isControllerOne ? -Constants.ControllerConstants.ControllerLeftYawZero : Constants.ControllerConstants.ControllerLeftYawZero)));
-        } 
-        else if (leftYaw < -kSwerveDeadband){
-            leftYaw = (leftYaw / (Constants.ControllerConstants.ControllerLeftYawLow + Constants.ControllerConstants.ControllerLeftYawZero));
+        if (leftYaw > kSwerveDeadband) {
+            leftYaw = (leftYaw / (Constants.ControllerConstants.ControllerLeftYawHigh
+                    + (Constants.ControllerConstants.isControllerOne
+                            ? -Constants.ControllerConstants.ControllerLeftYawZero
+                            : Constants.ControllerConstants.ControllerLeftYawZero)));
+        } else if (leftYaw < -kSwerveDeadband) {
+            leftYaw = (leftYaw / (Constants.ControllerConstants.ControllerLeftYawLow
+                    + Constants.ControllerConstants.ControllerLeftYawZero));
         }
 
-        if (leftYaw>1){
+        if (leftYaw > 1) {
             leftYaw = 1;
         }
-        
-        if (leftYaw<-1){
+
+        if (leftYaw < -1) {
             leftYaw = -1;
         }
 
-        //SmartDashboard.putNumber("remote leftYaw", leftYaw);
+        // SmartDashboard.putNumber("remote leftYaw", leftYaw);
         return leftYaw;
     }
 
-    //Returns positions from -1 to 1 
+    // Returns positions from -1 to 1
     // private double getLeftThrottle() {
-    //     double leftThrottle = m_driver.getRawAxis(Constants.leftYAxis);
+    // double leftThrottle = m_driver.getRawAxis(Constants.leftYAxis);
 
-    //     if (leftThrottle != 0){
-    //         leftThrottle = leftThrottle - Constants.ControllerConstants.ControllerLeftThrottleZero;
-    //     }
+    // if (leftThrottle != 0){
+    // leftThrottle = leftThrottle -
+    // Constants.ControllerConstants.ControllerLeftThrottleZero;
+    // }
 
-    //     if (leftThrottle > kSwerveDeadband){
-    //         leftThrottle = (leftThrottle / (Constants.ControllerConstants.ControllerLeftThrottleHigh + Constants.ControllerConstants.ControllerLeftThrottleZero));
-    //     } 
-    //     else if (leftThrottle < -kSwerveDeadband){
-    //         leftThrottle = (leftThrottle / (Constants.ControllerConstants.ControllerLeftThrottleLow + Constants.ControllerConstants.ControllerLeftThrottleZero));
-    //     }
+    // if (leftThrottle > kSwerveDeadband){
+    // leftThrottle = (leftThrottle /
+    // (Constants.ControllerConstants.ControllerLeftThrottleHigh +
+    // Constants.ControllerConstants.ControllerLeftThrottleZero));
+    // }
+    // else if (leftThrottle < -kSwerveDeadband){
+    // leftThrottle = (leftThrottle /
+    // (Constants.ControllerConstants.ControllerLeftThrottleLow +
+    // Constants.ControllerConstants.ControllerLeftThrottleZero));
+    // }
 
-    //     if (leftThrottle>1){
-    //         leftThrottle = 1;
-    //     }
-        
-    //     if (leftThrottle<-1){
-    //         leftThrottle = -1;
-    //     }
+    // if (leftThrottle>1){
+    // leftThrottle = 1;
+    // }
 
-    //     //SmartDashboard.putNumber("remote leftThrottle", leftThrottle);
-    //     return leftThrottle;
+    // if (leftThrottle<-1){
+    // leftThrottle = -1;
+    // }
+
+    // //SmartDashboard.putNumber("remote leftThrottle", leftThrottle);
+    // return leftThrottle;
     // }
 
     private double getRightThrottle() {
         double rightThrottle = m_driver.getRawAxis(Constants.rightYAxis);
 
-        if (rightThrottle != 0){
+        if (rightThrottle != 0) {
             rightThrottle = rightThrottle - Constants.ControllerConstants.ControllerRightThrottleZero;
         }
 
-        if (rightThrottle > (Constants.ControllerConstants.isControllerOne ? kSwerveDeadband : 0.102)){
-            rightThrottle = (rightThrottle / (Constants.ControllerConstants.ControllerRightThrottleHigh + (Constants.ControllerConstants.isControllerOne ? -Constants.ControllerConstants.ControllerRightThrottleZero : Constants.ControllerConstants.ControllerRightThrottleZero)));
-        } 
-        else if (rightThrottle < -kSwerveDeadband){
-            rightThrottle = (rightThrottle / (Constants.ControllerConstants.ControllerRightThrottleLow + Constants.ControllerConstants.ControllerRightThrottleZero));
+        if (rightThrottle > (Constants.ControllerConstants.isControllerOne ? kSwerveDeadband : 0.102)) {
+            rightThrottle = (rightThrottle / (Constants.ControllerConstants.ControllerRightThrottleHigh
+                    + (Constants.ControllerConstants.isControllerOne
+                            ? -Constants.ControllerConstants.ControllerRightThrottleZero
+                            : Constants.ControllerConstants.ControllerRightThrottleZero)));
+        } else if (rightThrottle < -kSwerveDeadband) {
+            rightThrottle = (rightThrottle / (Constants.ControllerConstants.ControllerRightThrottleLow
+                    + Constants.ControllerConstants.ControllerRightThrottleZero));
         }
 
-        if (rightThrottle>1){
+        if (rightThrottle > 1) {
             rightThrottle = 1;
         }
-        
-        if (rightThrottle<-1){
+
+        if (rightThrottle < -1) {
             rightThrottle = -1;
         }
 
-        //SmartDashboard.putNumber("remote rightThrottle", rightThrottle);
+        // SmartDashboard.putNumber("remote rightThrottle", rightThrottle);
         return rightThrottle;
     }
 
     private double getRightYaw() {
         double rightYaw = m_driver.getRawAxis(Constants.rightXAxis);
 
-        if (rightYaw != 0){
+        if (rightYaw != 0) {
             rightYaw = rightYaw - Constants.ControllerConstants.ControllerRightYawZero;
         }
 
-        if (rightYaw > kSwerveDeadband){
-            rightYaw = (rightYaw / (Constants.ControllerConstants.ControllerRightYawHigh + -Constants.ControllerConstants.ControllerRightYawZero));
-        } 
-        else if (rightYaw < -kSwerveDeadband){
-            rightYaw = (rightYaw / (Constants.ControllerConstants.ControllerRightYawLow + Constants.ControllerConstants.ControllerRightYawZero));
+        if (rightYaw > kSwerveDeadband) {
+            rightYaw = (rightYaw / (Constants.ControllerConstants.ControllerRightYawHigh
+                    + -Constants.ControllerConstants.ControllerRightYawZero));
+        } else if (rightYaw < -kSwerveDeadband) {
+            rightYaw = (rightYaw / (Constants.ControllerConstants.ControllerRightYawLow
+                    + Constants.ControllerConstants.ControllerRightYawZero));
         }
 
-        if (rightYaw>1){
+        if (rightYaw > 1) {
             rightYaw = 1;
         }
-        
-        if (rightYaw<-1){
+
+        if (rightYaw < -1) {
             rightYaw = -1;
         }
 
-        //SmartDashboard.putNumber("remote rightYaw", rightYaw);
+        // SmartDashboard.putNumber("remote rightYaw", rightYaw);
         return rightYaw;
     }
 }
-
