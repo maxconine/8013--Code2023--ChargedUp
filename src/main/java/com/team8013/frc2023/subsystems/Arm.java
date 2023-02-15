@@ -11,7 +11,7 @@ import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.Ports;
 import com.team8013.frc2023.logger.LogStorage;
 import com.team8013.frc2023.logger.LoggingSystem;
-import com.team8013.frc2023.subsystems.ServoMotorSubsystem.ControlState;
+//import com.team8013.frc2023.subsystems.ServoMotorSubsystem.ControlState;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.util.Util;
 
@@ -38,6 +38,7 @@ public class Arm extends Subsystem {
 
     // status variable for is enabled
     public boolean mIsEnabled = false;
+    private boolean isPulledIn = false;
 
     public ArmControlState mArmControlState = ArmControlState.OPEN_LOOP;
 
@@ -116,6 +117,22 @@ public class Arm extends Subsystem {
         mArm.setSelectedSensorPosition(0.0);
     }
 
+    public void pullClimberIntoZero (){
+        //if (Math.abs(PeriodicIO.arm_motor_velocity) > 0.5)
+        if (isPulledIn == false){
+            System.out.println("pullClimberIntoZero Called");
+            setArmPosition(-Constants.ArmConstants.kMaxHeight);
+            
+            if (Util.epsilonEquals(mPeriodicIO.arm_motor_velocity, 0, 0.5)
+            && (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kStatorCurrentLimit)){
+                resetClimberPosition();
+                setArmPosition(10);
+        }
+        isPulledIn = true;
+    }
+    System.out.println("pullClimberIntoZero Done");
+    }
+
     public void setArmOpenLoop(double wantedDemand) {
         if (mArmControlState != ArmControlState.OPEN_LOOP) {
             mArmControlState = ArmControlState.OPEN_LOOP;
@@ -146,15 +163,18 @@ public class Arm extends Subsystem {
 
     // extend arm
     public void setExtendForHybrid() {
+        isPulledIn = false;
         setArmPosition(Constants.ArmConstants.kHybridTravelDistance);
     }
 
     // third step for traversal
     public void setExtendForMid() {
+        isPulledIn = false;
         setArmPosition(Constants.ArmConstants.kMidTravelDistance);
     }
 
     public void setExtendForHigh() {
+        isPulledIn = false;
         setArmPosition(Constants.ArmConstants.kHighTravelDistance);
     }
 

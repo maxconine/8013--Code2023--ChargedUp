@@ -296,7 +296,7 @@ public class Constants {
     }
 
     public static final class ArmConstants {
-        public static final double kStatorCurrentLimit = 20; // 80.0;
+        public static final double kStatorCurrentLimit = 5; // 80.0;
 
         // arm constants
         public static final int kMinHeight = 0; // ticks
