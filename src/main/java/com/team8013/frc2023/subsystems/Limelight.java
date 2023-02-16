@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.team254.lib.geometry.Rotation2d;
-import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.Util;
 import com.team254.lib.vision.TargetInfo;
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.RobotState;
-import com.team8013.frc2023.controlboard.ControlBoard;
 import com.team8013.frc2023.logger.LogStorage;
 import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.ILooper;
@@ -81,6 +79,7 @@ public class Limelight extends Subsystem {
     
     /** Returns driving adjustment calculated from the vertical crosshair offset.
      * @return A double
+     * @apiNote Swerve.drive(new Translation2d(driving_adjust,0), steering_adjust, false, true);
      */
     public double getDrivingAdjust() {
         return KpDistance * mPeriodicIO.ty;
@@ -128,8 +127,8 @@ public class Limelight extends Subsystem {
         public int givenPipeline;
         public double tx; // Horizontal offset from crosshair to target 
         public double ty; // Vertical offset from crosshair to target
-        public double dt;
-        public double latency;
+        public double dt; // TODO: Ask what this is for. 
+        public double latency; // Limelight latency
         public double area;
         public boolean has_comms;
         public boolean sees_target;
@@ -266,10 +265,14 @@ public class Limelight extends Subsystem {
         }
     }
 
+    /** What is the point of this? */
     public synchronized void triggerOutputs() {
         mOutputsHaveChanged = true;
     }
 
+    /**
+     * @return Not sure, what is Util.epsilon?
+     */
     public synchronized boolean isAimed() {
         if (hasTarget()) {
             return Util.epsilonEquals(mPeriodicIO.tx, 0.0, Constants.VisionAlignConstants.kEpsilon);
@@ -278,42 +281,54 @@ public class Limelight extends Subsystem {
         }
     }
 
+    /**
+     * @return Also not sure but this seems like a repeat
+     */
     public synchronized boolean isAutonomousAimed() {
         if (hasTarget()) {
             return Util.epsilonEquals(mPeriodicIO.tx, 0.0, 1.0);
         } else {
             return false;
         }
-    }
+    }    
 
-    
-
+    /**
+     * @return True if Limelight communication is ok, false if not?
+     */
     public synchronized boolean limelightOK() {
         return mPeriodicIO.has_comms;
     }
 
+    /**
+     * @return Limelight latency
+     */
     public double getLatency() {
         return mPeriodicIO.latency;
     }
 
+    /**
+     * @return I have no idea, what is dt?
+     */
     public double getDt() {
         return mPeriodicIO.dt;
     }
 
+    /**
+     * @return Limelight's current pipeline. 
+     */
     public synchronized int getPipeline() {
         return mPeriodicIO.pipeline;
     }
 
+    /**
+     * @return True if Limelight has a target, false if it does not.
+     */
     public synchronized boolean hasTarget() {
         return mPeriodicIO.sees_target;
     }
-
-    public synchronized boolean isOK() {
-        return mPeriodicIO.has_comms;
-    }
-
-    /** Returns horizontal and verical crosshair offsets
-     * @return A double array (tx, ty)
+    
+    /** 
+     * @return Horizontal and vertical crosshair offsets as double array [tx, ty]
      */
     public double[] getOffset() {
         return new double[] { mPeriodicIO.tx, mPeriodicIO.ty };
