@@ -6,6 +6,8 @@ package com.team8013.frc2023;
 
 import java.util.Optional;
 
+import javax.lang.model.util.ElementScanner14;
+
 import com.lib.util.CTREConfigs;
 
 import edu.wpi.first.math.estimator.MerweScaledSigmaPoints;
@@ -27,6 +29,7 @@ import com.team8013.frc2023.loops.Looper;
 import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
 import com.team8013.frc2023.subsystems.Arm;
 import com.team8013.frc2023.subsystems.Limelight;
+import com.team8013.frc2023.subsystems.Pivot;
 import com.team8013.frc2023.subsystems.RobotStateEstimator;
 import com.team8013.frc2023.subsystems.Superstructure;
 import com.team8013.frc2023.subsystems.Swerve;
@@ -64,7 +67,7 @@ public class Robot extends TimedRobot {
 	private final Superstructure mSuperstructure = Superstructure.getInstance();
 	private final Swerve mSwerve = Swerve.getInstance();
 	// private final Intake mIntake = Intake.getInstance();
-	// private final Indexer mIndexer = Indexer.getInstance();
+	private final Pivot mPivot = Pivot.getInstance();
 	// private final Shooter mShooter = Shooter.getInstance();
 	// private final Trigger mTrigger = Trigger.getInstance();
 	// private final Hood mHood = Hood.getInstance();
@@ -101,6 +104,7 @@ public class Robot extends TimedRobot {
 					mRobotStateEstimator,
 					mSwerve,
 					mSuperstructure,
+					mPivot,
 					// mIntake,
 					// mIndexer,
 					// mShooter,
@@ -264,24 +268,44 @@ public class Robot extends TimedRobot {
 			// SmartDashboard.putNumber("1 position",
 			// mSwerve.getPositions()[1].distanceMeters);
 
-			if (mControlBoard.getArmDown()) {
-				// mArm.setArmPosition(-182000);
-				mArm.setArmDown();
-			}
-			if (mControlBoard.getHybrid()) {
-				mArm.setExtendForHybrid();
-			}
-			if (mControlBoard.getMid()) {
-				mArm.setExtendForMid();
-			}
-			if (mControlBoard.getHigh()) {
-				mArm.setExtendForHigh();
-			}
-			if (mControlBoard.getArmZero()) {
-				mArm.resetClimberPosition();
-			}
-			mArm.outputTelemetry();
+			// MANUALLY CONTROL PIVOT
+			if ((mControlBoard.getOperatorLeftThrottle() < -0.2) ||
+					(mControlBoard.getOperatorLeftThrottle() > 0.2)) {
+				mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle() * 12);
+			} else {
 
+				if (mControlBoard.getArmDown()) {
+					mPivot.setPivotDown();
+					mArm.setArmDown();
+				} else if (mControlBoard.getHybrid()) {
+					mPivot.setPivotForHybrid();
+					if (mPivot.canExtendArm()) {
+						mArm.setExtendForHybrid();
+					}
+				} else if (mControlBoard.getMid()) {
+					mPivot.setPivotForMid();
+					if (mPivot.canExtendArm()) {
+						mArm.setExtendForMid();
+					}
+				} else if (mControlBoard.getHigh()) {
+					mPivot.setPivotForHigh();
+					if (mPivot.canExtendArm()) {
+						mArm.setExtendForHigh();
+					}
+				}
+
+				// hold 3 lines button to pull in arm
+				if (mControlBoard.getZero()) {
+					mArm.resetClimberPosition();
+					mPivot.resetPivotPosition();
+				}
+				// if (mControlBoard.getArmPullInToZero()) {
+				// mArm.pullArmIntoZero();
+				// }
+
+				mArm.outputTelemetry();
+				mPivot.outputTelemetry();
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 			CrashTracker.logThrowableCrash(t);

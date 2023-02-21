@@ -38,6 +38,7 @@ public class Arm extends Subsystem {
 
     // status variable for is enabled
     public boolean mIsEnabled = false;
+
     private boolean isPulledIn = false;
 
     public ArmControlState mArmControlState = ArmControlState.OPEN_LOOP;
@@ -47,7 +48,8 @@ public class Arm extends Subsystem {
 
     public PeriodicIO mPeriodicIO = new PeriodicIO();
 
-    public StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT = new StatorCurrentLimitConfiguration(true, 60, 60, .2);
+    public StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT = new StatorCurrentLimitConfiguration(true,
+            60, 60, .2);
 
     private Arm() {
         mArm = TalonFXFactory.createDefaultTalon(Ports.ARM);
@@ -117,20 +119,21 @@ public class Arm extends Subsystem {
         mArm.setSelectedSensorPosition(0.0);
     }
 
-    public void pullClimberIntoZero (){
-        //if (Math.abs(PeriodicIO.arm_motor_velocity) > 0.5)
-        if (isPulledIn == false){
-            System.out.println("pullClimberIntoZero Called");
-            setArmPosition(-Constants.ArmConstants.kMaxHeight);
-            
+    public void pullArmIntoZero() {
+        // if (Math.abs(PeriodicIO.arm_motor_velocity) > 0.5)
+        if (isPulledIn == false) {
+            // SmartDashboard.putBoolean("isPulledIn", isPulledIn);
+            setArmDemand(-10000);
+            // pull in until velocity is less than 0.5 and current is higher than current
+            // limit, reset position
             if (Util.epsilonEquals(mPeriodicIO.arm_motor_velocity, 0, 0.5)
-            && (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kStatorCurrentLimit)){
+                    && (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kStatorCurrentLimit)) {
                 resetClimberPosition();
                 setArmPosition(10);
+                isPulledIn = true;
+                System.out.println("arm Pulled in");
+            }
         }
-        isPulledIn = true;
-    }
-    System.out.println("pullClimberIntoZero Done");
     }
 
     public void setArmOpenLoop(double wantedDemand) {

@@ -296,7 +296,8 @@ public class Constants {
     }
 
     public static final class ArmConstants {
-        public static final double kStatorCurrentLimit = 5; // 80.0;
+        public static final double kStatorCurrentLimit = 20; // 80.0;
+        public static final double kTriggerThresholdCurrent = 60;
 
         // arm constants
         public static final int kMinHeight = 0; // ticks
@@ -304,9 +305,9 @@ public class Constants {
         public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; // ticks
 
         // TODO I have no idea the max height ticks
-        public static final int kHybridTravelDistance = 182106; // kLeftTravelDistance * 0.75
-        public static final int kMidTravelDistance = 182106; // kLeftTravelDistance * 0.75
-        public static final int kHighTravelDistance = 200000; // kLeftTravelDistance * 0.75
+        public static final int kHybridTravelDistance = 60000; // kLeftTravelDistance * 0.75
+        public static final int kMidTravelDistance = 100000; // kLeftTravelDistance * 0.75
+        public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
 
         /* GENERAL CLIMBER CONSTANTS USED */
 
@@ -315,6 +316,36 @@ public class Constants {
         public static final int kSafetyMinimum = -7000; // minimum outside 0 ticks
 
         public static final double kTravelDistanceEpsilon = 20000;
+
+    }
+
+    public static final class PivotConstants {
+        public static final int kStatorCurrentLimit = 80; // 80 Amps for Neo motor
+        public static final double kTriggerThresholdCurrent = 60;
+
+        public static final double kP = 0.5;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double kIz = 0;
+        public static final double kFF = 0;
+        public static final double kMaxOutput = 0.95;
+        public static final double kMinOutput = -0.95;
+
+        // gear ratio for one full rotation of the pivot
+        // (5*4*3)* (227/14) = 972.857
+        public static final double oneDegreeOfroation = 2.702381;
+
+        // 14 tooth to 226 tooth
+        // rotations*360 to get degrees
+
+        // pivot constants
+        public static final int kMinHeight = 0;
+        public static final int kMaxHeight = 0;
+
+        // TODO I have no idea the degrees
+        public static final double kHybridTravelDistance = 45; // degrees
+        public static final double kMidTravelDistance = 70;
+        public static final double kHighTravelDistance = 100;
 
     }
 

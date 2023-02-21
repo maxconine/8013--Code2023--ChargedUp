@@ -4,7 +4,9 @@ import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.Ports;
+import com.team8013.frc2023.controlboard.CustomXboxController.Axis;
 import com.team8013.frc2023.controlboard.CustomXboxController.Button;
+import com.team8013.frc2023.controlboard.CustomXboxController.Side;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -142,8 +144,16 @@ public class ControlBoard {
         return operator.getButton(Button.Y);
     }
 
-    public boolean getArmZero() {
+    public boolean getZero() {
         return operator.getButton(Button.START);
+    }
+
+    public boolean getArmPullInToZero() {
+        return operator.getButton(Button.RB);
+    }
+
+    public double getOperatorLeftThrottle() {
+        return operator.getAxis(Side.LEFT, Axis.Y);
     }
 
     // // Intake Controls
