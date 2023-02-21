@@ -37,6 +37,7 @@ public class Limelight extends Subsystem {
     private NetworkTable mNetworkTable;
     LogStorage<PeriodicIO> mStorage = null;
     private PeriodicIO mPeriodicIO = new PeriodicIO();
+    private Swerve mSwerve = null; // I feel like this might be bad to do.
 
     private int mLatencyCounter = 0;
     public Optional<Double> mDistanceToTarget = Optional.empty();
@@ -354,12 +355,13 @@ public class Limelight extends Subsystem {
     }
 
     public Pair<Pose2d, Double> getBotPose() {
+        double currentTime = Timer.getFPGATimestamp() - getLatency();
 
+        // If Limelight does not have target return pose according to odometry
         if (!hasTarget()) {
-            return null;
+            return new Pair<Pose2d, Double>(mSwerve.getPose(), currentTime);
         }
 
-        double currentTime = Timer.getFPGATimestamp() - getLatency();
         double[] limelightBotPoseArray = tBotPose.getDoubleArray(new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
 
         if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) {
@@ -373,7 +375,7 @@ public class Limelight extends Subsystem {
                 .toPose2d();
 
         if (pose == null) {
-            return null;
+            return new Pair<Pose2d, Double>(mSwerve.getPose(), currentTime);
         }
 
         // transform pose from LL "field space" to pose2d
