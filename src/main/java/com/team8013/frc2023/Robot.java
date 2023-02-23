@@ -98,6 +98,7 @@ public class Robot extends TimedRobot {
 
 		ctreConfigs = new CTREConfigs();
 		mShuffleBoardInteractions = ShuffleBoardInteractions.getInstance();
+		mLimelight.setPipeline(1);
 
 		try {
 			CrashTracker.logRobotInit();
@@ -180,8 +181,14 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+<<<<<<< HEAD
 		// TODO;
 		// mLimelight.setLed(Limelight.LedMode.ON);
+=======
+		mLimelight.setLed(Limelight.LedMode.ON);
+		//mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(),0), mLimelight.getSteeringAdjust(), false, true);
+
+>>>>>>> a294285b20e872b2afa9465719d392298bdf9d18
 		// mLEDs.updateState();
 		// mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_YELLOW);
 	}
