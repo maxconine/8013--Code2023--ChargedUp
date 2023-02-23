@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
 	// instantiate logging looper
 	private final Looper mLoggingLooper = new Looper();
 
+	public static boolean settingDown, settingPickup, settingHybrid, settingMid, settingHigh;
 	// declare necessary class objects
 	private ShuffleBoardInteractions mShuffleBoardInteractions;
 	public static CTREConfigs ctreConfigs;
@@ -280,61 +281,62 @@ public class Robot extends TimedRobot {
 			} else {
 
 				if (mControlBoard.getArmDown()) {
-					boolean settingDown = true;
+					settingDown = true;
 					mArm.setArmDown();
-					while (settingDown) {
-						if (mArm.isIn()) {
-							mPivot.setPivotDown();
-							settingDown = true;
-						}
-					}
 				} else if (mControlBoard.getPickup()) {
 					mArm.setArmDown();
-					boolean settingPickup = true;
-					while (settingPickup) {
-						if (mArm.isIn()) {
-							mPivot.setPivotForPickup();
-						}
-						if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
-							mArm.setExtendForPickup();
-							settingPickup = false;
-						}
-					}
+					settingPickup = true;
 				} else if (mControlBoard.getHybrid()) {
 					mArm.setArmDown();
-					boolean settingHybrid = true;
-					while (settingHybrid) {
-						if (mArm.isIn()) {
-							mPivot.setPivotForHybrid();
-						}
-						if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
-							mArm.setExtendForHybrid();
-							settingHybrid = false;
-						}
-					}
+					settingHybrid = true;
 				} else if (mControlBoard.getMid()) {
 					mArm.setArmDown();
-					boolean settingMid = true;
-					while (settingMid) {
-						if (mArm.isIn()) {
-							mPivot.setPivotForMid();
-						}
-						if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
-							mArm.setExtendForMid();
-							settingMid = false;
-						}
-					}
+					settingMid = true;
 				} else if (mControlBoard.getHigh()) {
 					mArm.setArmDown();
-					boolean settingHigh = true;
-					while (settingHigh) {
-						if (mArm.isIn()) {
-							mPivot.setPivotForHigh();
-						}
-						if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
-							mArm.setExtendForHigh();
-							settingHigh = false;
-						}
+					settingHigh = true;
+				}
+
+				if (settingDown) {
+					if (mArm.isIn()) {
+						mPivot.setPivotDown();
+						settingDown = false;
+					}
+				}
+				if (settingPickup) {
+					if (mArm.isIn()) {
+						mPivot.setPivotForPickup();
+					}
+					if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
+						mArm.setExtendForPickup();
+						settingPickup = false;
+					}
+				}
+				if (settingHybrid) {
+					if (mArm.isIn()) {
+						mPivot.setPivotForHybrid();
+					}
+					if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
+						mArm.setExtendForHybrid();
+						settingHybrid = false;
+					}
+				}
+				if (settingMid) {
+					if (mArm.isIn()) {
+						mPivot.setPivotForMid();
+					}
+					if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
+						mArm.setExtendForMid();
+						settingMid = false;
+					}
+				}
+				if (settingHigh) {
+					if (mArm.isIn()) {
+						mPivot.setPivotForHigh();
+					}
+					if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
+						mArm.setExtendForHigh();
+						settingHigh = false;
 					}
 				}
 
