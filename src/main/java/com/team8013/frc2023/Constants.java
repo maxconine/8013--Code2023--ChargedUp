@@ -314,8 +314,9 @@ public class Constants {
                 public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final int kHybridTravelDistance = 60000; // kLeftTravelDistance * 0.75
-                public static final int kMidTravelDistance = 100000; // kLeftTravelDistance * 0.75
+                public static final int kPickupTravelDistance = 100000;
+                public static final int kHybridTravelDistance = 100000; // kLeftTravelDistance * 0.75
+                public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
                 public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
 
                 /* GENERAL CLIMBER CONSTANTS USED */
@@ -351,10 +352,11 @@ public class Constants {
                 public static final int kMinHeight = 0;
                 public static final int kMaxHeight = 0;
 
-                // TODO I have no idea the degrees
-                public static final double kHybridTravelDistance = 45; // degrees
-                public static final double kMidTravelDistance = 70;
-                public static final double kHighTravelDistance = 100;
+                // pivot degree constants
+                public static final double kPickupTravelDistance = 37;
+                public static final double kHybridTravelDistance = 47.37; // degrees
+                public static final double kMidTravelDistance = 95.47;
+                public static final double kHighTravelDistance = 106.2;
 
         }
 

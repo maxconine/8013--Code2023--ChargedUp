@@ -9,6 +9,7 @@ import com.team8013.frc2023.logger.LogStorage;
 import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.ILooper;
 import com.team8013.frc2023.loops.Loop;
+import com.team8013.frc2023.subsystems.LEDs.State;
 import com.team254.lib.geometry.Pose2d;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -39,7 +40,7 @@ public class Superstructure extends Subsystem {
     // private final ColorSensor mColorSensor = ColorSensor.getInstance();
     // private final Arm mArm = Arm.getInstance();
     private final Limelight mLimelight = Limelight.getInstance();
-    // private final LEDs mLEDs = LEDs.getInstance();
+    private final LEDs mLEDs = LEDs.getInstance();
     private final Pigeon mPigeon = Pigeon.getInstance();
 
     // robot state
@@ -159,25 +160,74 @@ public class Superstructure extends Subsystem {
     // }
     // }
 
-    // /*** UPDATE STATUS LEDS ON ROBOT ***/
-    // public void updateLEDs() {
-    // if (mLEDs.getUsingSmartdash()) {
-    // return;
-    // }
+    /*** UPDATE STATUS LEDS ON ROBOT ***/
+    public void updateLEDs() {
+        if (mLEDs.getUsingSmartdash()) {
+            return;
+        }
 
-    // State topState = State.OFF;
-    // State bottomState = State.OFF;
+        State frontState = State.OFF;
+        State backState = State.OFF;
+        if (hasEmergency) {
+            State topState = State.EMERGENCY;
+            State bottomState = State.EMERGENCY;
+        } else {
+            // if (!mClimbMode) {
+            // if (getBallCount() == 2) {
+            // bottomState = State.SOLID_GREEN;
+            // } else if (getBallCount() == 1) {
+            // bottomState = State.SOLID_CYAN;
+            // } else {
+            // bottomState = State.SOLID_ORANGE;
+            // }
+            // if (getWantsSpit()) {
+            // topState = State.SOLID_ORANGE;
+            // } else if (getWantsFender()) {
+            // topState = State.SOLID_CYAN;
+            // } else if (mPeriodicIO.SHOOT) {
+            // topState = State.FLASHING_PINK;
+            // } else if (isAimed()) {
+            // topState = State.FLASHING_GREEN;
+            // } else if (hasTarget()) {
+            // topState = State.SOLID_PURPLE;
+            // } else {
+            // topState = State.SOLID_ORANGE;
+            // }
+            // } else {
+            // if (mOpenLoopClimbControlMode) {
+            // topState = State.SOLID_YELLOW;
+            // bottomState = State.SOLID_YELLOW;
+            // } else if (mAutoTraversalClimb) {
+            // topState = State.FLASHING_ORANGE;
+            // bottomState = State.FLASHING_ORANGE;
+            // } else if (mAutoHighBarClimb) {
+            // topState = State.FLASHING_CYAN;
+            // bottomState = State.FLASHING_CYAN;
+            // } else {
+            // topState = State.SOLID_PINK;
+            // bottomState = State.SOLID_PINK;
+            // }
+            // }
+        }
+        frontState = State.FLASHING_CYAN;
+        backState = State.FLASHING_PINK;
 
-    // if (hasEmergency) {
-    // topState = State.EMERGENCY;
-    // bottomState = State.EMERGENCY;
-    // else{
-    // State topState = State.OFF;
-    // State bottomState = State.OFF;
-    // }
+        mLEDs.applyStates(frontState, backState);
+    }
 
-    // mLEDs.applyStates(topState, bottomState);
-    // }
+    /***
+     * UPDATE SUBSYSTEM STATES + SETPOINTS AND SET GOALS
+     * 
+     * 1. updates wanted actions for intake and indexer subsystems based on
+     * requested superstructure action
+     * 2. updates shooter and hood setpoint goals from tracked vars
+     * 3. set subsystem states and shooting setpoints within subsystems
+     * 
+     */
+    public void setGoals() {
+        /* Update subsystem wanted actions and setpoints */
+
+    }
 
     // // get vision align delta from goal
     // public double getVisionAlignGoal() {

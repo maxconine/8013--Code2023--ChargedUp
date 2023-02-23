@@ -23,6 +23,7 @@ import com.team8013.frc2023.auto.AutoModeSelector;
 import com.team8013.frc2023.auto.modes.AutoModeBase;
 import com.team8013.frc2023.controlboard.ControlBoard;
 import com.team8013.frc2023.controlboard.ControlBoard.SwerveCardinal;
+import com.team8013.frc2023.controlboard.CustomXboxController.Button;
 import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.CrashTracker;
 import com.team8013.frc2023.loops.Looper;
@@ -49,7 +50,7 @@ public class Robot extends TimedRobot {
 	 * for any
 	 * initialization code.
 	 */
-
+	// hitest
 	// instantiate enabled and disabled loopers
 	private final Looper mEnabledLooper = new Looper();
 	private final Looper mDisabledLooper = new Looper();
@@ -111,8 +112,8 @@ public class Robot extends TimedRobot {
 					// mTrigger,
 					// mHood,
 					// mColorSensor,
-					mArm,
-					mLimelight
+					mArm
+			// mLimelight
 			// mLEDs
 			);
 
@@ -162,7 +163,8 @@ public class Robot extends TimedRobot {
 
 			System.out.println("After starting auto mode executor");
 
-			mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
+			// TODO:
+			// mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
 
 			// set champs pride automation
 			// mLEDs.setChampsAutoAnimation();
@@ -177,7 +179,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		mLimelight.setLed(Limelight.LedMode.ON);
+		// TODO;
+		// mLimelight.setLed(Limelight.LedMode.ON);
 		// mLEDs.updateState();
 		// mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_YELLOW);
 	}
@@ -200,8 +203,9 @@ public class Robot extends TimedRobot {
 
 			// mSuperstructure.setEjectDisable(false);
 
-			mLimelight.setLed(Limelight.LedMode.ON);
-			mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
+			// TODO:
+			// mLimelight.setLed(Limelight.LedMode.ON);
+			// mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
 
 			// clear any previous automation from auto
 			// mLEDs.clearAnimation();
@@ -223,8 +227,9 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
-			mLimelight.setLed(Limelight.LedMode.ON);
-			mLimelight.outputTelemetry();
+			// TODO:
+			// mLimelight.setLed(Limelight.LedMode.ON);
+			// mLimelight.outputTelemetry();
 
 			// call operator commands container from superstructure
 			// mSuperstructure.updateOperatorCommands();
@@ -275,24 +280,69 @@ public class Robot extends TimedRobot {
 			} else {
 
 				if (mControlBoard.getArmDown()) {
-					mPivot.setPivotDown();
+					boolean settingDown = true;
 					mArm.setArmDown();
+					while (settingDown) {
+						if (mArm.isIn()) {
+							mPivot.setPivotDown();
+							settingDown = true;
+						}
+					}
+				} else if (mControlBoard.getPickup()) {
+					mArm.setArmDown();
+					boolean settingPickup = true;
+					while (settingPickup) {
+						if (mArm.isIn()) {
+							mPivot.setPivotForPickup();
+						}
+						if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
+							mArm.setExtendForPickup();
+							settingPickup = false;
+						}
+					}
 				} else if (mControlBoard.getHybrid()) {
-					mPivot.setPivotForHybrid();
-					if (mPivot.canExtendArm()) {
-						mArm.setExtendForHybrid();
+					mArm.setArmDown();
+					boolean settingHybrid = true;
+					while (settingHybrid) {
+						if (mArm.isIn()) {
+							mPivot.setPivotForHybrid();
+						}
+						if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
+							mArm.setExtendForHybrid();
+							settingHybrid = false;
+						}
 					}
 				} else if (mControlBoard.getMid()) {
-					mPivot.setPivotForMid();
-					if (mPivot.canExtendArm()) {
-						mArm.setExtendForMid();
+					mArm.setArmDown();
+					boolean settingMid = true;
+					while (settingMid) {
+						if (mArm.isIn()) {
+							mPivot.setPivotForMid();
+						}
+						if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
+							mArm.setExtendForMid();
+							settingMid = false;
+						}
 					}
 				} else if (mControlBoard.getHigh()) {
-					mPivot.setPivotForHigh();
-					if (mPivot.canExtendArm()) {
-						mArm.setExtendForHigh();
+					mArm.setArmDown();
+					boolean settingHigh = true;
+					while (settingHigh) {
+						if (mArm.isIn()) {
+							mPivot.setPivotForHigh();
+						}
+						if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
+							mArm.setExtendForHigh();
+							settingHigh = false;
+						}
 					}
 				}
+
+				// if (mControlBoard.autoTest()) {
+				// mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(), 0),
+				// mLimelight.getSteeringAdjust(),
+				// false, true);
+				// }
 
 				// hold 3 lines button to pull in arm
 				if (mControlBoard.getZero()) {
@@ -325,8 +375,9 @@ public class Robot extends TimedRobot {
 
 			mLoggingLooper.stop();
 
-			mLimelight.setLed(Limelight.LedMode.ON);
-			mLimelight.triggerOutputs();
+			// TODO:
+			// mLimelight.setLed(Limelight.LedMode.ON);
+			// mLimelight.triggerOutputs();
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -361,9 +412,10 @@ public class Robot extends TimedRobot {
 
 			// mLEDs.updateColor(mColorSensor.getAllianceColor());
 
-			mLimelight.setLed(Limelight.LedMode.ON);
-			mLimelight.writePeriodicOutputs();
-			mLimelight.outputTelemetry();
+			// TODO
+			// mLimelight.setLed(Limelight.LedMode.ON);
+			// mLimelight.writePeriodicOutputs();
+			// mLimelight.outputTelemetry();
 
 			Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
 			if (autoMode.isPresent() && autoMode.get() != mAutoModeExecutor.getAutoMode()) {

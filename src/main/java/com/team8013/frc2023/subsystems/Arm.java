@@ -165,8 +165,15 @@ public class Arm extends Subsystem {
      */
 
     // extend arm
+    public void setExtendForPickup() {
+        isPulledIn = false;
+
+        setArmPosition(Constants.ArmConstants.kPickupTravelDistance);
+    }
+
     public void setExtendForHybrid() {
         isPulledIn = false;
+
         setArmPosition(Constants.ArmConstants.kHybridTravelDistance);
     }
 
@@ -183,6 +190,14 @@ public class Arm extends Subsystem {
 
     public void setArmDown() {
         setArmPosition(10); // ticks
+    }
+
+    public boolean isIn() {
+        if (getArmPosition() < 5000) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // hold current position on arm

@@ -139,6 +139,15 @@ public class Pivot extends Subsystem {
         return Math.abs(getPivotPosition()) > 20 * Constants.PivotConstants.oneDegreeOfroation;
     }
 
+    public boolean canExtendArm(double degree) {
+        return (Math.abs(getPivotPosition()) > ((degree - 1) * Constants.PivotConstants.oneDegreeOfroation))
+                && (Math.abs(getPivotPosition()) < ((degree + 1) * Constants.PivotConstants.oneDegreeOfroation));
+    }
+
+    public void setPivotForPickup() {
+        setPivotPosition(Constants.PivotConstants.kPickupTravelDistance);
+    }
+
     // extend Pivot
     public void setPivotForHybrid() {
         setPivotPosition(Constants.PivotConstants.kHybridTravelDistance);

@@ -123,12 +123,20 @@ public class ControlBoard {
         return operator.getButton(Button.RB);
     }
 
+    public boolean autoTest() {
+        return operator.getButton(Button.LB);
+    }
+
     // // Locks wheels in X formation
     public boolean getBrake() {
         return m_driver.getRawButton(4); // far left switch
     }
 
     public boolean getArmDown() {
+        return operator.getButton(Button.START);
+    }
+
+    public boolean getPickup() {
         return operator.getButton(Button.A);
     }
 
@@ -145,7 +153,7 @@ public class ControlBoard {
     }
 
     public boolean getZero() {
-        return operator.getButton(Button.START);
+        return operator.getButton(Button.BACK);
     }
 
     public boolean getArmPullInToZero() {
