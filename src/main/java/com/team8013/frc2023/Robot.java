@@ -31,6 +31,8 @@ import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
 import com.team8013.frc2023.subsystems.Arm;
 import com.team8013.frc2023.subsystems.Limelight;
 import com.team8013.frc2023.subsystems.Pivot;
+import com.team8013.frc2023.subsystems.LEDs;
+import com.team8013.frc2023.subsystems.LEDs.State;
 import com.team8013.frc2023.subsystems.RobotStateEstimator;
 import com.team8013.frc2023.subsystems.Superstructure;
 import com.team8013.frc2023.subsystems.Swerve;
@@ -77,7 +79,7 @@ public class Robot extends TimedRobot {
 	// private final ColorSensor mColorSensor = ColorSensor.getInstance();
 	private final Arm mArm = Arm.getInstance();
 	private final Limelight mLimelight = Limelight.getInstance();
-	// private final LEDs mLEDs = LEDs.getInstance();
+	private final LEDs mLEDs = LEDs.getInstance();
 
 	// robot state estimator
 	private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
@@ -115,10 +117,9 @@ public class Robot extends TimedRobot {
 					// mTrigger,
 					// mHood,
 					// mColorSensor,
-					mArm
-			// mLimelight
-			// mLEDs
-			);
+					mArm,
+					mLimelight,
+					mLEDs);
 
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -170,7 +171,7 @@ public class Robot extends TimedRobot {
 			// mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
 
 			// set champs pride automation
-			// mLEDs.setChampsAutoAnimation();
+			mLEDs.setChampsAutoAnimation();
 
 		} catch (Throwable t) {
 			System.out.println("crash tracker for auto");
@@ -183,9 +184,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		// TODO;
-		// mLimelight.setLed(Limelight.LedMode.ON);
-		// mLEDs.updateState();
-		// mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_YELLOW);
+		mLimelight.setLed(Limelight.LedMode.ON);
+		mLEDs.updateState();
+		mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_YELLOW);
 	}
 
 	@Override
@@ -216,7 +217,8 @@ public class Robot extends TimedRobot {
 			// mLimelight.setPipeline(Constants.VisionConstants.kDefaultPipeline);
 
 			// clear any previous automation from auto
-			// mLEDs.clearAnimation();
+			mLEDs.clearAnimation();
+			mLEDs.setChampsAutoAnimation();
 
 			// set states for teleop init
 			// mSuperstructure.setInitialTeleopStates();
@@ -243,7 +245,7 @@ public class Robot extends TimedRobot {
 			// mSuperstructure.updateOperatorCommands();
 			// mSuperstructure.updateLEDs();
 
-			// mLEDs.updateState();
+			mLEDs.updateState();
 
 			/* SWERVE DRIVE */
 			// far left switch up
