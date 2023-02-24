@@ -120,11 +120,11 @@ public class ControlBoard {
 
     // Align swerve drive with target
     public boolean getVisionAlign() {
-        return operator.getButton(Button.RB);
+        return operator.getButton(Button.R_JOYSTICK);
     }
 
     public boolean autoTest() {
-        return operator.getButton(Button.LB);
+        return operator.getButton(Button.L_JOYSTICK);
     }
 
     // // Locks wheels in X formation
@@ -162,6 +162,14 @@ public class ControlBoard {
 
     public double getOperatorLeftThrottle() {
         return operator.getAxis(Side.LEFT, Axis.Y);
+    }
+
+    public boolean getArmExtend() {
+        return operator.getButton(Button.RB);
+    }
+
+    public boolean getArmRetract() {
+        return operator.getButton(Button.LB);
     }
 
     // // Intake Controls

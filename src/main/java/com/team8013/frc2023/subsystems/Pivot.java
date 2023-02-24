@@ -2,6 +2,9 @@ package com.team8013.frc2023.subsystems;
 
 import java.util.ArrayList;
 
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderStatusFrame;
+import com.lib.util.CTREConfigs;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -12,6 +15,7 @@ import com.team8013.frc2023.logger.LogStorage;
 import com.team8013.frc2023.logger.LoggingSystem;
 import com.team254.lib.util.Util;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -42,6 +46,8 @@ public class Pivot extends Subsystem {
 
     public PeriodicIO mPeriodicIO = new PeriodicIO();
 
+    private CANCoder angleEncoder;
+
     private Pivot() {
         mPivot = new CANSparkMax(Ports.PIVOT, MotorType.kBrushless);
 
@@ -57,6 +63,11 @@ public class Pivot extends Subsystem {
 
         // set current limits on motor
         mPivot.setSmartCurrentLimit(Constants.PivotConstants.kStatorCurrentLimit);
+
+        angleEncoder = new CANCoder(Ports.PIV_CANCODER, "canivore1");
+        configAngleEncoder();
+        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); // originally 255
+        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300); // originally 255
     }
 
     @Override
@@ -87,6 +98,8 @@ public class Pivot extends Subsystem {
             case CLOSED_LOOP:
                 mNeoMotor.setPosition(mPeriodicIO.pivot_demand);
                 break;
+            // case CLOSED_ENCODER: //use new pid controller that uses the encoder for input
+            // mNeoMotor.s
             default:
                 mNeoMotor.setPosition(0);
                 break;
@@ -127,6 +140,10 @@ public class Pivot extends Subsystem {
             mPeriodicIO.pivot_demand = mPeriodicIO.pivot_motor_position;
         }
         mPeriodicIO.pivot_demand = mPeriodicIO.pivot_demand + wantedPositionDelta;
+    }
+
+    public void setPivotPosToCancoder() {
+        mNeoMotor.setEncoderPosition(getRelativeCancoder() * Constants.PivotConstants.oneDegreeOfroation);
     }
 
     /***
@@ -230,6 +247,19 @@ public class Pivot extends Subsystem {
 
     public void togglePartialExtendPivot() {
         mPartialExtendPivot = !mPartialExtendPivot;
+    }
+
+    private void configAngleEncoder() {
+        angleEncoder.configFactoryDefault();
+        angleEncoder.configAllSettings(CTREConfigs.swerveCancoderConfig());
+    }
+
+    public Rotation2d getCanCoder() {
+        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+    }
+
+    public double getRelativeCancoder() {
+        return -1 * (angleEncoder.getPosition() - 138.25);
     }
 
     public boolean hasEmergency = false;

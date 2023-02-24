@@ -17,6 +17,7 @@ public class Ports {
     // public static final int INTAKE_ROLLER_BOTTOM = 19;
 
     public static final int CANDLE = 20;
+    public static final int PIV_CANCODER = 21;
 
     public static final int PCM = 13;
 

@@ -309,6 +309,8 @@ public class Constants {
                 public static final double kTriggerThresholdCurrent = 60;
 
                 // arm constants
+                public static final int changeArmManualAmount = 2000;
+
                 public static final int kMinHeight = 0; // ticks
                 public static final int kMaxHeight = 244984; // ticks
                 public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; // ticks
@@ -338,8 +340,8 @@ public class Constants {
                 public static final double kD = 0.0;
                 public static final double kIz = 0;
                 public static final double kFF = 0;
-                public static final double kMaxOutput = 0.95;
-                public static final double kMinOutput = -0.95;
+                public static final double kMaxOutput = 1;
+                public static final double kMinOutput = -1;
 
                 // gear ratio for one full rotation of the pivot
                 // (5*4*3)* (227/14) = 972.857

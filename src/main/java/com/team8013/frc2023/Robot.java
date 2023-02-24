@@ -56,8 +56,9 @@ public class Robot extends TimedRobot {
 	private final Looper mDisabledLooper = new Looper();
 	// instantiate logging looper
 	private final Looper mLoggingLooper = new Looper();
-
+	public static int maxArmPosition;
 	public static boolean settingDown, settingPickup, settingHybrid, settingMid, settingHigh;
+	public static boolean canControlArmManually;
 	// declare necessary class objects
 	private ShuffleBoardInteractions mShuffleBoardInteractions;
 	public static CTREConfigs ctreConfigs;
@@ -181,14 +182,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-<<<<<<< HEAD
 		// TODO;
 		// mLimelight.setLed(Limelight.LedMode.ON);
-=======
-		mLimelight.setLed(Limelight.LedMode.ON);
-		//mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(),0), mLimelight.getSteeringAdjust(), false, true);
-
->>>>>>> a294285b20e872b2afa9465719d392298bdf9d18
 		// mLEDs.updateState();
 		// mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_YELLOW);
 	}
@@ -204,6 +199,11 @@ public class Robot extends TimedRobot {
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
 			mLoggingLooper.start();
+
+			mPivot.setPivotPosToCancoder();
+			mArm.pullArmIntoZero();
+
+			// mPivot.setPivotDown();
 
 			// mSuperstructure.setWantEject(false, false);
 
@@ -289,19 +289,29 @@ public class Robot extends TimedRobot {
 
 				if (mControlBoard.getArmDown()) {
 					settingDown = true;
+					maxArmPosition = 0;
 					mArm.setArmDown();
+					canControlArmManually = false;
 				} else if (mControlBoard.getPickup()) {
 					mArm.setArmDown();
 					settingPickup = true;
+					maxArmPosition = Constants.ArmConstants.kPickupTravelDistance;
+					canControlArmManually = false;
 				} else if (mControlBoard.getHybrid()) {
 					mArm.setArmDown();
 					settingHybrid = true;
+					maxArmPosition = Constants.ArmConstants.kHybridTravelDistance;
+					canControlArmManually = false;
 				} else if (mControlBoard.getMid()) {
 					mArm.setArmDown();
 					settingMid = true;
+					maxArmPosition = Constants.ArmConstants.kMidTravelDistance;
+					canControlArmManually = false;
 				} else if (mControlBoard.getHigh()) {
 					mArm.setArmDown();
 					settingHigh = true;
+					maxArmPosition = Constants.ArmConstants.kHighTravelDistance;
+					canControlArmManually = true;
 				}
 
 				if (settingDown) {
@@ -317,6 +327,7 @@ public class Robot extends TimedRobot {
 					if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
 						mArm.setExtendForPickup();
 						settingPickup = false;
+						canControlArmManually = true;
 					}
 				}
 				if (settingHybrid) {
@@ -326,6 +337,7 @@ public class Robot extends TimedRobot {
 					if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
 						mArm.setExtendForHybrid();
 						settingHybrid = false;
+						canControlArmManually = true;
 					}
 				}
 				if (settingMid) {
@@ -335,6 +347,7 @@ public class Robot extends TimedRobot {
 					if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
 						mArm.setExtendForMid();
 						settingMid = false;
+						canControlArmManually = true;
 					}
 				}
 				if (settingHigh) {
@@ -344,6 +357,20 @@ public class Robot extends TimedRobot {
 					if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
 						mArm.setExtendForHigh();
 						settingHigh = false;
+						canControlArmManually = true;
+					}
+				}
+
+				if (canControlArmManually) {
+					if (mControlBoard.getArmExtend()) {
+						if (mArm.getArmPosition() < maxArmPosition) {
+							mArm.extendArmManual();
+						}
+					}
+					if (mControlBoard.getArmRetract()) {
+						if (mArm.getArmPosition() > 0) {
+							mArm.retractArmManual();
+						}
 					}
 				}
 
@@ -352,7 +379,8 @@ public class Robot extends TimedRobot {
 				// mLimelight.getSteeringAdjust(),
 				// false, true);
 				// }
-
+				System.out.println(mPivot.getRelativeCancoder());
+				System.out.println(mPivot.getPivotPosition());
 				// hold 3 lines button to pull in arm
 				if (mControlBoard.getZero()) {
 					mArm.resetClimberPosition();

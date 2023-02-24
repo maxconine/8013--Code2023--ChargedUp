@@ -121,17 +121,26 @@ public class Arm extends Subsystem {
 
     public void pullArmIntoZero() {
         // if (Math.abs(PeriodicIO.arm_motor_velocity) > 0.5)
+        boolean zeroing = true;
         if (isPulledIn == false) {
             // SmartDashboard.putBoolean("isPulledIn", isPulledIn);
-            setArmDemand(-10000);
+            if (mArmControlState != ArmControlState.OPEN_LOOP) {
+                mArmControlState = ArmControlState.OPEN_LOOP;
+            }
+            setArmDemand(-3);
+
+        }
+
+        if (zeroing) {
             // pull in until velocity is less than 0.5 and current is higher than current
             // limit, reset position
-            if (Util.epsilonEquals(mPeriodicIO.arm_motor_velocity, 0, 0.5)
-                    && (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kStatorCurrentLimit)) {
+            if ((mPeriodicIO.arm_motor_velocity < 0.4) &&
+                    (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kStatorCurrentLimit)) {
                 resetClimberPosition();
                 setArmPosition(10);
                 isPulledIn = true;
                 System.out.println("arm Pulled in");
+                zeroing = false;
             }
         }
     }
@@ -150,12 +159,12 @@ public class Arm extends Subsystem {
         mPeriodicIO.arm_demand = wantedPositionTicks;
     }
 
-    public void setRightClimberPositionDelta(double wantedPositionDelta) {
+    public void changeArmPosition(double wantedPositionChange) {
         if (mArmControlState != ArmControlState.MOTION_MAGIC) {
             mArmControlState = ArmControlState.MOTION_MAGIC;
             mPeriodicIO.arm_demand = mPeriodicIO.arm_motor_position;
         }
-        mPeriodicIO.arm_demand = mPeriodicIO.arm_demand + wantedPositionDelta;
+        mPeriodicIO.arm_demand = mPeriodicIO.arm_demand + wantedPositionChange;
     }
 
     /***
@@ -165,6 +174,15 @@ public class Arm extends Subsystem {
      */
 
     // extend arm
+
+    public void extendArmManual() {
+        changeArmPosition(Constants.ArmConstants.changeArmManualAmount);
+    }
+
+    public void retractArmManual() {
+        changeArmPosition(Constants.ArmConstants.changeArmManualAmount * -1);
+    }
+
     public void setExtendForPickup() {
         isPulledIn = false;
 
