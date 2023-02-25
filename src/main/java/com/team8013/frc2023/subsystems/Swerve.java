@@ -339,7 +339,7 @@ public class Swerve extends Subsystem {
 
     /**
      * Get robot pose and time
-     * @return Pair<Pose2d, Double> Pose2d as robot pose and double for time.
+     * @return Pair < Pose2d-robot's pose, Double-time that robot was at that pose. >
      */
     public Pair<Pose2d, Double> getBotPose() {
         double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency();  // Adjusting time for latency
@@ -379,6 +379,10 @@ public class Swerve extends Subsystem {
         return new Pair<Pose2d, Double>(pose, currentTime);
     }
 
+    /**
+     * Sets the robot's pose on the field and outputs to smartdashboard.
+     * @param pose - the robots pose
+     */
     public void setField(Pose2d pose){
         field.setRobotPose(pose);
         SmartDashboard.putData("Field2d", field);
