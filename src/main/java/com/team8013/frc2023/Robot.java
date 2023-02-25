@@ -39,6 +39,7 @@ import com.team8013.frc2023.subsystems.Limelight;
 import com.team8013.frc2023.subsystems.Pivot;
 import com.team8013.frc2023.subsystems.LEDs;
 import com.team8013.frc2023.subsystems.LEDs.State;
+import com.team8013.frc2023.subsystems.Limelight.LedMode;
 import com.team8013.frc2023.subsystems.RobotStateEstimator;
 import com.team8013.frc2023.subsystems.Superstructure;
 import com.team8013.frc2023.subsystems.Swerve;
@@ -161,6 +162,8 @@ public class Robot extends TimedRobot {
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
 			mLoggingLooper.start();
+			mLimelight.setLed(LedMode.PIPELINE); // Set Limelight LED's to Pipeline settings (shield your eyes!)
+			
 
 			Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
 			if (autoMode.isPresent()) {
@@ -211,6 +214,7 @@ public class Robot extends TimedRobot {
 			mLoggingLooper.start();
 
 			mPivot.setPivotPosToCancoder();
+			mLimelight.setLed(LedMode.PIPELINE); // Set Limelight LED's to Pipeline settings (shield your eyes!)
 
 			// mPivot.setPivotDown();
 
@@ -342,6 +346,7 @@ public class Robot extends TimedRobot {
 			mAutoModeSelector.updateModeCreator();
 
 			mSwerve.resetAnglesToAbsolute();
+			mLimelight.setLed(LedMode.OFF);  // Turn off Limelight LED's if robot is disabled (your eyes will thank me)
 
 			// update alliance color from driver station while disabled
 			// mColorSensor.updateAllianceColor();
