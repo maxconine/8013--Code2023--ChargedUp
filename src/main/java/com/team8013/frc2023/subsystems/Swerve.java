@@ -337,8 +337,10 @@ public class Swerve extends Subsystem {
             );
     }
 
-
-
+    /**
+     * Get robot pose and time
+     * @return Pair<Pose2d, Double> Pose2d as robot pose and double for time.
+     */
     public Pair<Pose2d, Double> getBotPose() {
         double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency();  // Adjusting time for latency
 
