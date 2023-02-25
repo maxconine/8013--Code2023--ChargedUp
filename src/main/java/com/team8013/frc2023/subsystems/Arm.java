@@ -100,7 +100,18 @@ public class Arm extends Subsystem {
 
         switch (mArmControlState) {
             case OPEN_LOOP:
-                mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand / 12);
+                if (mPeriodicIO.pullArmIntoZero) {
+                    mArm.set(ControlMode.PercentOutput, -0.3);
+
+                    if (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kZeroCurrentLimit) {
+                        mPeriodicIO.pullArmIntoZero = false;
+                        resetArmPosition();
+                        mArm.set(ControlMode.PercentOutput, 0.0);
+                        setArmPosition(10);
+                    }
+                } else {
+                    mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand);
+                }
                 break;
             case MOTION_MAGIC:
                 mArm.set(ControlMode.MotionMagic, mPeriodicIO.arm_demand);
@@ -116,35 +127,34 @@ public class Arm extends Subsystem {
         mArm.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
-    public synchronized void resetClimberPosition() {
+    public synchronized void resetArmPosition() {
         mArm.setSelectedSensorPosition(0.0);
     }
 
     public void pullArmIntoZero() {
         // if (Math.abs(PeriodicIO.arm_motor_velocity) > 0.5)
-        boolean zeroing = true;
-        if (mPeriodicIO.isPulledIn == false) {
-            // SmartDashboard.putBoolean("isPulledIn", isPulledIn);
-            if (mArmControlState != ArmControlState.OPEN_LOOP) {
-                mArmControlState = ArmControlState.OPEN_LOOP;
-            }
-            setArmDemand(-3);
-
+        // boolean zeroing = true;
+        // if (mPeriodicIO.isPulledIn == false) {
+        // SmartDashboard.putBoolean("isPulledIn", isPulledIn);
+        if (mArmControlState != ArmControlState.OPEN_LOOP) {
+            mArmControlState = ArmControlState.OPEN_LOOP;
         }
 
-        if (zeroing) {
-            // pull in until velocity is less than 0.5 and current is higher than current
-            // limit, reset position
-            if ((mPeriodicIO.arm_motor_velocity < 0.4) &&
-                    (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kStatorCurrentLimit)) {
-                resetClimberPosition();
-                setArmPosition(10);
-                mPeriodicIO.isPulledIn = true;
-                System.out.println("arm Pulled in");
-                zeroing = false;
-                mArm.setSelectedSensorPosition(0);
-            }
-        }
+        mPeriodicIO.pullArmIntoZero = true;
+
+        // }
+
+        // if (zeroing) {
+        // // pull in until velocity is less than 0.5 and current is higher than current
+        // // limit, reset position
+        // if (isIn()) {
+        // resetClimberPosition();
+        // setArmPosition(10);
+        // mPeriodicIO.isPulledIn = true;
+        // System.out.println("arm Pulled in");
+        // zeroing = false;
+        // }
+        // }
     }
 
     public void setArmOpenLoop(double wantedDemand) {
@@ -181,17 +191,20 @@ public class Arm extends Subsystem {
     // changeArmPosition(Constants.ArmConstants.changeArmManualAmount);
     // }
 
-    // public void retractArmManual() {
-    // changeArmPosition(Constants.ArmConstants.changeArmManualAmount * -1);
-    // }
-
     public void setExtendForPickup() {
+        if (mArmControlState != ArmControlState.MOTION_MAGIC) {
+            mArmControlState = ArmControlState.MOTION_MAGIC;
+        }
         mPeriodicIO.isPulledIn = false;
         mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kPickupTravelDistance;
+
         setArmPosition(Constants.ArmConstants.kPickupTravelDistance);
     }
 
     public void setExtendForHybrid() {
+        if (mArmControlState != ArmControlState.MOTION_MAGIC) {
+            mArmControlState = ArmControlState.MOTION_MAGIC;
+        }
         mPeriodicIO.isPulledIn = false;
         mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kHybridTravelDistance;
         setArmPosition(Constants.ArmConstants.kHybridTravelDistance);
@@ -199,18 +212,27 @@ public class Arm extends Subsystem {
 
     // third step for traversal
     public void setExtendForMid() {
+        if (mArmControlState != ArmControlState.MOTION_MAGIC) {
+            mArmControlState = ArmControlState.MOTION_MAGIC;
+        }
         mPeriodicIO.isPulledIn = false;
         mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kMidTravelDistance;
         setArmPosition(Constants.ArmConstants.kMidTravelDistance);
     }
 
     public void setExtendForHigh() {
+        if (mArmControlState != ArmControlState.MOTION_MAGIC) {
+            mArmControlState = ArmControlState.MOTION_MAGIC;
+        }
         mPeriodicIO.isPulledIn = false;
         mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kHighTravelDistance;
         setArmPosition(Constants.ArmConstants.kHighTravelDistance);
     }
 
     public void setArmDown() {
+        if (mArmControlState != ArmControlState.MOTION_MAGIC) {
+            mArmControlState = ArmControlState.MOTION_MAGIC;
+        }
         mPeriodicIO.arm_maxTravel = 10;
         setArmPosition(10); // ticks
     }
@@ -305,6 +327,7 @@ public class Arm extends Subsystem {
         SmartDashboard.putNumber("Arm Position", mPeriodicIO.arm_motor_position);
         SmartDashboard.putNumber("Arm Voltage ", mPeriodicIO.arm_voltage);
         SmartDashboard.putNumber("Arm Current ", mPeriodicIO.arm_stator_current);
+        SmartDashboard.putBoolean("Arm Zeroing ", mPeriodicIO.pullArmIntoZero);
         SmartDashboard.putBoolean("Extend Arm", getExtendArm());
         SmartDashboard.putBoolean("Partial Extend Arm", getPartialExtendArm());
 
@@ -321,6 +344,7 @@ public class Arm extends Subsystem {
         /* Outputs */
         public double arm_demand;
         public boolean isPulledIn;
+        public boolean pullArmIntoZero;
     }
 
     // logger

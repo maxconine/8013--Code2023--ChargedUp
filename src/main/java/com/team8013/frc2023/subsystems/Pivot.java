@@ -137,9 +137,10 @@ public class Pivot extends Subsystem {
     }
 
     // Sets the Pivot position to what its at + wantedPosition
-    public void setPositionDelta(double wantedPositionDelta) {
+    public void changePivPosition(double wantedPositionDelta) {
         if (mPivotControlState != PivotControlState.CLOSED_LOOP) {
             mPivotControlState = PivotControlState.CLOSED_LOOP;
+
             mPeriodicIO.pivot_demand = mPeriodicIO.pivot_motor_position;
         }
         mPeriodicIO.pivot_demand = mPeriodicIO.pivot_demand + wantedPositionDelta;

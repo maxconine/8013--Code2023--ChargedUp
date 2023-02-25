@@ -56,7 +56,7 @@ public class Swerve extends Subsystem {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public SwerveModulePosition[] swerveModulePositions;
-    
+
     public Pigeon mPigeon = Pigeon.getInstance();
 
     // chassis velocity status
@@ -69,7 +69,7 @@ public class Swerve extends Subsystem {
 
     public ProfiledPIDController snapPIDController;
     public PIDController visionPIDController;
-    
+
     // Private boolean to lock Swerve wheels
     private boolean mLocked = false;
 
@@ -77,6 +77,7 @@ public class Swerve extends Subsystem {
     public boolean getLocked() {
         return mLocked;
     }
+
     // Setter
     public void setLocked(boolean lock) {
         mLocked = lock;
@@ -89,34 +90,33 @@ public class Swerve extends Subsystem {
         return mInstance;
     }
 
-    public Swerve() {        
-
+    public Swerve() {
 
         snapPIDController = new ProfiledPIDController(Constants.SnapConstants.kP,
-                                                      Constants.SnapConstants.kI, 
-                                                      Constants.SnapConstants.kD,
-                                                      Constants.SnapConstants.kThetaControllerConstraints);
+                Constants.SnapConstants.kI,
+                Constants.SnapConstants.kD,
+                Constants.SnapConstants.kThetaControllerConstraints);
         snapPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
         visionPIDController = new PIDController(Constants.VisionAlignConstants.kP,
-                                                        Constants.VisionAlignConstants.kI,
-                                                        Constants.VisionAlignConstants.kD);
+                Constants.VisionAlignConstants.kI,
+                Constants.VisionAlignConstants.kD);
         visionPIDController.enableContinuousInput(-Math.PI, Math.PI);
         visionPIDController.setTolerance(0.0);
 
         zeroGyro();
 
         mSwerveMods = new SwerveModule[] {
-            new SwerveModule(0, Constants.SwerveConstants.Mod0.SwerveModuleConstants()),
-            new SwerveModule(1, Constants.SwerveConstants.Mod1.SwerveModuleConstants()),
-            new SwerveModule(2, Constants.SwerveConstants.Mod2.SwerveModuleConstants()),
-            new SwerveModule(3, Constants.SwerveConstants.Mod3.SwerveModuleConstants())
+                new SwerveModule(0, Constants.SwerveConstants.Mod0.SwerveModuleConstants()),
+                new SwerveModule(1, Constants.SwerveConstants.Mod1.SwerveModuleConstants()),
+                new SwerveModule(2, Constants.SwerveConstants.Mod2.SwerveModuleConstants()),
+                new SwerveModule(3, Constants.SwerveConstants.Mod3.SwerveModuleConstants())
         };
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, mPigeon.getYaw()
-        , getPositions(), new Pose2d(0, 0, new Rotation2d()));
-        
-        //^getPositions() might not work
+        swerveOdometry = new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, mPigeon.getYaw(),
+                getPositions(), new Pose2d(0, 0, new Rotation2d()));
+
+        // ^getPositions() might not work
     }
 
     @Override
@@ -140,10 +140,10 @@ public class Swerve extends Subsystem {
             }
         });
     }
-    
+
     public void setWantAutoVisionAim(boolean aim) {
         mWantsAutoVisionAim = aim;
-    } 
+    }
 
     public boolean getWantAutoVisionAim() {
         return mWantsAutoVisionAim;
@@ -170,26 +170,23 @@ public class Swerve extends Subsystem {
         }
         SwerveModuleState[] swerveModuleStates = null;
         if (mLocked) {
-            swerveModuleStates = new SwerveModuleState[]{
-                new SwerveModuleState(0.1, Rotation2d.fromDegrees(45)),
-                new SwerveModuleState(0.1, Rotation2d.fromDegrees(315)),
-                new SwerveModuleState(0.1, Rotation2d.fromDegrees(135)),
-                new SwerveModuleState(0.1, Rotation2d.fromDegrees(225))
+            swerveModuleStates = new SwerveModuleState[] {
+                    new SwerveModuleState(0.1, Rotation2d.fromDegrees(45)),
+                    new SwerveModuleState(0.1, Rotation2d.fromDegrees(315)),
+                    new SwerveModuleState(0.1, Rotation2d.fromDegrees(135)),
+                    new SwerveModuleState(0.1, Rotation2d.fromDegrees(225))
             };
         } else {
-            swerveModuleStates =
-                Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
+            swerveModuleStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
                     fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                        translation.getX(), 
-                                        translation.getY(), 
-                                        rotation, 
-                                        mPigeon.getYaw()
-                                    )
-                                    : new ChassisSpeeds(
-                                        translation.getX(), 
-                                        translation.getY(), 
-                                        rotation)
-                                    );
+                            translation.getX(),
+                            translation.getY(),
+                            rotation,
+                            mPigeon.getYaw())
+                            : new ChassisSpeeds(
+                                    translation.getX(),
+                                    translation.getY(),
+                                    rotation));
         }
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
 
@@ -198,11 +195,11 @@ public class Swerve extends Subsystem {
         }
 
         SmartDashboard.putNumber("rotation", rotation);
-        SmartDashboard.putBoolean("snappint" , isSnapping);
+        SmartDashboard.putBoolean("snappint", isSnapping);
     }
 
     public void acceptLatestGoalTrackVisionAlignGoal(double vision_goal) {
-        mGoalTrackVisionAlignGoal = vision_goal; 
+        mGoalTrackVisionAlignGoal = vision_goal;
     }
 
     public void chooseVisionAlignGoal() {
@@ -227,18 +224,19 @@ public class Swerve extends Subsystem {
         snapPIDController.setGoal(new TrapezoidProfile.State(Math.toRadians(snapAngle), 0.0));
         isSnapping = true;
     }
-    
+
     TimeDelayedBoolean delayedBoolean = new TimeDelayedBoolean();
 
     private boolean snapComplete() {
         double error = snapPIDController.getGoal().position - mPigeon.getYaw().getRadians();
-        return delayedBoolean.update(Math.abs(error) < Math.toRadians(Constants.SnapConstants.kEpsilon), Constants.SnapConstants.kTimeout);
+        return delayedBoolean.update(Math.abs(error) < Math.toRadians(Constants.SnapConstants.kEpsilon),
+                Constants.SnapConstants.kTimeout);
     }
 
-    public void maybeStopSnap(boolean force){
+    public void maybeStopSnap(boolean force) {
         if (!isSnapping) {
             return;
-        } 
+        }
         if (force || snapComplete()) {
             isSnapping = false;
             snapPIDController.reset(mPigeon.getYaw().getRadians());
@@ -248,13 +246,15 @@ public class Swerve extends Subsystem {
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
-        
-        for(SwerveModule mod : mSwerveMods){
+
+        for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
-            SmartDashboard.putNumber("mod " + mod.moduleNumber +  " desired speed", desiredStates[mod.moduleNumber].speedMetersPerSecond);
-            SmartDashboard.putNumber("mod " + mod.moduleNumber +  " desired angle", MathUtil.inputModulus(desiredStates[mod.moduleNumber].angle.getDegrees(), 0, 180));
+            SmartDashboard.putNumber("mod " + mod.moduleNumber + " desired speed",
+                    desiredStates[mod.moduleNumber].speedMetersPerSecond);
+            SmartDashboard.putNumber("mod " + mod.moduleNumber + " desired angle",
+                    MathUtil.inputModulus(desiredStates[mod.moduleNumber].angle.getDegrees(), 0, 180));
         }
-    }    
+    }
 
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
@@ -276,20 +276,22 @@ public class Swerve extends Subsystem {
 
     public SwerveModuleState[] getStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for(SwerveModule mod : mSwerveMods){
+        for (SwerveModule mod : mSwerveMods) {
             states[mod.moduleNumber] = mod.getState();
-            SmartDashboard.putNumber("mod " + mod.moduleNumber + " current speed", states[mod.moduleNumber].speedMetersPerSecond);
-            SmartDashboard.putNumber("mod " + mod.moduleNumber + " current angle", MathUtil.inputModulus(states[mod.moduleNumber].angle.getDegrees(), 0, 180));
+            SmartDashboard.putNumber("mod " + mod.moduleNumber + " current speed",
+                    states[mod.moduleNumber].speedMetersPerSecond);
+            SmartDashboard.putNumber("mod " + mod.moduleNumber + " current angle",
+                    MathUtil.inputModulus(states[mod.moduleNumber].angle.getDegrees(), 0, 180));
         }
         return states;
     }
 
-
     public SwerveModulePosition[] getPositions() {
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
-        for(SwerveModule mod : mSwerveMods){
+        for (SwerveModule mod : mSwerveMods) {
             positions[mod.moduleNumber] = mod.getPosition();
-            SmartDashboard.putNumber("mod " + mod.moduleNumber + " current distance", positions[mod.moduleNumber].distanceMeters);
+            SmartDashboard.putNumber("mod " + mod.moduleNumber + " current distance",
+                    positions[mod.moduleNumber].distanceMeters);
         }
         return positions;
     }
@@ -309,38 +311,35 @@ public class Swerve extends Subsystem {
     }
 
     public double[] getVisionAlignPIDValues() {
-        return  new double[] {visionPIDController.getP(), visionPIDController.getI(), visionPIDController.getD()};
+        return new double[] { visionPIDController.getP(), visionPIDController.getI(), visionPIDController.getD() };
     }
 
     @Override
-    public void zeroSensors(){
-        zeroGyro(0.0);
-    }
-    
-    public void zeroGyro(){
+    public void zeroSensors() {
         zeroGyro(0.0);
     }
 
-    public void zeroGyro(double reset){
+    public void zeroGyro() {
+        zeroGyro(0.0);
+    }
+
+    public void zeroGyro(double reset) {
         mPigeon.setYaw(reset);
         visionPIDController.reset();
     }
 
-    public void updateSwerveOdometry(){
+    public void updateSwerveOdometry() {
         swerveOdometry.update(mPigeon.getYaw(), getPositions());
-    //Was changed from original^
+        // Was changed from original^
         chassisVelocity = Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(
-                    mInstance.mSwerveMods[0].getState(),
-                    mInstance.mSwerveMods[1].getState(),
-                    mInstance.mSwerveMods[2].getState(),
-                    mInstance.mSwerveMods[3].getState()
-            );
+                mInstance.mSwerveMods[0].getState(),
+                mInstance.mSwerveMods[1].getState(),
+                mInstance.mSwerveMods[2].getState(),
+                mInstance.mSwerveMods[3].getState());
     }
 
-
-
     public Pair<Pose2d, Double> getBotPose() {
-        double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency();  // Adjusting time for latency
+        double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency(); // Adjusting time for latency
 
         // If Limelight does not have target return pose according to swerve odometry
         if (!mLimelight.hasTarget()) {
@@ -349,7 +348,7 @@ public class Swerve extends Subsystem {
 
         // Creating botpose array from limelight data
         double[] limelightBotPoseArray = mLimelight.getBotPose().getDoubleArray(new double[] { 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0 });
+                0.0, 0.0, 0.0, 0.0, 0.0 });
 
         // Ensuring that the botpose array has all values
         if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) {
@@ -358,9 +357,11 @@ public class Swerve extends Subsystem {
         }
 
         // Getting new Pose2d from botpose array
-        Pose2d pose = new Pose3d(new Translation3d(limelightBotPoseArray[0], limelightBotPoseArray[1], limelightBotPoseArray[2]),
-        new Rotation3d(Math.toRadians(limelightBotPoseArray[3]), Math.toRadians(limelightBotPoseArray[4]),
-        Math.toRadians(limelightBotPoseArray[5]))).toPose2d();
+        Pose2d pose = new Pose3d(
+                new Translation3d(limelightBotPoseArray[0], limelightBotPoseArray[1], limelightBotPoseArray[2]),
+                new Rotation3d(Math.toRadians(limelightBotPoseArray[3]), Math.toRadians(limelightBotPoseArray[4]),
+                        Math.toRadians(limelightBotPoseArray[5])))
+                .toPose2d();
 
         // If the pose from that is null, return pose from swerve
         if (pose == null) {
@@ -370,18 +371,17 @@ public class Swerve extends Subsystem {
 
         // Transform pose from LL "field space" to pose2d
         pose = new Pose2d(pose.getTranslation().plus(new Translation2d(Constants.VisionConstants.fieldLength / 2.0,
-        Constants.VisionConstants.fieldWidth / 2.0)), pose.getRotation());
+                Constants.VisionConstants.fieldWidth / 2.0)), pose.getRotation());
 
         setField(pose); // Adjust pose on shuffleboard field
         resetOdometry(pose); // Set swerve Odometry to Limelights pose
         return new Pair<Pose2d, Double>(pose, currentTime);
     }
 
-    public void setField(Pose2d pose){
+    public void setField(Pose2d pose) {
         field.setRobotPose(pose);
         SmartDashboard.putData("Field2d", field);
     }
-
 
     @Override
     public void stop() {
@@ -404,7 +404,7 @@ public class Swerve extends Subsystem {
         mPeriodicIO.snap_target = Math.toDegrees(snapPIDController.getGoal().position);
         mPeriodicIO.vision_align_target_angle = Math.toDegrees(mLimelightVisionAlignGoal);
         mPeriodicIO.swerve_heading = MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), 0, 360);
-
+        getBotPose();
         SendLog();
     }
 
@@ -430,13 +430,13 @@ public class Swerve extends Subsystem {
 
     }
 
-    //logger
+    // logger
     @Override
     public void registerLogger(LoggingSystem LS) {
         SetupLog();
         LS.register(mStorage, "SWERVE_LOGS.csv");
     }
-    
+
     public void SetupLog() {
         mStorage = new LogStorage<PeriodicIO>();
 
@@ -487,4 +487,3 @@ public class Swerve extends Subsystem {
     }
 
 }
-

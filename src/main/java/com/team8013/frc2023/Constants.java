@@ -306,6 +306,7 @@ public class Constants {
 
         public static final class ArmConstants {
                 public static final double kStatorCurrentLimit = 20; // 80.0;
+                public static final double kZeroCurrentLimit = 50; // 80.0;
                 public static final double kTriggerThresholdCurrent = 60;
 
                 // arm constants
@@ -316,7 +317,7 @@ public class Constants {
                 public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final int kPickupTravelDistance = 100000;
+                public static final int kPickupTravelDistance = 120000;
                 public static final int kHybridTravelDistance = 100000; // kLeftTravelDistance * 0.75
                 public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
                 public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
@@ -344,8 +345,8 @@ public class Constants {
                 public static final double kMinOutput = -1;
 
                 // gear ratio for one full rotation of the pivot
-                // (5*4*3)* (227/14) = 972.857
-                public static final double oneDegreeOfroation = 2.702381;
+                // (3*4*3)* (227/14) = 583.714285714 used to be 972.857
+                public static final double oneDegreeOfroation = 1.62142857143; // used to be 2.702381;
 
                 // 14 tooth to 226 tooth
                 // rotations*360 to get degrees
@@ -355,19 +356,19 @@ public class Constants {
                 public static final int kMaxHeight = 0;
 
                 // pivot degree constants
-                public static final double kPickupTravelDistance = 37;
-                public static final double kHybridTravelDistance = 47.37; // degrees
-                public static final double kMidTravelDistance = 95.47;
-                public static final double kHighTravelDistance = 106.2;
+                public static final double kPickupTravelDistance = 40;
+                public static final double kHybridTravelDistance = 47.37 + 5; // degrees
+                public static final double kMidTravelDistance = 95.47 + 5;
+                public static final double kHighTravelDistance = 106.2 + 5;
 
         }
 
         public static final class ClawConstants {
                 /* PIVOT */
 
-                public static final double piv_kP = 0.3;
+                public static final double piv_kP = 2;
                 public static final double piv_kI = 0;
-                public static final double piv_kD = 0.0;
+                public static final double piv_kD = 0.2;
 
                 public static final double piv_kMaxOutput = 0.9;
                 public static final double piv_kMinOutput = -0.9;
@@ -376,6 +377,10 @@ public class Constants {
                 public static final double piv_MinRotation = -450;
 
                 public static final double pivotGearRatio = 1.535714; // (86 / 56);
+
+                public static final double kPivotMinDistance = -pivotGearRatio; // encoder hard limit one full rotation
+                                                                                // either side
+                public static final double kPivotMaxDistance = pivotGearRatio; // encoder hard limit
 
                 /* CLAW */
 
@@ -387,11 +392,11 @@ public class Constants {
                 public static final double grip_kMaxOutput = 0.95;
                 public static final double grip_kMinOutput = -0.95;
 
-                public static final double kClawOpenDistance = 4; // position for pickup
+                public static final double kClawOpenDistance = 6; // position for pickup
                 public static final double kClawMinDistance = -3; // encoder hard limit
-                public static final double kClawMaxDistance = 6; // encoder hard limit
+                public static final double kClawMaxDistance = 9; // encoder hard limit
 
-                public static final double grip_rateDiff = 0.95; // Percent of max the speed needs to decrease from
+                public static final double grip_rateDiff = 0.97; // Percent of max the speed needs to decrease from
 
                 public static final double gripGearRatio = 42; // unsure if this value is correct
         }

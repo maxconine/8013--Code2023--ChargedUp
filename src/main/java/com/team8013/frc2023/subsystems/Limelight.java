@@ -14,7 +14,6 @@ import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.ILooper;
 import com.team8013.frc2023.loops.Loop;
 
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -43,14 +42,12 @@ public class Limelight extends Subsystem {
     double drivingAdjust = 0.0;
     double KpDistance = -0.1;
 
-    public final static int kDefaultPipeline = 1;
+    public final static int kDefaultPipeline = 2;
     // public final static int kZoomedInPipeline = 1;
 
     // private final NetworkTableEntry tBotPose = mNetworkTable.getEntry("botpose");
     // private final NetworkTableEntry tPipeline =
     // mNetworkTable.getEntry("pipeline");
-
-
 
     public static class LimelightConstants {
         public String kName = "";
@@ -147,7 +144,7 @@ public class Limelight extends Subsystem {
         // OUTPUTS
         public int ledMode = 1; // 0 - use pipeline mode, 1 - off, 2 - blink, 3 - on
         public int camMode = 0; // 0 - vision processing, 1 - driver camera
-        public int pipeline = 0; // 0 - 9
+        public int pipeline = 2; // 0 - 9
         public int stream = 2; // sets stream layout if another webcam is attached
         public int snapshot = 0; // 0 - stop snapshots, 1 - 2 Hz
     }
@@ -348,7 +345,7 @@ public class Limelight extends Subsystem {
     /**
      * @return Botpose array from Limelight as NetworkTable Entry.
      */
-    public NetworkTableEntry getBotPose(){
+    public NetworkTableEntry getBotPose() {
         return mPeriodicIO.tBotPose;
     }
 

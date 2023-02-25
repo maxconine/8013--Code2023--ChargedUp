@@ -68,6 +68,7 @@ public class Superstructure extends Subsystem {
         private boolean settingMid = false;
         private boolean settingHigh = false;
         private boolean canControlArmManually = true;
+        private int maxArmPosition = 0;
 
         // time measurements
         public double timestamp;
@@ -140,57 +141,80 @@ public class Superstructure extends Subsystem {
      * - right joystick throttle to pivot claw manually
      * 
      * - Use dpad to
-     * --> 0 to
-     * --> 180 to
+     * --> 0 to set grip upright
+     * --> 90 to set grip sideways
+     * --> 180 to flip upsidown
+     * --> 270 to set grip sideways other way
      * 
-     * - press START button / 3 lines button to getZero
+     * - press START button to bring arm and pivot down
+     * - BACK/MENU/2 screens button button to getZero
      * 
      * 
      * 
      */
-    public void putArmAtZero() {
-        mArm.pullArmIntoZero();
-    }
 
     public void updateOperatorCommands() {
 
         /* MANUALLY CONTROL PIVOT */
-        if ((mControlBoard.getOperatorLeftThrottle() < -0.4) ||
-                (mControlBoard.getOperatorLeftThrottle() > 0.4)) {
-            mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle());
+        if (mControlBoard.getOperatorLeftThrottle() > 0.4) {
+            System.out.println(mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation);
+            if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) > 0) {
+                mPivot.changePivPosition(mControlBoard.getOperatorLeftThrottle() * -1);
+                System.out.println("down");
+            }
+        } else if (mControlBoard.getOperatorLeftThrottle() < -0.4) {
+            System.out.println(mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation);
+            if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) < 120) {
+                mPivot.changePivPosition(mControlBoard.getOperatorLeftThrottle() * -1);
+                System.out.println("up");
+            }
         }
         /* MANUALLY CONTROL ARM */
-        else if ((mControlBoard.getOperatorLeftYaw() < -0.4) ||
-                (mControlBoard.getOperatorLeftYaw() > 0.4)) {
-            mArm.setArmOpenLoop(mControlBoard.getOperatorLeftYaw());
-            /* ARM AND PIVOT */
-        } else {
+        else if (mControlBoard.getOperatorLeftYaw() > 0.4) {
+            System.out.println(mArm.getArmPosition());
+            if (mArm.getArmPosition() < mPeriodicIO.maxArmPosition) {
+                mArm.changeArmPosition(mControlBoard.getOperatorLeftYaw() * 2000);
+                System.out.println("extend");
+            }
+        } else if (mControlBoard.getOperatorLeftYaw() < -0.4) {
+            System.out.println(mArm.getArmPosition());
+            if (mArm.getArmPosition() > 0) {
+                mArm.changeArmPosition(mControlBoard.getOperatorLeftYaw() * 2000);
+                System.out.println("retract");
+            }
+        }
+
+        /* ARM AND PIVOT */
+        else {
 
             if (mControlBoard.getArmDown()) {
                 mPeriodicIO.settingDown = true;
                 mArm.setArmDown();
+                mPeriodicIO.maxArmPosition = 0;
                 mPeriodicIO.canControlArmManually = false;
-                System.out.println("working");
             } else if (mControlBoard.getPickup()) {
                 mArm.setArmDown();
                 mPeriodicIO.settingPickup = true;
                 mPeriodicIO.canControlArmManually = false;
+                mPeriodicIO.maxArmPosition = Constants.ArmConstants.kPickupTravelDistance;
             } else if (mControlBoard.getHybrid()) {
                 mArm.setArmDown();
                 mPeriodicIO.settingHybrid = true;
                 mPeriodicIO.canControlArmManually = false;
+                mPeriodicIO.maxArmPosition = Constants.ArmConstants.kHybridTravelDistance;
             } else if (mControlBoard.getMid()) {
                 mArm.setArmDown();
                 mPeriodicIO.settingMid = true;
                 mPeriodicIO.canControlArmManually = false;
+                mPeriodicIO.maxArmPosition = Constants.ArmConstants.kMidTravelDistance;
             } else if (mControlBoard.getHigh()) {
                 mArm.setArmDown();
                 mPeriodicIO.settingHigh = true;
                 mPeriodicIO.canControlArmManually = true;
+                mPeriodicIO.maxArmPosition = Constants.ArmConstants.kHighTravelDistance;
             }
 
             if (mPeriodicIO.settingDown) {
-                System.out.println("working2");
                 if (mArm.isIn()) {
                     mPivot.setPivotDown();
                     mPeriodicIO.settingDown = false;
@@ -237,8 +261,6 @@ public class Superstructure extends Subsystem {
                 }
             }
 
-            System.out.println(mArm.getArmPosition());
-
             // if (mControlBoard.autoTest()) {
             // mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(), 0),
             // mLimelight.getSteeringAdjust(),
@@ -247,25 +269,38 @@ public class Superstructure extends Subsystem {
 
             // hold 3 lines button to pull in arm
             if (mControlBoard.getZero()) {
-                mArm.resetClimberPosition();
+                mArm.resetArmPosition();
                 mPivot.resetPivotPosition();
                 mClaw.zeroSensors();
             }
 
-            if ((mControlBoard.getOperatorRightThrottle() > 0.4)
-                    || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
-                mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
-            } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
-                    || (mControlBoard.getOperatorRightYaw() < -0.4)) {
-                mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);
-            } else if (mControlBoard.getGrip()) {
+            // if ((mControlBoard.getOperatorRightThrottle() > 0.4)
+            // || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
+            // mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
+            // } else {
+            // mClaw.stopPivot();
+            // }
+
+            // } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
+            // || (mControlBoard.getOperatorRightYaw() < -0.4)) {
+            // mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);
+
+            // right bumper
+            if (mControlBoard.getGrip()) {
                 mClaw.closeGrip();
-            } else if (mControlBoard.getRelease()) {
-                mClaw.openGrip();
-            } else {
-                mClaw.stop();
-                // mClaw.setPivotPosition(mControlBoard.operator.getController().getPOV());
             }
+            // left bumper
+            else if (mControlBoard.getRelease()) {
+                mClaw.openGrip();
+            } else if (!((mControlBoard.operator.getController().getPOV() == -1))) {
+                // System.out.println("trying to turn");
+                mClaw.setPivotPosition(mControlBoard.operator.getController().getPOV());
+            } else {
+                mClaw.stopGrip();
+                // mClaw.stop();
+
+            }
+            System.out.println(mControlBoard.operator.getController().getPOV());
         }
     }
 
@@ -331,8 +366,8 @@ public class Superstructure extends Subsystem {
         State frontState = State.OFF;
         State backState = State.OFF;
         if (hasEmergency) {
-            State topState = State.EMERGENCY;
-            State bottomState = State.EMERGENCY;
+            frontState = State.EMERGENCY;
+            backState = State.EMERGENCY;
         } else {
             // if (!mClimbMode) {
             // if (getBallCount() == 2) {

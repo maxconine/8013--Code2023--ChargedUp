@@ -10,6 +10,11 @@ import javax.lang.model.util.ElementScanner14;
 
 import com.lib.util.CTREConfigs;
 
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.math.estimator.MerweScaledSigmaPoints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -37,6 +42,7 @@ import com.team8013.frc2023.subsystems.LEDs.State;
 import com.team8013.frc2023.subsystems.RobotStateEstimator;
 import com.team8013.frc2023.subsystems.Superstructure;
 import com.team8013.frc2023.subsystems.Swerve;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -102,7 +108,9 @@ public class Robot extends TimedRobot {
 
 		ctreConfigs = new CTREConfigs();
 		mShuffleBoardInteractions = ShuffleBoardInteractions.getInstance();
-		mLimelight.setPipeline(1);
+		mLimelight.setPipeline(2);
+
+		CameraServer.startAutomaticCapture();
 
 		try {
 			CrashTracker.logRobotInit();
@@ -112,11 +120,6 @@ public class Robot extends TimedRobot {
 					mSwerve,
 					mSuperstructure,
 					mPivot,
-					// mIntake,
-					// mIndexer,
-					// mShooter,
-					// mTrigger,
-					// mHood,
 					mClaw,
 					mArm,
 					mLimelight,
@@ -196,6 +199,8 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		try {
 
+			mLimelight.setPipeline(2);
+
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
 			}
@@ -264,12 +269,13 @@ public class Robot extends TimedRobot {
 				mSwerve.zeroGyro();
 			}
 
-			if (mControlBoard.getSwerveSnap() != SwerveCardinal.NONE) {
-				mSwerve.startSnap(mControlBoard.getSwerveSnap().degrees);
-				SmartDashboard.putNumber("Snapping Drgrees", mControlBoard.getSwerveSnap().degrees);
-			} else {
-				SmartDashboard.putNumber("Snapping Drgrees", -1);
-			}
+			// if (mControlBoard.getSwerveSnap() != SwerveCardinal.NONE) {
+			// mSwerve.startSnap(mControlBoard.getSwerveSnap().degrees);
+			// SmartDashboard.putNumber("Snapping Drgrees",
+			// mControlBoard.getSwerveSnap().degrees);
+			// } else {
+			// SmartDashboard.putNumber("Snapping Drgrees", -1);
+			// }
 
 			Translation2d swerveTranslation = new Translation2d(mControlBoard.getSwerveTranslation().x(),
 					mControlBoard.getSwerveTranslation().y());
@@ -283,129 +289,10 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putBoolean("trying to vision allign drive", false);
 			// }
 
-			// SmartDashboard.putNumber("1 position",
-			// mSwerve.getPositions()[1].distanceMeters);
-			// MANUALLY CONTROL PIVOT
-			// if ((mControlBoard.getOperatorLeftThrottle() < -0.2) ||
-			// (mControlBoard.getOperatorLeftThrottle() > 0.2)) {
-			// mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle() * 12);
-			// } else {
-
-			// if (mControlBoard.getArmDown()) {
-			// settingDown = true;
-			// maxArmPosition = 0;
-			// mArm.setArmDown();
-			// canControlArmManually = false;
-			// } else if (mControlBoard.getPickup()) {
-			// mArm.setArmDown();
-			// settingPickup = true;
-			// maxArmPosition = Constants.ArmConstants.kPickupTravelDistance;
-			// canControlArmManually = false;
-			// } else if (mControlBoard.getHybrid()) {
-			// mArm.setArmDown();
-			// settingHybrid = true;
-			// maxArmPosition = Constants.ArmConstants.kHybridTravelDistance;
-			// canControlArmManually = false;
-			// } else if (mControlBoard.getMid()) {
-			// mArm.setArmDown();
-			// settingMid = true;
-			// maxArmPosition = Constants.ArmConstants.kMidTravelDistance;
-			// canControlArmManually = false;
-			// } else if (mControlBoard.getHigh()) {
-			// mArm.setArmDown();
-			// settingHigh = true;
-			// maxArmPosition = Constants.ArmConstants.kHighTravelDistance;
-			// canControlArmManually = true;
-			// }
-
-			// if (settingDown) {
-			// if (mArm.isIn()) {
-			// mPivot.setPivotDown();
-			// settingDown = false;
-			// }
-			// }
-			// if (settingPickup) {
-			// if (mArm.isIn()) {
-			// mPivot.setPivotForPickup();
-			// }
-			// if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
-			// mArm.setExtendForPickup();
-			// settingPickup = false;
-			// canControlArmManually = true;
-			// }
-			// }
-			// if (settingHybrid) {
-			// if (mArm.isIn()) {
-			// mPivot.setPivotForHybrid();
-			// }
-			// if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
-			// mArm.setExtendForHybrid();
-			// settingHybrid = false;
-			// canControlArmManually = true;
-			// }
-			// }
-			// if (settingMid) {
-			// if (mArm.isIn()) {
-			// mPivot.setPivotForMid();
-			// }
-			// if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
-			// mArm.setExtendForMid();
-			// settingMid = false;
-			// canControlArmManually = true;
-			// }
-			// }
-			// if (settingHigh) {
-			// if (mArm.isIn()) {
-			// mPivot.setPivotForHigh();
-			// }
-			// if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
-			// mArm.setExtendForHigh();
-			// settingHigh = false;
-			// canControlArmManually = true;
-			// }
-			// }
-
-			// if (canControlArmManually) {
-			// if (mControlBoard.getArmExtend()) {
-			// if (mArm.getArmPosition() < maxArmPosition) {
-			// mArm.extendArmManual();
-			// }
-			// }
-			// if (mControlBoard.getArmRetract()) {
-			// if (mArm.getArmPosition() > 0) {
-			// mArm.retractArmManual();
-			// }
-			// }
-			// }
-
-			// if (mControlBoard.autoTest()) {
-			// mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(), 0),
-			// mLimelight.getSteeringAdjust(),
-			// false, true);
-			// }
-			// mPivot.getRelativeCancoder());
-			// System.out.println(mPivot.getPivotPosition());
-			// hold 3 lines button to pull in arm
-			// if (mControlBoard.getZero()) {
-			// mArm.resetClimberPosition();
-			// mPivot.resetPivotPosition();
-			// mClaw.zeroSensors();
-			// }
-
-			// if ((mControlBoard.getOperatorRightThrottle() > 0.4)
-			// || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
-			// mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle());
-			// } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
-			// || (mControlBoard.getOperatorRightYaw() < -0.4)) {
-			// mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);
-			// } else {
-			// mClaw.stop();
-			// }
-
 			mSuperstructure.updateOperatorCommands();
 			mClaw.outputTelemetry();
-			mArm.outputTelemetry();
-			mPivot.outputTelemetry();
+			// mArm.outputTelemetry();
+			// mPivot.outputTelemetry();
 
 		} catch (Throwable t) {
 			t.printStackTrace();
