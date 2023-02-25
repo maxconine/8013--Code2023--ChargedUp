@@ -8,12 +8,12 @@
 // import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import frc.robot.Constants;
-
+// import com.team8013.frc2023.Constants;
+// import com.team8013.frc2023.Ports;
+// import com.ctre.phoenix.motorcontrol.ControlMode;
 // import com.ctre.phoenix.motorcontrol.NeutralMode;
 // import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 // import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-// import com.ctre.phoenixpro.hardware.Pigeon2;
 // import com.revrobotics.CANSparkMax;
 // import com.revrobotics.RelativeEncoder;
 // import com.revrobotics.SparkMaxPIDController;
@@ -23,7 +23,7 @@
 // //import edu.wpi.first.wpiutil.math.MathUtil;
 
 // public class Claw {
-// PowerDistribution revPower = new PowerDistribution(Constants.PDP_ID,
+// PowerDistribution revPower = new PowerDistribution(Ports.PDP,
 // ModuleType.kRev);
 
 // PIDController m_PivotPid;
@@ -35,17 +35,23 @@
 // Encoder m_GripEncoder;
 
 // boolean closing = false;
+// boolean wantedClosing = false;
+// boolean spedUp = false;
+
+// double currentLimit = .25;
 
 // public Claw() {
-// m_PivotEncoder = new Encoder(2, 3);
+// m_PivotEncoder = new Encoder(Ports.CLAW_PIV_ENCODER_A,
+// Ports.CLAW_PIV_ENCODER_B);
 // m_PivotEncoder.setDistancePerPulse(1 / 44.4 / (86 / 56));
-// m_PivotMotor = new VictorSPX(23);
+// m_PivotMotor = new VictorSPX(24);
 
-// m_GripEncoder = new Encoder(0, 1);
-// m_GripEncoder.setDistancePerPulse(1 / 44.4 / (86 / 56));
-// m_GripMotor = new VictorSPX(24);
+// m_GripEncoder = new Encoder(Ports.CLAW_GRIP_ENCODER_A,
+// Ports.CLAW_GRIP_ENCODER_B);
+// m_GripEncoder.setDistancePerPulse(1 / 44.4);
+// m_GripMotor = new VictorSPX(23);
 
-// m_PivotPid = new PIDController(2, 0, 0);
+// m_PivotPid = new PIDController(1, 0, 0);
 // m_GripPid = new PIDController(2, 0, 0);
 // }
 
@@ -58,28 +64,29 @@
 
 // double want = 1000;
 // if (difference > 180) {
-// if (currentDegrees + (360 - difference) <= Constants.Pivot.MaxRotation) {
+// if (currentDegrees + (360 - difference) <= Constants.Claw_Pivot.MaxRotation)
+// {
 // want = (currentDegrees + (360 - difference));
 // } else {
 // want = (currentDegrees - difference);
 // }
 
 // } else if (difference > 0) {
-// if (currentDegrees - difference >= Constants.Pivot.MinRotation) {
+// if (currentDegrees - difference >= Constants.Claw_Pivot.MinRotation) {
 // want = (currentDegrees - difference);
 // } else {
 // want = (currentDegrees + (360 - difference));
 // }
 
 // } else if (difference < -180) {
-// if (currentDegrees - (360 + difference) >= Constants.Pivot.MinRotation) { //
-// -abs(difference)
+// if (currentDegrees - (360 + difference) >= Constants.Claw_Pivot.MinRotation)
+// { // -abs(difference)
 // want = (currentDegrees - (360 + difference));
 // } else {
 // want = (currentDegrees - difference); // +abs(difference)
 // }
 // } else if (difference < 0) {
-// if (currentDegrees - difference <= Constants.Pivot.MaxRotation) {
+// if (currentDegrees - difference <= Constants.Claw_Pivot.MaxRotation) {
 // want = (currentDegrees - difference);
 // } else {
 // want = (currentDegrees - (360 + difference));
@@ -127,27 +134,66 @@
 // }
 
 // public void openGrip() {
-// m_GripPid.setSetpoint(.125);
-// closing = false;// remove this in future and do it when it stops
+// System.out.println("calling open");
+// m_GripMotor.set(ControlMode.PercentOutput, 0.5);
+// // m_GripPid.setSetpoint(.125);
+// wantedClosing = false;// remove this in future and do it when it stops
 // }
 
 // public void closeGrip() {
-// m_GripPid.setSetpoint(0);
-// // m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0.5);
+// // m_GripMotor.set(VictorSPXControlMode.PercentOutput, -0.95);
+// wantedClosing = true;
+// // m_GripPid.setSetpoint(0);
+// // if (m_GripEncoder.getRate() < 2.5) {
+// // m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
+// // }
+
+// // m_GripMotor.set(VictorSPXControlMode.PercentOutput, -0.5);
+
 // // closing = true;
+// }
+
+// public void stop() {
+// m_GripMotor.set(ControlMode.PercentOutput, 0.0);
+// m_PivotMotor.set(ControlMode.PercentOutput, 0.0);
+// wantedClosing = false;
 // }
 
 // public void keepCalling() {
 // SmartDashboard.putNumber("pivot", m_PivotEncoder.getDistance());
 // SmartDashboard.putNumber("grip", m_GripEncoder.getDistance());
-// // m_PivotMotor.set(VictorSPXControlMode.PercentOutput,
-// // MathUtil.clamp(m_PivotPid.calculate(m_PivotEncoder.getDistance()), -.25,
-// // .25));
-// // if (closing == true) {
-// // double current = revPower.getCurrent(19);
-// // System.out.println(current);
-// // if (current >= 1) { //add timer thing
+// SmartDashboard.putNumber("grip output voltage",
+// m_GripMotor.getMotorOutputVoltage());
+// SmartDashboard.putNumber("grip output bus voltage",
+// m_GripMotor.getBusVoltage());
+// SmartDashboard.putNumber("grip output encoder rate",
+// m_GripEncoder.getRate());
 
+// double deleteafter = MathUtil.clamp(-1 *
+// m_PivotPid.calculate(m_PivotEncoder.getDistance()), -.9, .9);
+// SmartDashboard.putNumber("pivot setpoint", deleteafter);
+// m_PivotMotor.set(VictorSPXControlMode.PercentOutput, deleteafter);
+// // if (closing == true) {
+// double current = revPower.getCurrent(19);
+// // System.out.println(current);
+// SmartDashboard.putNumber("current", current);
+
+// if (wantedClosing == true) {
+// m_GripMotor.set(VictorSPXControlMode.PercentOutput, -0.95);
+
+// if (m_GripEncoder.getRate() > 5.05) {
+// spedUp = true;
+// }
+
+// if ((m_GripEncoder.getRate() < 5) && (spedUp)) {
+// m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
+// wantedClosing = false;
+// spedUp = false;
+// }
+
+// }
+
+// // if (current >= 1) { //add timer thing
 // // System.out.println(current);
 // // m_GripMotor.set(VictorSPXControlMode.PercentOutput,0);
 // // closing=false;

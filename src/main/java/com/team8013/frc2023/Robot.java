@@ -29,6 +29,7 @@ import com.team8013.frc2023.loops.CrashTracker;
 import com.team8013.frc2023.loops.Looper;
 import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
 import com.team8013.frc2023.subsystems.Arm;
+import com.team8013.frc2023.subsystems.ClawV2;
 import com.team8013.frc2023.subsystems.Limelight;
 import com.team8013.frc2023.subsystems.Pivot;
 import com.team8013.frc2023.subsystems.LEDs;
@@ -76,7 +77,7 @@ public class Robot extends TimedRobot {
 	// private final Shooter mShooter = Shooter.getInstance();
 	// private final Trigger mTrigger = Trigger.getInstance();
 	// private final Hood mHood = Hood.getInstance();
-	// private final ColorSensor mColorSensor = ColorSensor.getInstance();
+	private final ClawV2 mClaw = ClawV2.getInstance();
 	private final Arm mArm = Arm.getInstance();
 	private final Limelight mLimelight = Limelight.getInstance();
 	private final LEDs mLEDs = LEDs.getInstance();
@@ -116,7 +117,7 @@ public class Robot extends TimedRobot {
 					// mShooter,
 					// mTrigger,
 					// mHood,
-					// mColorSensor,
+					mClaw,
 					mArm,
 					mLimelight,
 					mLEDs);
@@ -130,6 +131,8 @@ public class Robot extends TimedRobot {
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), new com.team254.lib.geometry.Pose2d());
 			mSwerve.resetOdometry(new Pose2d());
 			mSwerve.resetAnglesToAbsolute();
+
+			mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_BLUE);
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -218,7 +221,7 @@ public class Robot extends TimedRobot {
 
 			// clear any previous automation from auto
 			mLEDs.clearAnimation();
-			mLEDs.setChampsAutoAnimation();
+			mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_BLUE);
 
 			// set states for teleop init
 			// mSuperstructure.setInitialTeleopStates();
@@ -282,119 +285,127 @@ public class Robot extends TimedRobot {
 
 			// SmartDashboard.putNumber("1 position",
 			// mSwerve.getPositions()[1].distanceMeters);
-
 			// MANUALLY CONTROL PIVOT
-			if ((mControlBoard.getOperatorLeftThrottle() < -0.2) ||
-					(mControlBoard.getOperatorLeftThrottle() > 0.2)) {
-				mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle() * 12);
-			} else {
+			// if ((mControlBoard.getOperatorLeftThrottle() < -0.2) ||
+			// (mControlBoard.getOperatorLeftThrottle() > 0.2)) {
+			// mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle() * 12);
+			// } else {
 
-				if (mControlBoard.getArmDown()) {
-					settingDown = true;
-					maxArmPosition = 0;
-					mArm.setArmDown();
-					canControlArmManually = false;
-				} else if (mControlBoard.getPickup()) {
-					mArm.setArmDown();
-					settingPickup = true;
-					maxArmPosition = Constants.ArmConstants.kPickupTravelDistance;
-					canControlArmManually = false;
-				} else if (mControlBoard.getHybrid()) {
-					mArm.setArmDown();
-					settingHybrid = true;
-					maxArmPosition = Constants.ArmConstants.kHybridTravelDistance;
-					canControlArmManually = false;
-				} else if (mControlBoard.getMid()) {
-					mArm.setArmDown();
-					settingMid = true;
-					maxArmPosition = Constants.ArmConstants.kMidTravelDistance;
-					canControlArmManually = false;
-				} else if (mControlBoard.getHigh()) {
-					mArm.setArmDown();
-					settingHigh = true;
-					maxArmPosition = Constants.ArmConstants.kHighTravelDistance;
-					canControlArmManually = true;
-				}
+			// if (mControlBoard.getArmDown()) {
+			// settingDown = true;
+			// maxArmPosition = 0;
+			// mArm.setArmDown();
+			// canControlArmManually = false;
+			// } else if (mControlBoard.getPickup()) {
+			// mArm.setArmDown();
+			// settingPickup = true;
+			// maxArmPosition = Constants.ArmConstants.kPickupTravelDistance;
+			// canControlArmManually = false;
+			// } else if (mControlBoard.getHybrid()) {
+			// mArm.setArmDown();
+			// settingHybrid = true;
+			// maxArmPosition = Constants.ArmConstants.kHybridTravelDistance;
+			// canControlArmManually = false;
+			// } else if (mControlBoard.getMid()) {
+			// mArm.setArmDown();
+			// settingMid = true;
+			// maxArmPosition = Constants.ArmConstants.kMidTravelDistance;
+			// canControlArmManually = false;
+			// } else if (mControlBoard.getHigh()) {
+			// mArm.setArmDown();
+			// settingHigh = true;
+			// maxArmPosition = Constants.ArmConstants.kHighTravelDistance;
+			// canControlArmManually = true;
+			// }
 
-				if (settingDown) {
-					if (mArm.isIn()) {
-						mPivot.setPivotDown();
-						settingDown = false;
-					}
-				}
-				if (settingPickup) {
-					if (mArm.isIn()) {
-						mPivot.setPivotForPickup();
-					}
-					if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
-						mArm.setExtendForPickup();
-						settingPickup = false;
-						canControlArmManually = true;
-					}
-				}
-				if (settingHybrid) {
-					if (mArm.isIn()) {
-						mPivot.setPivotForHybrid();
-					}
-					if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
-						mArm.setExtendForHybrid();
-						settingHybrid = false;
-						canControlArmManually = true;
-					}
-				}
-				if (settingMid) {
-					if (mArm.isIn()) {
-						mPivot.setPivotForMid();
-					}
-					if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
-						mArm.setExtendForMid();
-						settingMid = false;
-						canControlArmManually = true;
-					}
-				}
-				if (settingHigh) {
-					if (mArm.isIn()) {
-						mPivot.setPivotForHigh();
-					}
-					if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
-						mArm.setExtendForHigh();
-						settingHigh = false;
-						canControlArmManually = true;
-					}
-				}
+			// if (settingDown) {
+			// if (mArm.isIn()) {
+			// mPivot.setPivotDown();
+			// settingDown = false;
+			// }
+			// }
+			// if (settingPickup) {
+			// if (mArm.isIn()) {
+			// mPivot.setPivotForPickup();
+			// }
+			// if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
+			// mArm.setExtendForPickup();
+			// settingPickup = false;
+			// canControlArmManually = true;
+			// }
+			// }
+			// if (settingHybrid) {
+			// if (mArm.isIn()) {
+			// mPivot.setPivotForHybrid();
+			// }
+			// if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
+			// mArm.setExtendForHybrid();
+			// settingHybrid = false;
+			// canControlArmManually = true;
+			// }
+			// }
+			// if (settingMid) {
+			// if (mArm.isIn()) {
+			// mPivot.setPivotForMid();
+			// }
+			// if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
+			// mArm.setExtendForMid();
+			// settingMid = false;
+			// canControlArmManually = true;
+			// }
+			// }
+			// if (settingHigh) {
+			// if (mArm.isIn()) {
+			// mPivot.setPivotForHigh();
+			// }
+			// if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
+			// mArm.setExtendForHigh();
+			// settingHigh = false;
+			// canControlArmManually = true;
+			// }
+			// }
 
-				if (canControlArmManually) {
-					if (mControlBoard.getArmExtend()) {
-						if (mArm.getArmPosition() < maxArmPosition) {
-							mArm.extendArmManual();
-						}
-					}
-					if (mControlBoard.getArmRetract()) {
-						if (mArm.getArmPosition() > 0) {
-							mArm.retractArmManual();
-						}
-					}
-				}
+			// if (canControlArmManually) {
+			// if (mControlBoard.getArmExtend()) {
+			// if (mArm.getArmPosition() < maxArmPosition) {
+			// mArm.extendArmManual();
+			// }
+			// }
+			// if (mControlBoard.getArmRetract()) {
+			// if (mArm.getArmPosition() > 0) {
+			// mArm.retractArmManual();
+			// }
+			// }
+			// }
 
-				// if (mControlBoard.autoTest()) {
-				// mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(), 0),
-				// mLimelight.getSteeringAdjust(),
-				// false, true);
-				// }
-				System.out.println(mPivot.getRelativeCancoder());
-				System.out.println(mPivot.getPivotPosition());
-				// hold 3 lines button to pull in arm
-				if (mControlBoard.getZero()) {
-					mArm.resetClimberPosition();
-					mPivot.resetPivotPosition();
-				}
-				// if (mControlBoard.getArmPullInToZero()) {
-				// mArm.pullArmIntoZero();
-				// }
+			// if (mControlBoard.autoTest()) {
+			// mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(), 0),
+			// mLimelight.getSteeringAdjust(),
+			// false, true);
+			// }
+			// mPivot.getRelativeCancoder());
+			// System.out.println(mPivot.getPivotPosition());
+			// hold 3 lines button to pull in arm
+			// if (mControlBoard.getZero()) {
+			// mArm.resetClimberPosition();
+			// mPivot.resetPivotPosition();
+			// mClaw.zeroSensors();
+			// }
 
-				mArm.outputTelemetry();
-				mPivot.outputTelemetry();
-			}
+			// if ((mControlBoard.getOperatorRightThrottle() > 0.4)
+			// || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
+			// mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle());
+			// } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
+			// || (mControlBoard.getOperatorRightYaw() < -0.4)) {
+			// mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);
+			// } else {
+			// mClaw.stop();
+			// }
+			mSuperstructure.updateOperatorCommands();
+			mClaw.outputTelemetry();
+			mArm.outputTelemetry();
+			mPivot.outputTelemetry();
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 			CrashTracker.logThrowableCrash(t);
@@ -449,7 +460,7 @@ public class Robot extends TimedRobot {
 			// update linear offset for rb ratio
 			// mColorSensor.updateColorOffset();
 
-			// mLEDs.updateColor(mColorSensor.getAllianceColor());
+			mLEDs.updateColor(mLEDs.getAllianceColor());
 
 			// TODO
 			// mLimelight.setLed(Limelight.LedMode.ON);

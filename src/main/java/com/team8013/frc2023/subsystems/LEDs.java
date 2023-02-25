@@ -1,6 +1,5 @@
 package com.team8013.frc2023.subsystems;
 
-
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
@@ -38,12 +37,11 @@ public class LEDs extends Subsystem {
     private double timestamp = 0.0;
 
     private final boolean mUseSmartdash = false; // if we want to manual control lights using shuffleboard
-    
 
     // led sections
-    //private LEDStatus mTopStatus = new LEDStatus(14, 28);
+    // private LEDStatus mTopStatus = new LEDStatus(14, 28);
     private LEDStatus mBackStatus = new LEDStatus(0, 24);
-    private LEDStatus mFrontStatus = new LEDStatus(25, 49);
+    private LEDStatus mFrontStatus = new LEDStatus(25, 56);
 
     // shuffleboard selectors
     private SendableChooser<State> mFrontStateChooser;
@@ -61,7 +59,6 @@ public class LEDs extends Subsystem {
     public enum ColorChoices {
         RED, BLUE, OTHER, NONE
     }
-
 
     // led states
     public enum State {
@@ -167,8 +164,8 @@ public class LEDs extends Subsystem {
         Color mColor = mFrontStatus.getWantedColor();
 
         mCandle.setLEDs(
-                mColor.r, 
-                mColor.g, 
+                mColor.r,
+                mColor.g,
                 mColor.b, 0, mFrontStatus.startIDx,
                 mFrontStatus.LEDCount);
 
@@ -181,17 +178,18 @@ public class LEDs extends Subsystem {
     }
 
     // private void updateBackLeds() {
-    //     // check if we need to cycle to next color
-    //     if (mTopStatus.state.interval != Double.POSITIVE_INFINITY) {
-    //         if (timestamp - mTopStatus.lastSwitchTime >= mTopStatus.state.interval) {
-    //             mTopStatus.nextColor();
-    //             mTopStatus.lastSwitchTime = timestamp;
-    //         }
-    //     }
+    // // check if we need to cycle to next color
+    // if (mTopStatus.state.interval != Double.POSITIVE_INFINITY) {
+    // if (timestamp - mTopStatus.lastSwitchTime >= mTopStatus.state.interval) {
+    // mTopStatus.nextColor();
+    // mTopStatus.lastSwitchTime = timestamp;
+    // }
+    // }
 
-    //     Color topColor = mTopStatus.getWantedColor();
+    // Color topColor = mTopStatus.getWantedColor();
 
-    //     mCandle.setLEDs(topColor.r, topColor.g, topColor.b, 0, mTopStatus.startIDx, mTopStatus.LEDCount);
+    // mCandle.setLEDs(topColor.r, topColor.g, topColor.b, 0, mTopStatus.startIDx,
+    // mTopStatus.LEDCount);
     // }
 
     // setter functions

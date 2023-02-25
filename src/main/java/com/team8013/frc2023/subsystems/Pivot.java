@@ -15,6 +15,7 @@ import com.team8013.frc2023.logger.LogStorage;
 import com.team8013.frc2023.logger.LoggingSystem;
 import com.team254.lib.util.Util;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -82,6 +83,8 @@ public class Pivot extends Subsystem {
         mPeriodicIO.pivot_motor_velocity = mNeoMotor.getMotorVelocityRPM();
         mPeriodicIO.pivot_motor_position = mNeoMotor.getEncoderPosition();
 
+        mPeriodicIO.pivot_cancoder = getRelativeCancoder();
+
         // send log data
         SendLog();
     }
@@ -93,10 +96,10 @@ public class Pivot extends Subsystem {
 
         switch (mPivotControlState) {
             case OPEN_LOOP:
-                mPivot.set(mPeriodicIO.pivot_demand / 12.0);
+                // mPivot.set(mPeriodicIO.pivot_demand);
                 break;
             case CLOSED_LOOP:
-                mNeoMotor.setPosition(mPeriodicIO.pivot_demand);
+                // mNeoMotor.setPosition(mPeriodicIO.pivot_demand);
                 break;
             // case CLOSED_ENCODER: //use new pid controller that uses the encoder for input
             // mNeoMotor.s
@@ -123,7 +126,7 @@ public class Pivot extends Subsystem {
         if (mPivotControlState != PivotControlState.OPEN_LOOP) {
             mPivotControlState = PivotControlState.OPEN_LOOP;
         }
-        mPeriodicIO.pivot_demand = (wantedDemand > 12 ? 12 : wantedDemand);
+        mPeriodicIO.pivot_demand = MathUtil.clamp(wantedDemand, -1, 1);
     }
 
     public void setPivotPosition(double wantedPositionDegrees) {
@@ -269,6 +272,7 @@ public class Pivot extends Subsystem {
         SmartDashboard.putNumber("Pivot Position", mPeriodicIO.pivot_motor_position);
         SmartDashboard.putNumber("Pivot Voltage ", mPeriodicIO.pivot_voltage);
         SmartDashboard.putNumber("Pivot Current ", mPeriodicIO.pivot_current);
+        SmartDashboard.putNumber("Pivot CanCoder ", mPeriodicIO.pivot_cancoder);
 
     }
 
@@ -278,6 +282,8 @@ public class Pivot extends Subsystem {
         public double pivot_current;
         public double pivot_motor_position;
         public double pivot_motor_velocity;
+
+        public double pivot_cancoder;
 
         /* Outputs */
         public double pivot_demand;

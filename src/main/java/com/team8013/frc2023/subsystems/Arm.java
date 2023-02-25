@@ -15,6 +15,7 @@ import com.team8013.frc2023.logger.LoggingSystem;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.util.Util;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -38,8 +39,6 @@ public class Arm extends Subsystem {
 
     // status variable for is enabled
     public boolean mIsEnabled = false;
-
-    private boolean isPulledIn = false;
 
     public ArmControlState mArmControlState = ArmControlState.OPEN_LOOP;
 
@@ -75,6 +74,8 @@ public class Arm extends Subsystem {
 
         // set current limits on motor
         mArm.configStatorCurrentLimit(STATOR_CURRENT_LIMIT);
+
+        mPeriodicIO.isPulledIn = false;
     }
 
     @Override
@@ -99,10 +100,10 @@ public class Arm extends Subsystem {
 
         switch (mArmControlState) {
             case OPEN_LOOP:
-                mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand / 12.0);
+                // mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand);
                 break;
             case MOTION_MAGIC:
-                mArm.set(ControlMode.MotionMagic, mPeriodicIO.arm_demand);
+                // mArm.set(ControlMode.MotionMagic, mPeriodicIO.arm_demand);
                 break;
             default:
                 mArm.set(ControlMode.MotionMagic, 0.0);
@@ -122,7 +123,7 @@ public class Arm extends Subsystem {
     public void pullArmIntoZero() {
         // if (Math.abs(PeriodicIO.arm_motor_velocity) > 0.5)
         boolean zeroing = true;
-        if (isPulledIn == false) {
+        if (mPeriodicIO.isPulledIn == false) {
             // SmartDashboard.putBoolean("isPulledIn", isPulledIn);
             if (mArmControlState != ArmControlState.OPEN_LOOP) {
                 mArmControlState = ArmControlState.OPEN_LOOP;
@@ -138,7 +139,7 @@ public class Arm extends Subsystem {
                     (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kStatorCurrentLimit)) {
                 resetClimberPosition();
                 setArmPosition(10);
-                isPulledIn = true;
+                mPeriodicIO.isPulledIn = true;
                 System.out.println("arm Pulled in");
                 zeroing = false;
             }
@@ -149,7 +150,7 @@ public class Arm extends Subsystem {
         if (mArmControlState != ArmControlState.OPEN_LOOP) {
             mArmControlState = ArmControlState.OPEN_LOOP;
         }
-        mPeriodicIO.arm_demand = (wantedDemand > 12 ? 12 : wantedDemand);
+        mPeriodicIO.arm_demand = MathUtil.clamp(wantedDemand, -1, 1);
     }
 
     public void setArmPosition(double wantedPositionTicks) {
@@ -175,38 +176,41 @@ public class Arm extends Subsystem {
 
     // extend arm
 
-    public void extendArmManual() {
-        changeArmPosition(Constants.ArmConstants.changeArmManualAmount);
-    }
+    // public void extendArmManual() {
+    // changeArmPosition(Constants.ArmConstants.changeArmManualAmount);
+    // }
 
-    public void retractArmManual() {
-        changeArmPosition(Constants.ArmConstants.changeArmManualAmount * -1);
-    }
+    // public void retractArmManual() {
+    // changeArmPosition(Constants.ArmConstants.changeArmManualAmount * -1);
+    // }
 
     public void setExtendForPickup() {
-        isPulledIn = false;
-
+        mPeriodicIO.isPulledIn = false;
+        mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kPickupTravelDistance;
         setArmPosition(Constants.ArmConstants.kPickupTravelDistance);
     }
 
     public void setExtendForHybrid() {
-        isPulledIn = false;
-
+        mPeriodicIO.isPulledIn = false;
+        mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kHybridTravelDistance;
         setArmPosition(Constants.ArmConstants.kHybridTravelDistance);
     }
 
     // third step for traversal
     public void setExtendForMid() {
-        isPulledIn = false;
+        mPeriodicIO.isPulledIn = false;
+        mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kMidTravelDistance;
         setArmPosition(Constants.ArmConstants.kMidTravelDistance);
     }
 
     public void setExtendForHigh() {
-        isPulledIn = false;
+        mPeriodicIO.isPulledIn = false;
+        mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kHighTravelDistance;
         setArmPosition(Constants.ArmConstants.kHighTravelDistance);
     }
 
     public void setArmDown() {
+        mPeriodicIO.arm_maxTravel = 10;
         setArmPosition(10); // ticks
     }
 
@@ -311,9 +315,11 @@ public class Arm extends Subsystem {
         public double arm_stator_current;
         public double arm_motor_position;
         public double arm_motor_velocity;
+        public double arm_maxTravel;
 
         /* Outputs */
         public double arm_demand;
+        public boolean isPulledIn;
     }
 
     // logger

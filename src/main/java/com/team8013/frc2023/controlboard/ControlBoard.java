@@ -164,11 +164,23 @@ public class ControlBoard {
         return operator.getAxis(Side.LEFT, Axis.Y);
     }
 
-    public boolean getArmExtend() {
+    public double getOperatorLeftYaw() {
+        return operator.getAxis(Side.LEFT, Axis.X);
+    }
+
+    public double getOperatorRightThrottle() {
+        return operator.getAxis(Side.RIGHT, Axis.Y);
+    }
+
+    public double getOperatorRightYaw() {
+        return operator.getAxis(Side.RIGHT, Axis.X);
+    }
+
+    public boolean getGrip() {
         return operator.getButton(Button.RB);
     }
 
-    public boolean getArmRetract() {
+    public boolean getRelease() {
         return operator.getButton(Button.LB);
     }
 

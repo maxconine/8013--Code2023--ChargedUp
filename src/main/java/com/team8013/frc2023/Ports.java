@@ -6,8 +6,14 @@ public class Ports {
     public static final int DRIVER_PORT = 2;
     public static final int OPERATOR_PORT = 1;
 
-    public static final int CLAW_PIV = 14;
-    public static final int CLAW_GRIP = 15;
+    public static final int CLAW_PIV = 24;
+    public static final int CLAW_GRIP = 23;
+
+    public static final int CLAW_PIV_ENCODER_A = 0;
+    public static final int CLAW_PIV_ENCODER_B = 1;
+
+    public static final int CLAW_GRIP_ENCODER_A = 2;
+    public static final int CLAW_GRIP_ENCODER_B = 3;
 
     public static final int PIVOT = 16;
     public static final int ARM = 17;
@@ -19,7 +25,7 @@ public class Ports {
     public static final int CANDLE = 20;
     public static final int PIV_CANCODER = 21;
 
-    public static final int PCM = 13;
+    public static final int PDP = 13;
 
     /*** SWERVE MODULE PORTS ***/
 

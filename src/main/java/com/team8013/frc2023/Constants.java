@@ -362,6 +362,40 @@ public class Constants {
 
         }
 
+        public static final class ClawConstants {
+                /* PIVOT */
+
+                public static final double piv_kP = 0.3;
+                public static final double piv_kI = 0;
+                public static final double piv_kD = 0.0;
+
+                public static final double piv_kMaxOutput = 0.9;
+                public static final double piv_kMinOutput = -0.9;
+
+                public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
+                public static final double piv_MinRotation = -450;
+
+                public static final double pivotGearRatio = 1.535714; // (86 / 56);
+
+                /* CLAW */
+
+                public static final double grip_kP = 0.3;
+                public static final double grip_kI = 0;
+                public static final double grip_kD = 0.0;
+
+                // how fast you can manually control claw (percent output)
+                public static final double grip_kMaxOutput = 0.95;
+                public static final double grip_kMinOutput = -0.95;
+
+                public static final double kClawOpenDistance = 4; // position for pickup
+                public static final double kClawMinDistance = -3; // encoder hard limit
+                public static final double kClawMaxDistance = 6; // encoder hard limit
+
+                public static final double grip_rateDiff = 0.95; // Percent of max the speed needs to decrease from
+
+                public static final double gripGearRatio = 42; // unsure if this value is correct
+        }
+
         public static final class ControllerConstants {
                 public static final boolean isControllerOne = true;
 

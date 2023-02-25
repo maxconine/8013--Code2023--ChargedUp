@@ -36,9 +36,9 @@ public class Superstructure extends Subsystem {
     /*** REQUIRED INSTANCES ***/
     private final ControlBoard mControlBoard = ControlBoard.getInstance();
     private final Swerve mSwerve = Swerve.getInstance();
-    // private final Intake mIntake = Intake.getInstance();
-    // private final ColorSensor mColorSensor = ColorSensor.getInstance();
-    // private final Arm mArm = Arm.getInstance();
+    private final ClawV2 mClaw = ClawV2.getInstance();
+    private final Pivot mPivot = Pivot.getInstance();
+    private final Arm mArm = Arm.getInstance();
     private final Limelight mLimelight = Limelight.getInstance();
     private final LEDs mLEDs = LEDs.getInstance();
     private final Pigeon mPigeon = Pigeon.getInstance();
@@ -59,9 +59,15 @@ public class Superstructure extends Subsystem {
     public static class PeriodicIO {
         // INPUTS
         // (superstructure actions)
-        // private boolean INTAKE = false; // run the intake to pick up cargo
-        // private boolean REVERSE = false; // reverse the intake and singulator
-        // private boolean REJECT = false; // have the intake reject cargo
+
+        // private boolean GRABBED = false; // run the intake to pick up cargo
+
+        private boolean settingDown = false;
+        private boolean settingPickup = false;
+        private boolean settingHybrid = false;
+        private boolean settingMid = false;
+        private boolean settingHigh = false;
+        private boolean canControlArmManually = true;
 
         // time measurements
         public double timestamp;
@@ -105,6 +111,154 @@ public class Superstructure extends Subsystem {
                 stop();
             }
         });
+    }
+
+    // public enum WantedAction {
+    // NONE, STORE, PICKUP, HYBRID, MID, HIGH
+    // }
+
+    /***
+     * CONTAINER FOR OPERATOR COMMANDS CALLING SUPERSTRUCTURE ACTIONS
+     * Jack, feel free to change this!
+     * 
+     * 
+     * - hold right trigger to
+     * - hold left trigger to
+     * 
+     * - press right bumper to grip
+     * - press left bumper to ungrip
+     * 
+     * - press A to getPickup
+     * - press Y to getHigh
+     * - press B to getHybrid
+     * - press X to getMid
+     * 
+     * - left joystick yaw to move arm in and out manually
+     * - left joystick throttle to move pivot up and down manually
+     * 
+     * - right joystick yaw to grip claw manually
+     * - right joystick throttle to pivot claw manually
+     * 
+     * - Use dpad to
+     * --> 0 to
+     * --> 180 to
+     * 
+     * - press START button / 3 lines button to getZero
+     * 
+     * 
+     * 
+     */
+    public void updateOperatorCommands() {
+
+        /* MANUALLY CONTROL PIVOT */
+        if ((mControlBoard.getOperatorLeftThrottle() < -0.4) ||
+                (mControlBoard.getOperatorLeftThrottle() > 0.4)) {
+            mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle());
+        }
+        /* MANUALLY CONTROL ARM */
+        else if ((mControlBoard.getOperatorLeftYaw() < -0.4) ||
+                (mControlBoard.getOperatorLeftYaw() > 0.4)) {
+            mArm.setArmOpenLoop(mControlBoard.getOperatorLeftYaw());
+            /* ARM AND PIVOT */
+        } else {
+
+            if (mControlBoard.getArmDown()) {
+                mPeriodicIO.settingDown = true;
+                mArm.setArmDown();
+                mPeriodicIO.canControlArmManually = false;
+            } else if (mControlBoard.getPickup()) {
+                mArm.setArmDown();
+                mPeriodicIO.settingPickup = true;
+                mPeriodicIO.canControlArmManually = false;
+            } else if (mControlBoard.getHybrid()) {
+                mArm.setArmDown();
+                mPeriodicIO.settingHybrid = true;
+                mPeriodicIO.canControlArmManually = false;
+            } else if (mControlBoard.getMid()) {
+                mArm.setArmDown();
+                mPeriodicIO.settingMid = true;
+                mPeriodicIO.canControlArmManually = false;
+            } else if (mControlBoard.getHigh()) {
+                mArm.setArmDown();
+                mPeriodicIO.settingHigh = true;
+                mPeriodicIO.canControlArmManually = true;
+            }
+
+            if (mPeriodicIO.settingDown) {
+                if (mArm.isIn()) {
+                    mPivot.setPivotDown();
+                    mPeriodicIO.settingDown = false;
+                }
+            }
+            if (mPeriodicIO.settingPickup) {
+                if (mArm.isIn()) {
+                    mPivot.setPivotForPickup();
+                }
+                if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
+                    mArm.setExtendForPickup();
+                    mPeriodicIO.settingPickup = false;
+                    mPeriodicIO.canControlArmManually = true;
+                }
+            }
+            if (mPeriodicIO.settingHybrid) {
+                if (mArm.isIn()) {
+                    mPivot.setPivotForHybrid();
+                }
+                if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
+                    mArm.setExtendForHybrid();
+                    mPeriodicIO.settingHybrid = false;
+                    mPeriodicIO.canControlArmManually = true;
+                }
+            }
+            if (mPeriodicIO.settingMid) {
+                if (mArm.isIn()) {
+                    mPivot.setPivotForMid();
+                }
+                if (mPivot.canExtendArm(Constants.PivotConstants.kMidTravelDistance)) {
+                    mArm.setExtendForMid();
+                    mPeriodicIO.settingMid = false;
+                    mPeriodicIO.canControlArmManually = true;
+                }
+            }
+            if (mPeriodicIO.settingHigh) {
+                if (mArm.isIn()) {
+                    mPivot.setPivotForHigh();
+                }
+                if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
+                    mArm.setExtendForHigh();
+                    mPeriodicIO.settingHigh = false;
+                    mPeriodicIO.canControlArmManually = true;
+                }
+            }
+
+            // if (mControlBoard.autoTest()) {
+            // mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(), 0),
+            // mLimelight.getSteeringAdjust(),
+            // false, true);
+            // }
+
+            // hold 3 lines button to pull in arm
+            if (mControlBoard.getZero()) {
+                mArm.resetClimberPosition();
+                mPivot.resetPivotPosition();
+                mClaw.zeroSensors();
+            }
+
+            if ((mControlBoard.getOperatorRightThrottle() > 0.4)
+                    || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
+                mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle());
+            } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
+                    || (mControlBoard.getOperatorRightYaw() < -0.4)) {
+                mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);
+            } else if (mControlBoard.getGrip()) {
+                mClaw.closeGrip();
+            } else if (mControlBoard.getRelease()) {
+                mClaw.openGrip();
+            } else {
+                mClaw.stop();
+                // mClaw.setPivotPosition(mControlBoard.operator.getController().getPOV());
+            }
+        }
     }
 
     /*** RUMBLE OPERATOR CONTROLLERS ***/
