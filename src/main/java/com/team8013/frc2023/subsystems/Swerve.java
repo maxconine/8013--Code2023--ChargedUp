@@ -17,11 +17,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
@@ -38,6 +44,8 @@ public class Swerve extends Subsystem {
 
     // limelight instance for raw aiming
     Limelight mLimelight = Limelight.getInstance();
+
+    private final Field2d field = new Field2d();
 
     // logger
     LogStorage<PeriodicIO> mStorage = null;
@@ -328,6 +336,52 @@ public class Swerve extends Subsystem {
                     mInstance.mSwerveMods[3].getState()
             );
     }
+
+
+
+    public Pair<Pose2d, Double> getBotPose() {
+        double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency();  // Adjusting time for latency
+
+        // If Limelight does not have target return pose according to swerve odometry
+        if (!mLimelight.hasTarget()) {
+            return new Pair<Pose2d, Double>(getPose(), currentTime);
+        }
+
+        // Creating botpose array from limelight data
+        double[] limelightBotPoseArray = mLimelight.getBotPose().getDoubleArray(new double[] { 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0 });
+
+        // Ensuring that the botpose array has all values
+        if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) {
+            setField(getPose());
+            return new Pair<Pose2d, Double>(getPose(), currentTime);
+        }
+
+        // Getting new Pose2d from botpose array
+        Pose2d pose = new Pose3d(new Translation3d(limelightBotPoseArray[0], limelightBotPoseArray[1], limelightBotPoseArray[2]),
+        new Rotation3d(Math.toRadians(limelightBotPoseArray[3]), Math.toRadians(limelightBotPoseArray[4]),
+        Math.toRadians(limelightBotPoseArray[5]))).toPose2d();
+
+        // If the pose from that is null, return pose from swerve
+        if (pose == null) {
+            setField(getPose());
+            return new Pair<Pose2d, Double>(getPose(), currentTime);
+        }
+
+        // Transform pose from LL "field space" to pose2d
+        pose = new Pose2d(pose.getTranslation().plus(new Translation2d(Constants.VisionConstants.fieldLength / 2.0,
+        Constants.VisionConstants.fieldWidth / 2.0)), pose.getRotation());
+
+        setField(pose); // Adjust pose on shuffleboard field
+        resetOdometry(pose); // Set swerve Odometry to Limelights pose
+        return new Pair<Pose2d, Double>(pose, currentTime);
+    }
+
+    public void setField(Pose2d pose){
+        field.setRobotPose(pose);
+        SmartDashboard.putData("Field2d", field);
+    }
+
 
     @Override
     public void stop() {

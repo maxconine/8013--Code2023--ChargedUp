@@ -14,12 +14,6 @@ import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.ILooper;
 import com.team8013.frc2023.loops.Loop;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.Pair;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -56,7 +50,7 @@ public class Limelight extends Subsystem {
     // private final NetworkTableEntry tPipeline =
     // mNetworkTable.getEntry("pipeline");
 
-    private final Field2d field = new Field2d();
+
 
     public static class LimelightConstants {
         public String kName = "";
@@ -148,6 +142,7 @@ public class Limelight extends Subsystem {
         public int givenLedMode, givenPipeline;
         public double tx, ty, tv, tl, ta;
         public boolean hasComms, seesTarget;
+        public NetworkTableEntry tBotPose;
 
         // OUTPUTS
         public int ledMode = 1; // 0 - use pipeline mode, 1 - off, 2 - blink, 3 - on
@@ -208,6 +203,7 @@ public class Limelight extends Subsystem {
         mPeriodicIO.tx = mNetworkTable.getEntry("tx").getDouble(0.0);
         mPeriodicIO.ty = mNetworkTable.getEntry("ty").getDouble(0.0);
         mPeriodicIO.ta = mNetworkTable.getEntry("ta").getDouble(0.0);
+        mPeriodicIO.tBotPose = mNetworkTable.getEntry("botpose");
 
         if (latency == mPeriodicIO.tl) {
             mLatencyCounter++;
@@ -258,8 +254,6 @@ public class Limelight extends Subsystem {
 
         SmartDashboard.putNumber("Limelight Distance To Target",
                 mDistanceToTarget.isPresent() ? mDistanceToTarget.get() : 0.0);
-
-        SmartDashboard.putData("Field2d", field);
     }
 
     public enum LedMode {
@@ -351,45 +345,12 @@ public class Limelight extends Subsystem {
         return new double[] { mPeriodicIO.tx, mPeriodicIO.ty };
     }
 
-    // public Pair<Pose2d, Double> getBotPose() {
-    // double currentTime = Timer.getFPGATimestamp() - getLatency();
-
-    // // If Limelight does not have target return pose according to odometry
-    // if (!hasTarget()) {
-    // // return new Pair<Pose2d, Double>(mSwerve.getPose(), currentTime);
-    // }
-
-    // double[] limelightBotPoseArray = tBotPose.getDoubleArray(new double[] { 0.0,
-    // 0.0, 0.0, 0.0, 0.0, 0.0 });
-
-    // if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) {
-    // return null;
-    // }
-
-    // Pose2d pose = new Pose3d(
-    // new Translation3d(limelightBotPoseArray[0], limelightBotPoseArray[1],
-    // limelightBotPoseArray[2]),
-    // new Rotation3d(Math.toRadians(limelightBotPoseArray[3]),
-    // Math.toRadians(limelightBotPoseArray[4]),
-    // Math.toRadians(limelightBotPoseArray[5])))
-    // .toPose2d();
-
-    // if (pose == null) {
-    // return new Pair<Pose2d, Double>(mSwerve.getPose(), currentTime);
-    // }
-
-    // // transform pose from LL "field space" to pose2d
-    // pose = new Pose2d(pose.getTranslation().plus(new
-    // Translation2d(Constants.VisionConstants.fieldLength / 2.0,
-    // Constants.VisionConstants.fieldWidth / 2.0)), pose.getRotation());
-
-    // // System.out.println("LL Field2d");
-    // // System.out.println(pose);
-
-    // field.setRobotPose(pose);
-
-    // return new Pair<Pose2d, Double>(pose, currentTime);
-    // }
+    /**
+     * @return Botpose array from Limelight as NetworkTable Entry.
+     */
+    public NetworkTableEntry getBotPose(){
+        return mPeriodicIO.tBotPose;
+    }
 
     // logger
     @Override
