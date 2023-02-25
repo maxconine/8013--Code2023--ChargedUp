@@ -19,7 +19,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -28,29 +27,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Limelight extends Subsystem {
     private static Limelight mInstance = null;
     private LimelightConstants mConstants = null;
-    private NetworkTable mNetworkTable;
     LogStorage<PeriodicIO> mStorage = null;
+    private NetworkTable mNetworkTable;
     private PeriodicIO mPeriodicIO = new PeriodicIO();
-    // private Swerve mSwerve = null; // I feel like this might be bad to do.
-
+    
     private int mLatencyCounter = 0;
-    public Optional<Double> mDistanceToTarget = Optional.empty();
     private boolean mOutputsHaveChanged = true;
-
-    double KpAim = 1; // controls overshoot of aim
-    double minCommand = 0.275; // controls minimum voltage of aim
-    double steeringAdjust = 0.0;
-    double drivingAdjust = 0.0;
-    double KpDistance = -0.1;
+    public Optional<Double> mDistanceToTarget = Optional.empty();
 
     public final static int kDefaultPipeline = 1;
-    // public final static int kZoomedInPipeline = 1;
-
-    // private final NetworkTableEntry tBotPose = mNetworkTable.getEntry("botpose");
-    // private final NetworkTableEntry tPipeline =
-    // mNetworkTable.getEntry("pipeline");
-
-
 
     public static class LimelightConstants {
         public String kName = "";
@@ -69,35 +54,6 @@ public class Limelight extends Subsystem {
             mInstance = new Limelight();
         }
         return mInstance;
-    }
-
-    /**
-     * Returns steering adjustment calculated from the horizontal crosshair offset.
-     * 
-     * @return A double
-     */
-    public double getSteeringAdjust() {
-        double headingError = -mPeriodicIO.tx;
-
-        if (mPeriodicIO.tx > 1.0) {
-            steeringAdjust = KpAim * headingError - minCommand;
-        } else if (mPeriodicIO.tx < -1.0) {
-            steeringAdjust = KpAim * headingError + minCommand;
-        }
-
-        return steeringAdjust;
-    }
-
-    /**
-     * Returns driving adjustment calculated from the vertical crosshair offset.
-     * 
-     * @return A double
-     *         <p>
-     *         Swerve.drive(new Translation2d(driving_adjust,0), steering_adjust,
-     *         false, true);
-     */
-    public double getDrivingAdjust() {
-        return KpDistance * mPeriodicIO.ty;
     }
 
     @Override
@@ -183,15 +139,7 @@ public class Limelight extends Subsystem {
         double height_diff = Constants.VisionConstants.kGoalHeight
                 - Constants.VisionConstants.kLimelightConstants.kHeight;
 
-        mDistanceToTarget = Optional.of(height_diff / Math.tan(goal_theta) + Constants.VisionConstants.kGoalRadius); // add
-                                                                                                                     // goal
-                                                                                                                     // radius
-                                                                                                                     // for
-                                                                                                                     // offset
-                                                                                                                     // to
-                                                                                                                     // center
-                                                                                                                     // of
-                                                                                                                     // target
+        mDistanceToTarget = Optional.of(height_diff / Math.tan(goal_theta) + Constants.VisionConstants.kGoalRadius); // add goal radius for offset to center of target
     }
 
     @Override
@@ -217,13 +165,15 @@ public class Limelight extends Subsystem {
         mPeriodicIO.seesTarget = mNetworkTable.getEntry("tv").getDouble(0) == 1.0;
     }
 
+    /**
+     * Write to smartdashboard
+     */
     @Override
     public synchronized void writePeriodicOutputs() {
         if (mPeriodicIO.givenLedMode != mPeriodicIO.ledMode || mPeriodicIO.givenPipeline != mPeriodicIO.pipeline) {
             mOutputsHaveChanged = true;
         }
         if (mOutputsHaveChanged) {
-
             mNetworkTable.getEntry("ledMode").setNumber(mPeriodicIO.ledMode);
             mNetworkTable.getEntry("camMode").setNumber(mPeriodicIO.camMode);
             mNetworkTable.getEntry("pipeline").setNumber(mPeriodicIO.pipeline);
@@ -243,6 +193,9 @@ public class Limelight extends Subsystem {
         return true;
     }
 
+    /**
+     * Write Limelight info to smartdashboard
+     */
     public synchronized void outputTelemetry() {
         SmartDashboard.putBoolean("Limelight Ok", mPeriodicIO.hasComms);
         SmartDashboard.putNumber(mConstants.kName + ": Pipeline Latency (ms)", mPeriodicIO.tl);
@@ -256,27 +209,9 @@ public class Limelight extends Subsystem {
                 mDistanceToTarget.isPresent() ? mDistanceToTarget.get() : 0.0);
     }
 
-    public enum LedMode {
-        PIPELINE, OFF, BLINK, ON
-    }
-
-    public synchronized void setLed(LedMode mode) {
-        if (mode.ordinal() != mPeriodicIO.ledMode) {
-            mPeriodicIO.ledMode = mode.ordinal();
-            mOutputsHaveChanged = true;
-        }
-    }
-
-    public synchronized void setPipeline(int mode) {
-        if (mode != mPeriodicIO.pipeline) {
-            mPeriodicIO.pipeline = mode;
-
-            System.out.println(mPeriodicIO.pipeline + ", " + mode);
-            mOutputsHaveChanged = true;
-        }
-    }
-
-    /** What is the point of this? */
+    /** 
+     * Set outputs have changed to true. 
+     */
     public synchronized void triggerOutputs() {
         mOutputsHaveChanged = true;
     }
@@ -292,17 +227,34 @@ public class Limelight extends Subsystem {
         }
     }
 
-    /**
-     * @return Also not sure but this seems like a repeat
+     /**
+     * Returns steering adjustment calculated from the horizontal crosshair offset.
+     * @return A double
      */
-    public synchronized boolean isAutonomousAimed() {
-        if (hasTarget()) {
-            return Util.epsilonEquals(mPeriodicIO.tx, 0.0, 1.0);
-        } else {
-            return false;
+    public double getSteeringAdjust() {
+        double headingError = -mPeriodicIO.tx;
+        double KpAim = 1; // controls overshoot of aim
+        double minCommand = 0.275; // controls minimum voltage of aim
+
+        if (mPeriodicIO.tx > 1.0) {
+            return KpAim * headingError - minCommand;
+        }
+        // if mPeriodicIO.tx <= -1.0
+        else {
+            return KpAim * headingError + minCommand;
         }
     }
 
+    /**
+     * Returns driving adjustment calculated from the vertical crosshair offset.
+     * @return A double
+     *         <p>Swerve.drive(new Translation2d(driving_adjust,0), steering_adjust, false, true);
+     */
+    public double getDrivingAdjust() {
+        double KpDistance = -0.1;
+        return KpDistance * mPeriodicIO.ty;
+    }
+    
     /**
      * @return True if Limelight communication is ok, false if not?
      */
@@ -320,7 +272,7 @@ public class Limelight extends Subsystem {
     /**
      * @return I have no idea, what is dt?
      */
-    public double getDt() {
+    public double getTV() {
         return mPeriodicIO.tv;
     }
 
@@ -350,6 +302,37 @@ public class Limelight extends Subsystem {
      */
     public NetworkTableEntry getBotPose(){
         return mPeriodicIO.tBotPose;
+    }
+
+    /**
+     * LED Modes
+     */
+    public enum LedMode {
+        PIPELINE, OFF, BLINK, ON
+    }
+
+    /**
+     * Set Limelight's LED's
+     * @param mode - Limelight LED mode
+     */
+    public synchronized void setLed(LedMode mode) {
+        if (mode.ordinal() != mPeriodicIO.ledMode) {
+            mPeriodicIO.ledMode = mode.ordinal();
+            mOutputsHaveChanged = true;
+        }
+    }
+
+    /**
+     * Set Limelight's pipeline
+     * @param mode - Limelight pipeline
+     */
+    public synchronized void setPipeline(int mode) {
+        if (mode != mPeriodicIO.pipeline) {
+            mPeriodicIO.pipeline = mode;
+
+            System.out.println(mPeriodicIO.pipeline + ", " + mode);
+            mOutputsHaveChanged = true;
+        }
     }
 
     // logger
