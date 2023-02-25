@@ -96,10 +96,10 @@ public class Pivot extends Subsystem {
 
         switch (mPivotControlState) {
             case OPEN_LOOP:
-                // mPivot.set(mPeriodicIO.pivot_demand);
+                mPivot.set(mPeriodicIO.pivot_demand);
                 break;
             case CLOSED_LOOP:
-                // mNeoMotor.setPosition(mPeriodicIO.pivot_demand);
+                mNeoMotor.setPosition(mPeriodicIO.pivot_demand);
                 break;
             // case CLOSED_ENCODER: //use new pid controller that uses the encoder for input
             // mNeoMotor.s

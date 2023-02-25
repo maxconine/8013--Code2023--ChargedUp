@@ -148,6 +148,10 @@ public class Superstructure extends Subsystem {
      * 
      * 
      */
+    public void putArmAtZero() {
+        mArm.pullArmIntoZero();
+    }
+
     public void updateOperatorCommands() {
 
         /* MANUALLY CONTROL PIVOT */
@@ -166,6 +170,7 @@ public class Superstructure extends Subsystem {
                 mPeriodicIO.settingDown = true;
                 mArm.setArmDown();
                 mPeriodicIO.canControlArmManually = false;
+                System.out.println("working");
             } else if (mControlBoard.getPickup()) {
                 mArm.setArmDown();
                 mPeriodicIO.settingPickup = true;
@@ -185,6 +190,7 @@ public class Superstructure extends Subsystem {
             }
 
             if (mPeriodicIO.settingDown) {
+                System.out.println("working2");
                 if (mArm.isIn()) {
                     mPivot.setPivotDown();
                     mPeriodicIO.settingDown = false;
@@ -231,6 +237,8 @@ public class Superstructure extends Subsystem {
                 }
             }
 
+            System.out.println(mArm.getArmPosition());
+
             // if (mControlBoard.autoTest()) {
             // mSwerve.drive(new Translation2d(mLimelight.getDrivingAdjust(), 0),
             // mLimelight.getSteeringAdjust(),
@@ -246,7 +254,7 @@ public class Superstructure extends Subsystem {
 
             if ((mControlBoard.getOperatorRightThrottle() > 0.4)
                     || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
-                mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle());
+                mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
             } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
                     || (mControlBoard.getOperatorRightYaw() < -0.4)) {
                 mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);

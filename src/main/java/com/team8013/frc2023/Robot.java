@@ -200,12 +200,12 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
+			mArm.pullArmIntoZero();
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
 			mLoggingLooper.start();
 
 			mPivot.setPivotPosToCancoder();
-			mArm.pullArmIntoZero();
 
 			// mPivot.setPivotDown();
 
@@ -401,6 +401,7 @@ public class Robot extends TimedRobot {
 			// } else {
 			// mClaw.stop();
 			// }
+
 			mSuperstructure.updateOperatorCommands();
 			mClaw.outputTelemetry();
 			mArm.outputTelemetry();

@@ -100,10 +100,10 @@ public class Arm extends Subsystem {
 
         switch (mArmControlState) {
             case OPEN_LOOP:
-                // mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand);
+                mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand / 12);
                 break;
             case MOTION_MAGIC:
-                // mArm.set(ControlMode.MotionMagic, mPeriodicIO.arm_demand);
+                mArm.set(ControlMode.MotionMagic, mPeriodicIO.arm_demand);
                 break;
             default:
                 mArm.set(ControlMode.MotionMagic, 0.0);
@@ -142,6 +142,7 @@ public class Arm extends Subsystem {
                 mPeriodicIO.isPulledIn = true;
                 System.out.println("arm Pulled in");
                 zeroing = false;
+                mArm.setSelectedSensorPosition(0);
             }
         }
     }
