@@ -163,7 +163,6 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			mLoggingLooper.start();
 			mLimelight.setLed(LedMode.PIPELINE); // Set Limelight LED's to Pipeline settings (shield your eyes!)
-			
 
 			Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
 			if (autoMode.isPresent()) {
@@ -208,6 +207,9 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
+			mClaw.resetPivotEncoder();
+			mClaw.resetGripEncoder();
+			// mClaw.setPivotPosition(0);
 			mArm.pullArmIntoZero();
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
@@ -244,6 +246,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		try {
+			// mSuperstructure.readPeriodicInputs();
 
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
@@ -258,6 +261,7 @@ public class Robot extends TimedRobot {
 			// mSuperstructure.updateLEDs();
 
 			mLEDs.updateState();
+			// mSwerve.getBotPose();
 
 			/* SWERVE DRIVE */
 			// far left switch up
@@ -346,7 +350,7 @@ public class Robot extends TimedRobot {
 			mAutoModeSelector.updateModeCreator();
 
 			mSwerve.resetAnglesToAbsolute();
-			mLimelight.setLed(LedMode.OFF);  // Turn off Limelight LED's if robot is disabled (your eyes will thank me)
+			mLimelight.setLed(LedMode.OFF); // Turn off Limelight LED's if robot is disabled (your eyes will thank me)
 
 			// update alliance color from driver station while disabled
 			// mColorSensor.updateAllianceColor();
@@ -357,8 +361,9 @@ public class Robot extends TimedRobot {
 
 			// TODO
 			// mLimelight.setLed(Limelight.LedMode.ON);
-			// mLimelight.writePeriodicOutputs();
+			mLimelight.writePeriodicOutputs();
 			// mLimelight.outputTelemetry();
+			mClaw.outputTelemetry();
 
 			Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
 			if (autoMode.isPresent() && autoMode.get() != mAutoModeExecutor.getAutoMode()) {

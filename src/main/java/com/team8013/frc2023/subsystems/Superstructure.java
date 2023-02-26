@@ -196,7 +196,7 @@ public class Superstructure extends Subsystem {
                 mArm.setArmDown();
                 mPeriodicIO.settingPickup = true;
                 mPeriodicIO.canControlArmManually = false;
-                mPeriodicIO.maxArmPosition = Constants.ArmConstants.kPickupTravelDistance;
+                mPeriodicIO.maxArmPosition = Constants.ArmConstants.kPickupTravelDistance + 20000;
             } else if (mControlBoard.getHybrid()) {
                 mArm.setArmDown();
                 mPeriodicIO.settingHybrid = true;
@@ -268,18 +268,18 @@ public class Superstructure extends Subsystem {
             // }
 
             // hold 3 lines button to pull in arm
-            if (mControlBoard.getZero()) {
-                mArm.resetArmPosition();
-                mPivot.resetPivotPosition();
-                mClaw.zeroSensors();
-            }
-
-            // if ((mControlBoard.getOperatorRightThrottle() > 0.4)
-            // || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
-            // mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
-            // } else {
-            // mClaw.stopPivot();
+            // if (mControlBoard.getZero()) {
+            // mArm.resetArmPosition();
+            // mPivot.resetPivotPosition();
+            // mClaw.zeroSensors();
             // }
+
+            if ((mControlBoard.getOperatorRightThrottle() > 0.4)
+                    || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
+                mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
+            } else {
+                mClaw.stopPivot();
+            }
 
             // } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
             // || (mControlBoard.getOperatorRightYaw() < -0.4)) {
@@ -292,16 +292,20 @@ public class Superstructure extends Subsystem {
             // left bumper
             else if (mControlBoard.getRelease()) {
                 mClaw.openGrip();
-            } else if (!((mControlBoard.operator.getController().getPOV() == -1))) {
-                // System.out.println("trying to turn");
-                mClaw.setPivotPosition(mControlBoard.operator.getController().getPOV());
+                // } else if (mControlBoard.operator.getController().getPOV() == 180) {
+                // mClaw.setPivotDemand(0.4);
+                // // System.out.println("trying to turn");
+                // // mClaw.setPivotPosition(mControlBoard.operator.getController().getPOV() *
+                // .5);
+                // } else if (mControlBoard.operator.getController().getPOV() == 0) {
+                // mClaw.setPivotDemand(0.0);
+                // } else {
             } else {
                 mClaw.stopGrip();
                 // mClaw.stop();
-
             }
-            System.out.println(mControlBoard.operator.getController().getPOV());
         }
+        // System.out.println(mControlBoard.operator.getController().getPOV());
     }
 
     /*** RUMBLE OPERATOR CONTROLLERS ***/
@@ -484,6 +488,7 @@ public class Superstructure extends Subsystem {
     public void readPeriodicInputs() {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         mRoll = mPigeon.getRoll().getDegrees();
+        // mSwerve.readPeriodicInputs();
     }
 
     // logger

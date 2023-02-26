@@ -368,10 +368,10 @@ public class Constants {
 
                 public static final double piv_kP = 2;
                 public static final double piv_kI = 0;
-                public static final double piv_kD = 0.2;
+                public static final double piv_kD = 0.0;
 
-                public static final double piv_kMaxOutput = 0.9;
-                public static final double piv_kMinOutput = -0.9;
+                public static final double piv_kMaxOutput = 0.6;
+                public static final double piv_kMinOutput = -0.6;
 
                 public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
                 public static final double piv_MinRotation = -450;

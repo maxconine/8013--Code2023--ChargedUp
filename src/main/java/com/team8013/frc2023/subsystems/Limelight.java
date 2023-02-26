@@ -29,32 +29,23 @@ public class Limelight extends Subsystem {
     LogStorage<PeriodicIO> mStorage = null;
     private NetworkTable mNetworkTable;
     private PeriodicIO mPeriodicIO = new PeriodicIO();
-    
+
     private int mLatencyCounter = 0;
     private boolean mOutputsHaveChanged = true;
     public Optional<Double> mDistanceToTarget = Optional.empty();
 
-<<<<<<< HEAD
-    public final static int kDefaultPipeline = 2;
-    // public final static int kZoomedInPipeline = 1;
-
-    // private final NetworkTableEntry tBotPose = mNetworkTable.getEntry("botpose");
-    // private final NetworkTableEntry tPipeline =
-    // mNetworkTable.getEntry("pipeline");
-=======
     public final static int kDefaultPipeline = 1;
->>>>>>> e70875b001ebe948c3904d63f5792e5a8305cbc0
 
     public static class LimelightConstants {
         public String kName = "";
-        public String kTableName = "limelight";
+        public String kTableName = "limelight-cones";
         public double kHeight = 0.0; // height of limelight from ground?
         public Rotation2d kHorizontalPlaneToLens = Rotation2d.identity();
     }
 
     private Limelight() {
         mConstants = Constants.VisionConstants.kLimelightConstants;
-        mNetworkTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName);
+        mNetworkTable = NetworkTableInstance.getDefault().getTable("limelight-cones");
     }
 
     public static Limelight getInstance() {
@@ -89,7 +80,7 @@ public class Limelight extends Subsystem {
                 SendLog();
 
                 final double end = Timer.getFPGATimestamp();
-                mPeriodicIO.tv = end - start;
+                // mPeriodicIO.tv = end - start;
             }
 
             @Override
@@ -99,21 +90,6 @@ public class Limelight extends Subsystem {
             }
         };
         mEnabledLooper.register(mLoop);
-    }
-
-    public static class PeriodicIO {
-        // INPUTS
-        public int givenLedMode, givenPipeline;
-        public double tx, ty, tv, tl, ta;
-        public boolean hasComms, seesTarget;
-        public NetworkTableEntry tBotPose;
-
-        // OUTPUTS
-        public int ledMode = 1; // 0 - use pipeline mode, 1 - off, 2 - blink, 3 - on
-        public int camMode = 0; // 0 - vision processing, 1 - driver camera
-        public int pipeline = 2; // 0 - 9
-        public int stream = 2; // sets stream layout if another webcam is attached
-        public int snapshot = 0; // 0 - stop snapshots, 1 - 2 Hz
     }
 
     public synchronized List<TargetInfo> getTarget() {
@@ -147,7 +123,30 @@ public class Limelight extends Subsystem {
         double height_diff = Constants.VisionConstants.kGoalHeight
                 - Constants.VisionConstants.kLimelightConstants.kHeight;
 
-        mDistanceToTarget = Optional.of(height_diff / Math.tan(goal_theta) + Constants.VisionConstants.kGoalRadius); // add goal radius for offset to center of target
+        mDistanceToTarget = Optional.of(height_diff / Math.tan(goal_theta) + Constants.VisionConstants.kGoalRadius); // add
+                                                                                                                     // goal
+                                                                                                                     // radius
+                                                                                                                     // for
+                                                                                                                     // offset
+                                                                                                                     // to
+                                                                                                                     // center
+                                                                                                                     // of
+                                                                                                                     // target
+    }
+
+    public static class PeriodicIO {
+        // INPUTS
+        public int givenLedMode, givenPipeline;
+        public double tx, ty, tv, tl, ta, tid;
+        public boolean hasComms, seesTarget;
+        public NetworkTableEntry tBotPose;
+
+        // OUTPUTS
+        public int ledMode = 1; // 0 - use pipeline mode, 1 - off, 2 - blink, 3 - on
+        public int camMode = 0; // 0 - vision processing, 1 - driver camera
+        public int pipeline = 2; // 0 - 9
+        public int stream = 2; // sets stream layout if another webcam is attached
+        public int snapshot = 0; // 0 - stop snapshots, 1 - 2 Hz
     }
 
     @Override
@@ -160,6 +159,8 @@ public class Limelight extends Subsystem {
         mPeriodicIO.ty = mNetworkTable.getEntry("ty").getDouble(0.0);
         mPeriodicIO.ta = mNetworkTable.getEntry("ta").getDouble(0.0);
         mPeriodicIO.tBotPose = mNetworkTable.getEntry("botpose");
+        mPeriodicIO.tid = mNetworkTable.getEntry("tid").getDouble(0.0);
+        mPeriodicIO.tv = mNetworkTable.getEntry("tv").getDouble(0);
 
         if (latency == mPeriodicIO.tl) {
             mLatencyCounter++;
@@ -170,7 +171,6 @@ public class Limelight extends Subsystem {
         mPeriodicIO.tl = latency;
         mPeriodicIO.hasComms = mLatencyCounter < 10;
 
-        mPeriodicIO.seesTarget = mNetworkTable.getEntry("tv").getDouble(0) == 1.0;
     }
 
     /**
@@ -207,18 +207,22 @@ public class Limelight extends Subsystem {
     public synchronized void outputTelemetry() {
         SmartDashboard.putBoolean("Limelight Ok", mPeriodicIO.hasComms);
         SmartDashboard.putNumber(mConstants.kName + ": Pipeline Latency (ms)", mPeriodicIO.tl);
-        SmartDashboard.putNumber("Limelight dt", mPeriodicIO.tv);
+        SmartDashboard.putNumber("Limelight tv", mPeriodicIO.tv);
+        SmartDashboard.putBoolean("Limelight has target ", hasTarget());
 
         SmartDashboard.putBoolean(mConstants.kName + ": Has Target", mPeriodicIO.seesTarget);
         SmartDashboard.putNumber("Limelight Tx: ", mPeriodicIO.tx);
         SmartDashboard.putNumber("Limelight Ty: ", mPeriodicIO.ty);
+        SmartDashboard.putNumber("Limelight tid: ", mPeriodicIO.tid);
+
+        // SmartDashboard.putNumberArray("Limelight BotPose: ", mPeriodicIO.tBotPose);
 
         SmartDashboard.putNumber("Limelight Distance To Target",
                 mDistanceToTarget.isPresent() ? mDistanceToTarget.get() : 0.0);
     }
 
-    /** 
-     * Set outputs have changed to true. 
+    /**
+     * Set outputs have changed to true.
      */
     public synchronized void triggerOutputs() {
         mOutputsHaveChanged = true;
@@ -235,8 +239,9 @@ public class Limelight extends Subsystem {
         }
     }
 
-     /**
+    /**
      * Returns steering adjustment calculated from the horizontal crosshair offset.
+     * 
      * @return A double
      */
     public double getSteeringAdjust() {
@@ -255,14 +260,17 @@ public class Limelight extends Subsystem {
 
     /**
      * Returns driving adjustment calculated from the vertical crosshair offset.
+     * 
      * @return A double
-     *         <p>Swerve.drive(new Translation2d(driving_adjust,0), steering_adjust, false, true);
+     *         <p>
+     *         Swerve.drive(new Translation2d(driving_adjust,0), steering_adjust,
+     *         false, true);
      */
     public double getDrivingAdjust() {
         double KpDistance = -0.1;
         return KpDistance * mPeriodicIO.ty;
     }
-    
+
     /**
      * @return True if Limelight communication is ok, false if not?
      */
@@ -278,7 +286,7 @@ public class Limelight extends Subsystem {
     }
 
     /**
-     * @return I have no idea, what is dt?
+     * @return Limelight tv
      */
     public double getTV() {
         return mPeriodicIO.tv;
@@ -295,7 +303,11 @@ public class Limelight extends Subsystem {
      * @return True if Limelight has a target, false if it does not.
      */
     public synchronized boolean hasTarget() {
-        return mPeriodicIO.seesTarget;
+        if (mPeriodicIO.tv == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -321,6 +333,7 @@ public class Limelight extends Subsystem {
 
     /**
      * Set Limelight's LED's
+     * 
      * @param mode - Limelight LED mode
      */
     public synchronized void setLed(LedMode mode) {
@@ -332,6 +345,7 @@ public class Limelight extends Subsystem {
 
     /**
      * Set Limelight's pipeline
+     * 
      * @param mode - Limelight pipeline
      */
     public synchronized void setPipeline(int mode) {

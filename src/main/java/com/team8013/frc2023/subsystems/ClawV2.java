@@ -51,7 +51,7 @@ public class ClawV2 extends Subsystem {
 
     private ClawV2() {
         m_PivotEncoder = new Encoder(Ports.CLAW_PIV_ENCODER_A, Ports.CLAW_PIV_ENCODER_B);
-        m_PivotEncoder.setDistancePerPulse(1 / 44.4 / Constants.ClawConstants.pivotGearRatio);
+        m_PivotEncoder.setDistancePerPulse(1 / 44.4); // / Constants.ClawConstants.pivotGearRatio);
         m_PivotMotor = new VictorSPX(Ports.CLAW_PIV);
 
         m_GripEncoder = new Encoder(Ports.CLAW_GRIP_ENCODER_A, Ports.CLAW_GRIP_ENCODER_B);
@@ -97,100 +97,104 @@ public class ClawV2 extends Subsystem {
         // set status variable for being enabled to true
         mIsEnabled = true;
 
-        if (((mPeriodicIO.grip_current > 11) && (mPeriodicIO.grip_motor_position == 0.0))
-                || (mPeriodicIO.pivot_current > 11) && (mPeriodicIO.pivot_motor_position == 0.0)
-                        && (!mPeriodicIO.maybeEncoderBroken)) {
-            doubleCheckBrokenTime = Timer.getFPGATimestamp();
-            mPeriodicIO.maybeEncoderBroken = true;
-        }
-        if ((Timer.getFPGATimestamp() + 0.5 > doubleCheckBrokenTime)
-                && (((mPeriodicIO.grip_current > 11) && (mPeriodicIO.grip_motor_position == 0.0))
-                        || (mPeriodicIO.pivot_current > 11) && (mPeriodicIO.pivot_motor_position == 0.0))
-                && (mPeriodicIO.maybeEncoderBroken)) {
-            mPeriodicIO.encoderBroken = true;
-        }
+        // if (((mPeriodicIO.grip_current > 11) && (mPeriodicIO.grip_motor_position ==
+        // 0.0))
+        // || (mPeriodicIO.pivot_current > 11) && (mPeriodicIO.pivot_motor_position ==
+        // 0.0)
+        // && (!mPeriodicIO.maybeEncoderBroken)) {
+        // doubleCheckBrokenTime = Timer.getFPGATimestamp();
+        // mPeriodicIO.maybeEncoderBroken = true;
+        // }
+        // if ((Timer.getFPGATimestamp() + 0.5 > doubleCheckBrokenTime)
+        // && (((mPeriodicIO.grip_current > 11) && (mPeriodicIO.grip_motor_position ==
+        // 0.0))
+        // || (mPeriodicIO.pivot_current > 11) && (mPeriodicIO.pivot_motor_position ==
+        // 0.0))
+        // && (mPeriodicIO.maybeEncoderBroken)) {
+        // mPeriodicIO.encoderBroken = true;
+        // }
 
-        if (mPeriodicIO.encoderBroken == false) {
+        // if (mPeriodicIO.encoderBroken == false) {
 
-            /* GRIP OUTPUT */
+        /* GRIP OUTPUT */
 
-            switch (mGripControlState) {
-                case OPEN_LOOP:
-                    // if trying to close:
-                    if (mPeriodicIO.wantedClosing == true) {
-                        m_GripMotor.set(VictorSPXControlMode.PercentOutput, -Constants.ClawConstants.grip_kMaxOutput);
+        switch (mGripControlState) {
+            case OPEN_LOOP:
+                // if trying to close:
+                if (mPeriodicIO.wantedClosing == true) {
+                    m_GripMotor.set(VictorSPXControlMode.PercentOutput, -Constants.ClawConstants.grip_kMaxOutput);
 
-                        mPeriodicIO.grip_peakSpeed = Math.max(mPeriodicIO.grip_motor_velocity,
-                                mPeriodicIO.grip_peakSpeed);
+                    mPeriodicIO.grip_peakSpeed = Math.max(mPeriodicIO.grip_motor_velocity,
+                            mPeriodicIO.grip_peakSpeed);
 
-                        // if grip rate slows down to ex: 70% of max speed greater than 2, or claw is
-                        // too far in
-                        if ((mPeriodicIO.grip_motor_velocity > 2)
-                                && (mPeriodicIO.grip_motor_velocity < (mPeriodicIO.grip_peakSpeed
-                                        * Constants.ClawConstants.grip_rateDiff))
-                                || (mPeriodicIO.grip_motor_position <= Constants.ClawConstants.kClawMinDistance)) {
-                            m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
-                            mPeriodicIO.wantedClosing = false;
-                            mPeriodicIO.grip_peakSpeed = 0;
-                            // mPeriodicIO.spedUp = false;
-                        }
+                    // if grip rate slows down to ex: 70% of max speed greater than 2, or claw is
+                    // too far in
+                    if ((mPeriodicIO.grip_motor_velocity > 2)
+                            && (mPeriodicIO.grip_motor_velocity < (mPeriodicIO.grip_peakSpeed
+                                    * Constants.ClawConstants.grip_rateDiff))
+                            || (mPeriodicIO.grip_motor_position <= Constants.ClawConstants.kClawMinDistance)) {
+                        m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
+                        mPeriodicIO.wantedClosing = false;
+                        mPeriodicIO.grip_peakSpeed = 0;
+                        // mPeriodicIO.spedUp = false;
                     }
-                    // if trying to open manually, dont let the claw over extend out:
-                    else if ((mPeriodicIO.grip_demand < 0) // I changed signs around
-                            && (mPeriodicIO.grip_motor_position < Constants.ClawConstants.kClawMaxDistance)) {
-                        m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
-                    } else if ((mPeriodicIO.grip_demand > 0)
-                            && (mPeriodicIO.grip_motor_position > Constants.ClawConstants.kClawMinDistance)) {
-                        m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
-                    } else {
-                        m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0);
-                    }
-                    break;
-                case CLOSED_LOOP:
-                    // don't let distance exceed max and min
-                    mPeriodicIO.grip_demand = MathUtil.clamp(mPeriodicIO.grip_demand,
-                            Constants.ClawConstants.kClawMinDistance, Constants.ClawConstants.kClawMaxDistance);
-                    m_GripPid.setSetpoint(mPeriodicIO.grip_demand);
-                    m_GripMotor.set(VictorSPXControlMode.PercentOutput,
-                            MathUtil.clamp(/*-1 */ m_GripPid.calculate(m_GripEncoder.getDistance()),
-                                    Constants.ClawConstants.grip_kMinOutput,
-                                    Constants.ClawConstants.grip_kMaxOutput));
-
-                    break;
-                default:
+                }
+                // if trying to open manually, dont let the claw over extend out:
+                else if ((mPeriodicIO.grip_demand < 0) // I changed signs around
+                        && (mPeriodicIO.grip_motor_position < Constants.ClawConstants.kClawMaxDistance)) {
+                    m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
+                } else if ((mPeriodicIO.grip_demand > 0)
+                        && (mPeriodicIO.grip_motor_position > Constants.ClawConstants.kClawMinDistance)) {
+                    m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
+                } else {
                     m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0);
-                    break;
+                }
+                break;
+            case CLOSED_LOOP:
+                // don't let distance exceed max and min
+                mPeriodicIO.grip_demand = MathUtil.clamp(mPeriodicIO.grip_demand,
+                        Constants.ClawConstants.kClawMinDistance, Constants.ClawConstants.kClawMaxDistance);
+                m_GripPid.setSetpoint(mPeriodicIO.grip_demand);
+                m_GripMotor.set(VictorSPXControlMode.PercentOutput,
+                        MathUtil.clamp(/*-1 */ m_GripPid.calculate(mPeriodicIO.grip_motor_position),
+                                Constants.ClawConstants.grip_kMinOutput,
+                                Constants.ClawConstants.grip_kMaxOutput));
 
-            }
+                break;
+            default:
+                m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0);
+                break;
 
-            /* PIVOT OUTPUT */
-            switch (mPivotControlState) {
-                case OPEN_LOOP:
-                    // if ((mPeriodicIO.pivot_motor_position >
-                    // Constants.ClawConstants.kPivotMaxDistance)
-                    // && (mPeriodicIO.pivot_demand > 0)) {
-                    // m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0);
-                    // } else if ((mPeriodicIO.pivot_motor_position <
-                    // Constants.ClawConstants.kPivotMinDistance)
-                    // && (mPeriodicIO.pivot_demand < 0)) {
-                    // m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0);
-                    // } else {
-                    m_PivotMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.pivot_demand);
-                    // }
-                    break;
-                case CLOSED_LOOP:
-                    mPeriodicIO.pivot_demand = MathUtil.clamp(mPeriodicIO.pivot_demand,
-                            Constants.ClawConstants.kPivotMinDistance, Constants.ClawConstants.kPivotMaxDistance);
-                    m_PivotPid.setSetpoint(mPeriodicIO.pivot_demand);
-                    m_PivotMotor.set(VictorSPXControlMode.PercentOutput,
-                            MathUtil.clamp(-1 * m_PivotPid.calculate(m_PivotEncoder.getDistance()),
-                                    Constants.ClawConstants.piv_kMinOutput,
-                                    Constants.ClawConstants.piv_kMaxOutput));
-                    break;
-                default:
-                    m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
-                    break;
-            }
+        }
+
+        /* PIVOT OUTPUT */
+        switch (mPivotControlState) {
+            case OPEN_LOOP:
+                // if ((mPeriodicIO.pivot_motor_position >
+                // Constants.ClawConstants.kPivotMaxDistance)
+                // && (mPeriodicIO.pivot_demand > 0)) {
+                // m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0);
+                // } else if ((mPeriodicIO.pivot_motor_position <
+                // Constants.ClawConstants.kPivotMinDistance)
+                // && (mPeriodicIO.pivot_demand < 0)) {
+                // m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0);
+                // } else {
+                m_PivotMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.pivot_demand);
+                // }
+                break;
+            case CLOSED_LOOP:
+                mPeriodicIO.pivot_demand = MathUtil.clamp(mPeriodicIO.pivot_demand,
+                        Constants.ClawConstants.kPivotMinDistance, Constants.ClawConstants.kPivotMaxDistance);
+                m_PivotPid.setSetpoint(mPeriodicIO.pivot_demand);
+                m_PivotMotor.set(VictorSPXControlMode.PercentOutput,
+                        MathUtil.clamp(-1 * m_PivotPid.calculate(mPeriodicIO.pivot_motor_position),
+                                Constants.ClawConstants.piv_kMinOutput,
+                                Constants.ClawConstants.piv_kMaxOutput));
+                break;
+            default:
+                m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
+                break;
+
         }
 
     }
@@ -235,7 +239,7 @@ public class ClawV2 extends Subsystem {
             mPivotControlState = PivotControlState.CLOSED_LOOP;
         }
         // demand in rotations
-        mPeriodicIO.pivot_demand = wantedPositionDegrees / 360;
+        mPeriodicIO.pivot_demand = wantedPositionDegrees / 180;
     }
 
     public void setGripPosition(double wantedPositionRotations) {

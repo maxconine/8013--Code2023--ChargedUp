@@ -256,13 +256,20 @@ public class Swerve extends Subsystem {
         }
     }
 
-    public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
-    }
+    // public Pose2d getPose() {
+    // return swerveOdometry.getPoseMeters();
+    // }
 
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(pose.getRotation(), getPositions(), pose);
         zeroGyro(pose.getRotation().getDegrees());
+
+        // reset field to vehicle
+        RobotState.getInstance().reset(new com.team254.lib.geometry.Pose2d(pose));
+    }
+
+    public void updatePoseOdometry(Pose2d pose) {
+        swerveOdometry.resetPosition(pose.getRotation(), getPositions(), pose);
 
         // reset field to vehicle
         RobotState.getInstance().reset(new com.team254.lib.geometry.Pose2d(pose));
@@ -338,19 +345,19 @@ public class Swerve extends Subsystem {
                 mInstance.mSwerveMods[3].getState());
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Get robot pose and time
-     * @return Pair < Pose2d-robot's pose, Double-time that robot was at that pose. >
+     * 
+     * @return Pair < Pose2d-robot's pose, Double-time that robot was at that pose.
+     *         >
      */
->>>>>>> e70875b001ebe948c3904d63f5792e5a8305cbc0
-    public Pair<Pose2d, Double> getBotPose() {
-        double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency(); // Adjusting time for latency
+    public Pose2d getPose() {
+        // double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency(); //
+        // Adjusting time for latency
 
         // If Limelight does not have target return pose according to swerve odometry
         if (!mLimelight.hasTarget()) {
-            return new Pair<Pose2d, Double>(getPose(), currentTime);
+            return swerveOdometry.getPoseMeters();
         }
 
         // Creating botpose array from limelight data
@@ -360,12 +367,12 @@ public class Swerve extends Subsystem {
         // Ensuring that the botpose array has all values
         if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) {
             setField(getPose());
-            return new Pair<Pose2d, Double>(getPose(), currentTime);
+            return swerveOdometry.getPoseMeters();
         }
 
-        // Getting new Pose2d from botpose array
+        // Getting new Pose2d from botpose array (invert x)
         Pose2d pose = new Pose3d(
-                new Translation3d(limelightBotPoseArray[0], limelightBotPoseArray[1], limelightBotPoseArray[2]),
+                new Translation3d(-limelightBotPoseArray[0], limelightBotPoseArray[1], limelightBotPoseArray[2]),
                 new Rotation3d(Math.toRadians(limelightBotPoseArray[3]), Math.toRadians(limelightBotPoseArray[4]),
                         Math.toRadians(limelightBotPoseArray[5])))
                 .toPose2d();
@@ -373,27 +380,25 @@ public class Swerve extends Subsystem {
         // If the pose from that is null, return pose from swerve
         if (pose == null) {
             setField(getPose());
-            return new Pair<Pose2d, Double>(getPose(), currentTime);
+            return swerveOdometry.getPoseMeters();
         }
 
+        setField(pose); // Adjust pose on shuffleboard field
+        updatePoseOdometry(pose); // Set swerve Odometry to Limelights pose
+        // System.out.println("Tag pose " + pose);
+        return pose;
+    }
+
+    /**
+     * Sets the robot's pose on the field and outputs to smartdashboard.
+     * 
+     * @param pose - the robots pose
+     */
+    public void setField(Pose2d pose) {
         // Transform pose from LL "field space" to pose2d
         pose = new Pose2d(pose.getTranslation().plus(new Translation2d(Constants.VisionConstants.fieldLength / 2.0,
                 Constants.VisionConstants.fieldWidth / 2.0)), pose.getRotation());
 
-        setField(pose); // Adjust pose on shuffleboard field
-        resetOdometry(pose); // Set swerve Odometry to Limelights pose
-        return new Pair<Pose2d, Double>(pose, currentTime);
-    }
-
-<<<<<<< HEAD
-    public void setField(Pose2d pose) {
-=======
-    /**
-     * Sets the robot's pose on the field and outputs to smartdashboard.
-     * @param pose - the robots pose
-     */
-    public void setField(Pose2d pose){
->>>>>>> e70875b001ebe948c3904d63f5792e5a8305cbc0
         field.setRobotPose(pose);
         SmartDashboard.putData("Field2d", field);
     }
@@ -419,7 +424,7 @@ public class Swerve extends Subsystem {
         mPeriodicIO.snap_target = Math.toDegrees(snapPIDController.getGoal().position);
         mPeriodicIO.vision_align_target_angle = Math.toDegrees(mLimelightVisionAlignGoal);
         mPeriodicIO.swerve_heading = MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), 0, 360);
-        getBotPose();
+        getPose();
         SendLog();
     }
 
