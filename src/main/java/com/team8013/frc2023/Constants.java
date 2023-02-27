@@ -86,7 +86,7 @@ public class Constants {
                 public static final double angleKF = 0.0;
 
                 /* Drive Motor PID Values */
-                public static final double driveKP = 0.05;
+                public static final double driveKP = 0.05; // 0.05
                 public static final double driveKI = 0.0;
                 public static final double driveKD = 0.0;
                 public static final double driveKF = 0.0;
@@ -209,7 +209,7 @@ public class Constants {
 
                 public static final double kPXController = 1; // og 1 0.2 works
                 public static final double kPYController = 1; // og 1 0.3 works
-                public static final double kPThetaController = 0.8; // og 5
+                public static final double kPThetaController = 1; // og 5
 
                 // Constraint for the motion profilied robot angle controller
                 public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -366,12 +366,12 @@ public class Constants {
         public static final class ClawConstants {
                 /* PIVOT */
 
-                public static final double piv_kP = 2;
+                public static final double piv_kP = .011;
                 public static final double piv_kI = 0;
-                public static final double piv_kD = 0.0;
+                public static final double piv_kD = 0;
 
-                public static final double piv_kMaxOutput = 0.6;
-                public static final double piv_kMinOutput = -0.6;
+                public static final double piv_kMaxOutput = 0.4;
+                public static final double piv_kMinOutput = -0.4;
 
                 public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
                 public static final double piv_MinRotation = -450;

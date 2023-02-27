@@ -206,8 +206,8 @@ public class Robot extends TimedRobot {
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
 			}
-
-			mClaw.resetPivotEncoder();
+			mClaw.stopPivot();
+			mClaw.setPivotTeleopInit();
 			mClaw.resetGripEncoder();
 			// mClaw.setPivotPosition(0);
 			mArm.pullArmIntoZero();

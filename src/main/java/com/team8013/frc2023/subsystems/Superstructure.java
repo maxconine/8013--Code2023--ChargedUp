@@ -274,13 +274,24 @@ public class Superstructure extends Subsystem {
             // mClaw.zeroSensors();
             // }
 
-            if ((mControlBoard.getOperatorRightThrottle() > 0.4)
-                    || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
-                mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
-            } else {
-                mClaw.stopPivot();
-            }
+            // if ((mControlBoard.getOperatorRightThrottle() > 0.4)
+            // || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
+            // mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
+            // } else {
+            // mClaw.stopPivot();
+            // }
 
+            System.out.println(mClaw.getCanCoder());
+            System.out.println(mClaw.getPivotDemand() + "&&" + mClaw.getPivotPosition());
+            if (mControlBoard.operator.getController().getPOV() == 90) {
+
+                mClaw.setPivotPosition(90);
+
+            } else if (mControlBoard.operator.getController().getPOV() == 0) {
+
+                mClaw.setPivotPosition(-10);
+
+            }
             // } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
             // || (mControlBoard.getOperatorRightYaw() < -0.4)) {
             // mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);

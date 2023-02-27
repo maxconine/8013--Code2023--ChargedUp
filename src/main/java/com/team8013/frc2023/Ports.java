@@ -9,6 +9,8 @@ public class Ports {
     public static final int CLAW_PIV = 24;
     public static final int CLAW_GRIP = 23;
 
+    public static final int CLAW_CANCODER = 26;
+
     public static final int CLAW_PIV_ENCODER_A = 0;
     public static final int CLAW_PIV_ENCODER_B = 1;
 
