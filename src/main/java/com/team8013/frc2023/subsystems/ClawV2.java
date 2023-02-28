@@ -95,7 +95,7 @@ public class ClawV2 extends Subsystem {
         mPeriodicIO.grip_voltage = m_GripMotor.getBusVoltage();
         mPeriodicIO.grip_current = m_GripMotor.getMotorOutputVoltage();
         mPeriodicIO.grip_motor_velocity = m_GripEncoder.getRate();
-        mPeriodicIO.grip_motor_position = getRelativeCancoder();
+        mPeriodicIO.grip_motor_position = m_GripEncoder.getDistance();
 
         // mPeriodicIO.wantedClosing =
 

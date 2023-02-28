@@ -6,16 +6,8 @@ package com.team8013.frc2023;
 
 import java.util.Optional;
 
-import javax.lang.model.util.ElementScanner14;
-
 import com.lib.util.CTREConfigs;
 
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
-import edu.wpi.first.math.estimator.MerweScaledSigmaPoints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -27,8 +19,6 @@ import com.team8013.frc2023.auto.AutoModeExecutor;
 import com.team8013.frc2023.auto.AutoModeSelector;
 import com.team8013.frc2023.auto.modes.AutoModeBase;
 import com.team8013.frc2023.controlboard.ControlBoard;
-import com.team8013.frc2023.controlboard.ControlBoard.SwerveCardinal;
-import com.team8013.frc2023.controlboard.CustomXboxController.Button;
 import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.CrashTracker;
 import com.team8013.frc2023.loops.Looper;
@@ -136,7 +126,7 @@ public class Robot extends TimedRobot {
 			mSwerve.resetOdometry(new Pose2d());
 			mSwerve.resetAnglesToAbsolute();
 
-			mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_BLUE);
+			mLEDs.applyStates(State.SOLID_BLUE);
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -194,7 +184,7 @@ public class Robot extends TimedRobot {
 		// TODO;
 		mLimelight.setLed(Limelight.LedMode.ON);
 		mLEDs.updateState();
-		mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_YELLOW);
+		// mLEDs.applyStates(State.SOLID_BLUE);
 	}
 
 	@Override
@@ -232,7 +222,7 @@ public class Robot extends TimedRobot {
 
 			// clear any previous automation from auto
 			mLEDs.clearAnimation();
-			mLEDs.applyStates(State.SOLID_BLUE, State.SOLID_BLUE);
+			mLEDs.applyStates(State.OFF);
 
 			// set states for teleop init
 			// mSuperstructure.setInitialTeleopStates();
@@ -257,10 +247,11 @@ public class Robot extends TimedRobot {
 			// mLimelight.outputTelemetry();
 
 			// call operator commands container from superstructure
-			// mSuperstructure.updateOperatorCommands();
-			// mSuperstructure.updateLEDs();
+			mSuperstructure.updateOperatorCommands();
+			mSuperstructure.updateLEDs();
 
 			mLEDs.updateState();
+
 			// mSwerve.getBotPose();
 
 			/* SWERVE DRIVE */
@@ -297,10 +288,11 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putBoolean("trying to vision allign drive", false);
 			// }
 
-			mSuperstructure.updateOperatorCommands();
+			/* Smart Dashboard outputs */
+
 			mClaw.outputTelemetry();
-			// mArm.outputTelemetry();
-			// mPivot.outputTelemetry();
+			mArm.outputTelemetry();
+			mPivot.outputTelemetry();
 
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -353,9 +345,7 @@ public class Robot extends TimedRobot {
 			mLimelight.setLed(LedMode.OFF); // Turn off Limelight LED's if robot is disabled (your eyes will thank me)
 
 			// update alliance color from driver station while disabled
-			// mColorSensor.updateAllianceColor();
-			// update linear offset for rb ratio
-			// mColorSensor.updateColorOffset();
+			mLEDs.updateAllianceColor();
 
 			mLEDs.updateColor(mLEDs.getAllianceColor());
 

@@ -289,7 +289,7 @@ public class Superstructure extends Subsystem {
 
             } else if (mControlBoard.operator.getController().getPOV() == 0) {
 
-                mClaw.setPivotPosition(-10);
+                mClaw.setPivotPosition(0);
 
             }
             // } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
@@ -378,11 +378,10 @@ public class Superstructure extends Subsystem {
             return;
         }
 
-        State frontState = State.OFF;
-        State backState = State.OFF;
+        State mState = State.OFF;
+
         if (hasEmergency) {
-            frontState = State.EMERGENCY;
-            backState = State.EMERGENCY;
+            mState = State.EMERGENCY;
         } else {
             // if (!mClimbMode) {
             // if (getBallCount() == 2) {
@@ -421,10 +420,9 @@ public class Superstructure extends Subsystem {
             // }
             // }
         }
-        frontState = State.FLASHING_CYAN;
-        backState = State.FLASHING_PINK;
+        mState = State.FLASHING_CYAN;
 
-        mLEDs.applyStates(frontState, backState);
+        mLEDs.applyStates(mState);
     }
 
     /***

@@ -40,12 +40,12 @@ public class LEDs extends Subsystem {
 
     // led sections
     // private LEDStatus mTopStatus = new LEDStatus(14, 28);
-    private LEDStatus mBackStatus = new LEDStatus(0, 24);
-    private LEDStatus mFrontStatus = new LEDStatus(25, 56);
+    private LEDStatus mStatus = new LEDStatus(0, 27);
+    // private LEDStatus mFrontStatus = new LEDStatus(25, 56);
 
     // shuffleboard selectors
-    private SendableChooser<State> mFrontStateChooser;
-    private SendableChooser<State> mBackStateChooser;
+    // private SendableChooser<State> mFrontStateChooser;
+    private SendableChooser<State> mStateChooser;
 
     // animation to run when disabled
     private Animation mRedAllianceAnimation = new ColorFlowAnimation(255, 0, 0, 0, 0.5, 48, Direction.Forward);
@@ -104,16 +104,16 @@ public class LEDs extends Subsystem {
 
         // create sendable choosers for shuffleboard
         if (mUseSmartdash) {
-            mFrontStateChooser = new SendableChooser<>();
-            mBackStateChooser = new SendableChooser<>();
+            // mFrontStateChooser = new SendableChooser<>();
+            mStateChooser = new SendableChooser<>();
             for (State state : State.values()) {
-                mFrontStateChooser.addOption(state.getName(), state);
-                mBackStateChooser.addOption(state.getName(), state);
+                // mFrontStateChooser.addOption(state.getName(), state);
+                mStateChooser.addOption(state.getName(), state);
             }
-            mFrontStateChooser.setDefaultOption("OFF", State.OFF);
-            mBackStateChooser.setDefaultOption("OFF", State.OFF);
-            SmartDashboard.putData("Front LEDs", mFrontStateChooser);
-            SmartDashboard.putData("Back LEDs", mBackStateChooser);
+            // mFrontStateChooser.setDefaultOption("OFF", State.OFF);
+            mStateChooser.setDefaultOption("OFF", State.OFF);
+            SmartDashboard.putData("LEDs", mStateChooser);
+            // SmartDashboard.putData("Back LEDs", mBackStateChooser);
         }
     }
 
@@ -132,8 +132,8 @@ public class LEDs extends Subsystem {
 
             @Override
             public void onStop(double timestamp) {
-                mFrontStatus.reset();
-                mBackStatus.reset();
+                // mFrontStatus.reset();
+                mStatus.reset();
             }
         });
     }
@@ -143,7 +143,7 @@ public class LEDs extends Subsystem {
         outputTelemtry();
         timestamp = Timer.getFPGATimestamp(); // update timestamp for color cycling
         if (mUseSmartdash) { // pull states from smartdash
-            applyStates(mFrontStateChooser.getSelected(), mBackStateChooser.getSelected());
+            applyStates(mStateChooser.getSelected());
         }
     }
 
@@ -154,26 +154,26 @@ public class LEDs extends Subsystem {
 
     private void updateLeds() {
         // check if we need to cycle to next color
-        if (mFrontStatus.state.interval != Double.POSITIVE_INFINITY) {
-            if (timestamp - mFrontStatus.lastSwitchTime >= mFrontStatus.state.interval) {
-                mFrontStatus.nextColor();
-                mFrontStatus.lastSwitchTime = timestamp;
+        if (mStatus.state.interval != Double.POSITIVE_INFINITY) {
+            if (timestamp - mStatus.lastSwitchTime >= mStatus.state.interval) {
+                mStatus.nextColor();
+                mStatus.lastSwitchTime = timestamp;
             }
         }
 
-        Color mColor = mFrontStatus.getWantedColor();
+        Color mColor = mStatus.getWantedColor();
 
         mCandle.setLEDs(
                 mColor.r,
                 mColor.g,
-                mColor.b, 0, mFrontStatus.startIDx,
-                mFrontStatus.LEDCount);
+                mColor.b, 0, mStatus.startIDx,
+                mStatus.LEDCount);
 
-        mCandle.setLEDs(
-                mColor.r,
-                mColor.g,
-                mColor.b, 0, mBackStatus.startIDx,
-                mBackStatus.LEDCount);
+        // mCandle.setLEDs(
+        // mColor.r,
+        // mColor.g,
+        // mColor.b, 0, mBackStatus.startIDx,
+        // mBackStatus.LEDCount);
 
     }
 
@@ -193,18 +193,18 @@ public class LEDs extends Subsystem {
     // }
 
     // setter functions
-    public void applyStates(State frontState, State backState) {
-        mBackStatus.setState(backState);
-        mFrontStatus.setState(frontState);
+    public void applyStates(State state) {
+        mStatus.setState(state);
+        // mFrontStatus.setState(frontState);
     }
 
-    public void applyFrontState(State state) {
-        mFrontStatus.setState(state);
-    }
+    // public void applyFrontState(State state) {
+    // mFrontStatus.setState(state);
+    // }
 
-    public void applyBackState(State state) {
-        mBackStatus.setState(state);
-    }
+    // public void applyBackState(State state) {
+    // mBackStatus.setState(state);
+    // }
 
     // apply configuration to candle
     private void configureCandle() {
@@ -268,24 +268,25 @@ public class LEDs extends Subsystem {
     }
 
     // getter functions
-    public State getFrontState() {
-        return mFrontStatus.state;
+    public State getState() {
+        return mStatus.state;
     }
 
-    public State getBackState() {
-        return mBackStatus.state;
-    }
+    // public State getBackState() {
+    // return mBackStatus.state;
+    // }
 
     public boolean getUsingSmartdash() {
         return mUseSmartdash;
     }
 
     private void outputTelemtry() {
-        SmartDashboard.putString("Front LED Status", getFrontState().name);
-        SmartDashboard.putString("Back LED Status", getBackState().name);
+        SmartDashboard.putString("LED Status", getState().name);
+        // SmartDashboard.putString("Back LED Status", getBackState().name);
 
-        SmartDashboard.putString("Front LED Colors", mFrontStatus.getWantedColor().toString());
-        SmartDashboard.putString("Back LED Colors", mBackStatus.getWantedColor().toString());
+        SmartDashboard.putString("LED Colors", mStatus.getWantedColor().toString());
+        // SmartDashboard.putString("Back LED Colors",
+        // mBackStatus.getWantedColor().toString());
     }
 
     // class for holding information about each section
