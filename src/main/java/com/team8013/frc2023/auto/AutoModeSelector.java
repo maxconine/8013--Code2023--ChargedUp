@@ -11,11 +11,12 @@ import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
 
 public class AutoModeSelector {
     enum DesiredMode {
-        DO_NOTHING, 
+        DO_NOTHING,
         TEST_PATH_AUTO,
         TOP_CONE_MODE,
         DRIVE_FORWARD,
-        CURVY_PATH
+        CURVY_PATH,
+        HIGH_CONE_TO_BALANCE
     }
 
     private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -31,8 +32,8 @@ public class AutoModeSelector {
         mModeChooser.addOption("Top Cone Mode", DesiredMode.TOP_CONE_MODE);
         mModeChooser.addOption("Drive Forward Mode", DesiredMode.DRIVE_FORWARD);
         mModeChooser.addOption("Curvy Path Mode", DesiredMode.CURVY_PATH);
-        // mModeChooser.addOption("Five Ball Mode", DesiredMode.FIVE_BALL_AUTO);
-        
+        mModeChooser.addOption("High Cone To Balance Mode", DesiredMode.HIGH_CONE_TO_BALANCE);
+
         SmartDashboard.putData(mModeChooser);
         System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
     }
@@ -51,39 +52,39 @@ public class AutoModeSelector {
 
     private Optional<AutoModeBase> getAutoModeForParams(DesiredMode mode) {
         switch (mode) {
-        case DO_NOTHING:
-            return Optional.of(new DoNothingMode());
+            case DO_NOTHING:
+                return Optional.of(new DoNothingMode());
 
-        case TEST_PATH_AUTO:
-            return Optional.of(new TestPathMode());
+            case TEST_PATH_AUTO:
+                return Optional.of(new TestPathMode());
 
-        case TOP_CONE_MODE:
-            return Optional.of(new TopConeAutoMode());
+            case TOP_CONE_MODE:
+                return Optional.of(new TopConeAutoMode());
 
-        case DRIVE_FORWARD:
-            return Optional.of(new DriveForward());
+            case DRIVE_FORWARD:
+                return Optional.of(new DriveForward());
 
-        case CURVY_PATH:
-            return Optional.of(new CurvyPathMode());
+            case CURVY_PATH:
+                return Optional.of(new CurvyPathMode());
 
-        // case ONE_BALL_RIGHT_AUTO:
-        //     return Optional.of(new OneBallRightMode());
+            case HIGH_CONE_TO_BALANCE:
+                return Optional.of(new HighConeToBalanceMode());
 
-        // case TWO_BALL_AUTO:
-        //     return Optional.of(new TwoBallMode());
+            // case TWO_BALL_AUTO:
+            // return Optional.of(new TwoBallMode());
 
-        // case TWO_BY_ONE_AUTO:
-        //     return Optional.of(new TwobyOneMode());
+            // case TWO_BY_ONE_AUTO:
+            // return Optional.of(new TwobyOneMode());
 
-        // case TWO_BY_TWO_AUTO:
-        //     return Optional.of(new TwobyTwoMode());
+            // case TWO_BY_TWO_AUTO:
+            // return Optional.of(new TwobyTwoMode());
 
-        // case FIVE_BALL_AUTO:
-        //     return Optional.of(new FiveBallMode());
-            
-        default:
-            System.out.println("ERROR: unexpected auto mode: " + mode);
-            break;
+            // case FIVE_BALL_AUTO:
+            // return Optional.of(new FiveBallMode());
+
+            default:
+                System.out.println("ERROR: unexpected auto mode: " + mode);
+                break;
         }
 
         System.err.println("No valid auto mode found for  " + mode);

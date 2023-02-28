@@ -48,10 +48,10 @@ public class LEDs extends Subsystem {
     private SendableChooser<State> mStateChooser;
 
     // animation to run when disabled
-    private Animation mRedAllianceAnimation = new ColorFlowAnimation(255, 0, 0, 0, 0.5, 48, Direction.Forward);
-    private Animation mBlueAllianceAnimation = new ColorFlowAnimation(0, 0, 255, 0, 0.5, 48, Direction.Backward);
-    private Animation mNoAllianceAnimation = new ColorFlowAnimation(185, 64, 255, 0, 0.5, 48, Direction.Backward);
-    private Animation mChampsRainbowAutoAnimation = new RainbowAnimation(1.0, 1.0, 48);
+    private Animation mRedAllianceAnimation = new ColorFlowAnimation(255, 0, 0, 0, 0.5, 56, Direction.Forward);
+    private Animation mBlueAllianceAnimation = new ColorFlowAnimation(0, 0, 255, 0, 0.5, 56, Direction.Backward);
+    private Animation mNoAllianceAnimation = new ColorFlowAnimation(185, 64, 255, 0, 0.5, 56, Direction.Backward);
+    private Animation mChampsRainbowAutoAnimation = new RainbowAnimation(1.0, 1.0, 56);
 
     public ColorChoices mAllianceColor = ColorChoices.NONE;
     public ColorChoices mMatchedColor;

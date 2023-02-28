@@ -12,7 +12,9 @@ import com.team8013.frc2023.loops.Loop;
 import com.team8013.frc2023.subsystems.LEDs.State;
 import com.team254.lib.geometry.Pose2d;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -285,11 +287,15 @@ public class Superstructure extends Subsystem {
             System.out.println(mClaw.getPivotDemand() + "&&" + mClaw.getPivotPosition());
             if (mControlBoard.operator.getController().getPOV() == 90) {
 
-                mClaw.setPivotPosition(90);
+                mClaw.setPivotPosition(Constants.ClawConstants.piv_90Rotation);
 
             } else if (mControlBoard.operator.getController().getPOV() == 0) {
 
-                mClaw.setPivotPosition(0);
+                mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
+
+            } else if (mControlBoard.operator.getController().getPOV() == 180) {
+
+                mClaw.setPivotPosition(Constants.ClawConstants.piv_180Rotation);
 
             }
             // } else if ((mControlBoard.getOperatorRightYaw() > 0.4)
@@ -303,6 +309,7 @@ public class Superstructure extends Subsystem {
             // left bumper
             else if (mControlBoard.getRelease()) {
                 mClaw.openGrip();
+
                 // } else if (mControlBoard.operator.getController().getPOV() == 180) {
                 // mClaw.setPivotDemand(0.4);
                 // // System.out.println("trying to turn");
@@ -322,6 +329,57 @@ public class Superstructure extends Subsystem {
     /*** RUMBLE OPERATOR CONTROLLERS ***/
     public void updateRumble() {
         mControlBoard.setOperatorRumble(false);
+    }
+
+    public void pivUpAuto() {
+
+        mPivot.setPivotForHigh();
+
+    }
+
+    public void armExtendHighAuto() {
+        mClaw.setPivotPosition(0);
+        mArm.setExtendForHigh();
+
+    }
+
+    public void dropConeAuto() {
+
+        mClaw.openGrip();
+
+    }
+
+    public void pivPickupAuto() {
+
+        mPivot.setPivotForPickup();
+        mArm.setExtendForPickup();
+
+    }
+
+    public void clampCube() {
+
+        mClaw.closeGrip();
+
+    }
+
+    public void pullArmInAuto() {
+        mArm.setArmDown();
+    }
+
+    public void pullPivInAuto() {
+        mPivot.setPivotDown();
+    }
+
+    public void engageChargeStation() {
+        if (mPigeon.getPitch().getDegrees() > 2.0) {
+            mSwerve.drive(new Translation2d(0.1, 0.0), 0, true, false);
+            engageChargeStation();
+        } else if (mPigeon.getPitch().getDegrees() < -2.0) {
+            mSwerve.drive(new Translation2d(-0.1, 0.0), 0, true, false);
+            engageChargeStation();
+        } else {
+            SmartDashboard.putString("ChargeStation", "Charge Station Engaged");
+        }
     }
 
     /***

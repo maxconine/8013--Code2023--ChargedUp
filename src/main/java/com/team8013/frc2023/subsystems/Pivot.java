@@ -271,6 +271,7 @@ public class Pivot extends Subsystem {
     public void outputTelemetry() {
         SmartDashboard.putNumber("Pivot Demand", mPeriodicIO.pivot_demand);
         SmartDashboard.putNumber("Pivot Position", mPeriodicIO.pivot_motor_position);
+        SmartDashboard.putNumber("pivot cancoder", mPeriodicIO.pivot_cancoder);
         SmartDashboard.putNumber("Pivot Voltage ", mPeriodicIO.pivot_voltage);
         SmartDashboard.putNumber("Pivot Current ", mPeriodicIO.pivot_current);
         SmartDashboard.putNumber("Pivot CanCoder ", mPeriodicIO.pivot_cancoder);

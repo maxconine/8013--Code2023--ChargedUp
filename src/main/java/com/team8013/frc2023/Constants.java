@@ -317,7 +317,7 @@ public class Constants {
                 public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final int kPickupTravelDistance = 120000;
+                public static final int kPickupTravelDistance = 140000;
                 public static final int kHybridTravelDistance = 100000; // kLeftTravelDistance * 0.75
                 public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
                 public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
@@ -366,15 +366,20 @@ public class Constants {
         public static final class ClawConstants {
                 /* PIVOT */
 
-                public static final double piv_kP = .2;
+                public static final double piv_kP = .0085;
                 public static final double piv_kI = 0;
-                public static final double piv_kD = 0.0;
+                public static final double piv_kD = 0.00025;
 
                 public static final double piv_kMaxOutput = 0.95;
                 public static final double piv_kMinOutput = -0.95;
 
                 public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
                 public static final double piv_MinRotation = -450;
+
+                public static final double piv_ZeroRotation = 0.1;
+                public static final double piv_90Rotation = 87;
+                public static final double piv_180Rotation = 160;
+                public static final double piv_cancoderOffset = 241.38;
 
                 public static final double pivotGearRatio = 1.535714; // (86 / 56);
 
@@ -384,15 +389,15 @@ public class Constants {
 
                 /* CLAW */
 
-                public static final double grip_kP = 0.3;
+                public static final double grip_kP = 0.35;
                 public static final double grip_kI = 0;
-                public static final double grip_kD = 0.0;
+                public static final double grip_kD = 0.001;
 
                 // how fast you can manually control claw (percent output)
                 public static final double grip_kMaxOutput = 0.95;
                 public static final double grip_kMinOutput = -0.95;
 
-                public static final double kClawOpenDistance = 6; // position for pickup
+                public static final double kClawOpenDistance = 5.5; // position for pickup
                 public static final double kClawMinDistance = -3; // encoder hard limit
                 public static final double kClawMaxDistance = 9; // encoder hard limit
 

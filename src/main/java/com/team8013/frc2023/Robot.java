@@ -171,6 +171,8 @@ public class Robot extends TimedRobot {
 			// set champs pride automation
 			mLEDs.setChampsAutoAnimation();
 
+			mClaw.resetGripEncoder();
+
 		} catch (Throwable t) {
 			System.out.println("crash tracker for auto");
 			CrashTracker.logThrowableCrash(t);
@@ -198,7 +200,7 @@ public class Robot extends TimedRobot {
 			}
 			mClaw.stopPivot();
 			mClaw.setPivotTeleopInit();
-			mClaw.resetGripEncoder();
+
 			// mClaw.setPivotPosition(0);
 			mArm.pullArmIntoZero();
 			mDisabledLooper.stop();
@@ -212,8 +214,6 @@ public class Robot extends TimedRobot {
 
 			// mSuperstructure.setWantEject(false, false);
 
-			// mClimber.setBrakeMode(true);
-
 			// mSuperstructure.setEjectDisable(false);
 
 			// TODO:
@@ -223,6 +223,8 @@ public class Robot extends TimedRobot {
 			// clear any previous automation from auto
 			mLEDs.clearAnimation();
 			mLEDs.applyStates(State.OFF);
+
+			mClaw.resetGripEncoder();
 
 			// set states for teleop init
 			// mSuperstructure.setInitialTeleopStates();
