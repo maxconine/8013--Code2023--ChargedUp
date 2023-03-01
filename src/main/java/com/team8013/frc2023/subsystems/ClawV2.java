@@ -104,13 +104,6 @@ public class ClawV2 extends Subsystem {
         mPeriodicIO.grip_motor_position = m_GripEncoder.getDistance();
         mPeriodicIO.limitSwitchActivated = !(m_LimitSwitch.get());
 
-        if (Timer.getFPGATimestamp() > 30 && Timer.getFPGATimestamp() < 60) {
-            kClawOpenDistance = 6;
-        }
-
-        if (Timer.getFPGATimestamp() > 60) {
-            kClawOpenDistance = 6.5;
-        }
         // mPeriodicIO.wantedClosing =
 
         // send log data
@@ -240,7 +233,9 @@ public class ClawV2 extends Subsystem {
     }
 
     public double getRelativeCancoder() {
-        return (m_ClawCANCoder.getPosition() - Constants.ClawConstants.piv_cancoderOffset + 331 - 360); // + 155.07);
+        return (m_ClawCANCoder.getPosition()
+                - Constants.ClawConstants.piv_cancoderOffset + 301);// + 331 - 360); // +
+        // 155.07);
     }
 
     public synchronized void resetPositions() {
@@ -305,7 +300,7 @@ public class ClawV2 extends Subsystem {
         }
 
         mPeriodicIO.wantedClosing = false;
-        if (mPeriodicIO.grip_motor_position < kClawOpenDistance) {
+        if (mPeriodicIO.grip_motor_position < 15) {
             mPeriodicIO.grip_demand = .7;
         } else {
             mPeriodicIO.grip_demand = 0;
@@ -316,6 +311,14 @@ public class ClawV2 extends Subsystem {
             m_GripEncoder.reset();
         }
 
+    }
+
+    public boolean getLimitSwitch() {
+        if (mPeriodicIO.limitSwitchActivated) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void closeGrip() {
@@ -439,6 +442,14 @@ public class ClawV2 extends Subsystem {
     // @return retruns current going to canSparkMax
     public double getGripCurrent() {
         return mPeriodicIO.grip_current;
+    }
+
+    public boolean getWantGrip() {
+        return mPeriodicIO.wantedClosing;
+    }
+
+    public boolean getWantRelease() {
+        return (mPeriodicIO.grip_motor_velocity > 0.2);
     }
 
     public boolean checkSystem() {

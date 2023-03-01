@@ -40,7 +40,7 @@ public class LEDs extends Subsystem {
 
     // led sections
     // private LEDStatus mTopStatus = new LEDStatus(14, 28);
-    private LEDStatus mStatus = new LEDStatus(0, 27);
+    private LEDStatus mStatus = new LEDStatus(0, 56);
     // private LEDStatus mFrontStatus = new LEDStatus(25, 56);
 
     // shuffleboard selectors

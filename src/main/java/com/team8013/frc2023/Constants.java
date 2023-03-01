@@ -202,14 +202,14 @@ public class Constants {
                 public static final double kSlowMaxAngularSpeedRadiansPerSecondSquared = Math
                                 .pow(kSlowMaxAngularSpeedRadiansPerSecond, 2);
 
-                public static final double kMaxAngularSpeedRadiansPerSecond = 0.6 * Math.PI; // 0g
+                public static final double kMaxAngularSpeedRadiansPerSecond = 0.8 * Math.PI; // 0g
                 public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(
                                 kMaxAngularSpeedRadiansPerSecond,
                                 2);
 
                 public static final double kPXController = 1; // og 1 0.2 works
                 public static final double kPYController = 1; // og 1 0.3 works
-                public static final double kPThetaController = 1; // og 5
+                public static final double kPThetaController = 0.7; // 3.8; // og 5
 
                 // Constraint for the motion profilied robot angle controller
                 public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -313,14 +313,16 @@ public class Constants {
                 public static final int changeArmManualAmount = 2000;
 
                 public static final int kMinHeight = 0; // ticks
-                public static final int kMaxHeight = 244984; // ticks
-                public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; // ticks
+                // public static final int kMaxHeight = 244984; // ticks
+                // public static final int kTravelDistance = kMaxHeight - kMinHeight + 500; //
+                // ticks
 
                 // TODO I have no idea the max height ticks
                 public static final int kPickupTravelDistance = 140000;
                 public static final int kHybridTravelDistance = 100000; // kLeftTravelDistance * 0.75
                 public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
                 public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
+                public static final int kAutoHighTravelDistance = 290000; // kLeftTravelDistance * 0.75
 
                 /* GENERAL CLIMBER CONSTANTS USED */
 
@@ -360,6 +362,7 @@ public class Constants {
                 public static final double kHybridTravelDistance = 47.37 + 5; // degrees
                 public static final double kMidTravelDistance = 95.47 + 5;
                 public static final double kHighTravelDistance = 106.2 + 5;
+                public static final double kAutoHighTravelDistance = 105;
 
         }
 
@@ -398,7 +401,7 @@ public class Constants {
                 public static final double grip_kMinOutput = -0.95;
 
                 public static final double kClawOpenDistance = 0; // position for pickup
-                public static final double kClawMinDistance = -8.5; // encoder hard limit
+                public static final double kClawMinDistance = -10; // encoder hard limit
                 public static final double kClawMaxDistance = 10; // encoder hard limit
 
                 public static final double grip_rateDiff = 0.97; // Percent of max the speed needs to decrease from

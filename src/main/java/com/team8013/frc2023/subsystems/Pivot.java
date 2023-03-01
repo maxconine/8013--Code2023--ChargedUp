@@ -183,6 +183,10 @@ public class Pivot extends Subsystem {
         setPivotPosition(Constants.PivotConstants.kHighTravelDistance);
     }
 
+    public void setPivotForAutoHigh() {
+        setPivotPosition(Constants.PivotConstants.kAutoHighTravelDistance);
+    }
+
     public void setPivotDown() {
         setPivotPosition(0); // rotations
     }

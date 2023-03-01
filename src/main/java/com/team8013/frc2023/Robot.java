@@ -19,6 +19,7 @@ import com.team8013.frc2023.auto.AutoModeExecutor;
 import com.team8013.frc2023.auto.AutoModeSelector;
 import com.team8013.frc2023.auto.modes.AutoModeBase;
 import com.team8013.frc2023.controlboard.ControlBoard;
+import com.team8013.frc2023.drivers.Pigeon;
 import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.CrashTracker;
 import com.team8013.frc2023.loops.Looper;
@@ -78,6 +79,7 @@ public class Robot extends TimedRobot {
 	private final Arm mArm = Arm.getInstance();
 	private final Limelight mLimelight = Limelight.getInstance();
 	private final LEDs mLEDs = LEDs.getInstance();
+	private final Pigeon mPigeon = Pigeon.getInstance();
 
 	// robot state estimator
 	private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
@@ -171,7 +173,9 @@ public class Robot extends TimedRobot {
 			// set champs pride automation
 			mLEDs.setChampsAutoAnimation();
 
-			mClaw.resetGripEncoder();
+			// mPigeon.resetPitch(); ????HOW DO WE RESET PITCH, LOOK IN METHOD
+
+			// mClaw.resetGripEncoder();
 
 		} catch (Throwable t) {
 			System.out.println("crash tracker for auto");
@@ -186,6 +190,11 @@ public class Robot extends TimedRobot {
 		// TODO;
 		mLimelight.setLed(Limelight.LedMode.ON);
 		mLEDs.updateState();
+		mSuperstructure.getClawOpen();
+
+		SmartDashboard.putNumber("Pitch", mPigeon.getPitch().getDegrees());
+		System.out.println(mPigeon.getPitch().getDegrees());
+
 		// mLEDs.applyStates(State.SOLID_BLUE);
 	}
 
@@ -225,7 +234,7 @@ public class Robot extends TimedRobot {
 			mLEDs.clearAnimation();
 			mLEDs.applyStates(State.OFF);
 
-			mClaw.resetGripEncoder();
+			// mClaw.resetGripEncoder();
 
 			// set states for teleop init
 			// mSuperstructure.setInitialTeleopStates();

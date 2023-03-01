@@ -71,6 +71,7 @@ public class Superstructure extends Subsystem {
         private boolean settingHigh = false;
         private boolean canControlArmManually = true;
         private int maxArmPosition = 0;
+        private boolean openingClaw;
 
         // time measurements
         public double timestamp;
@@ -308,8 +309,8 @@ public class Superstructure extends Subsystem {
             }
             // left bumper
             else if (mControlBoard.getRelease()) {
-                mClaw.openGrip();
 
+                mClaw.openGrip();
                 // } else if (mControlBoard.operator.getController().getPOV() == 180) {
                 // mClaw.setPivotDemand(0.4);
                 // // System.out.println("trying to turn");
@@ -333,20 +334,29 @@ public class Superstructure extends Subsystem {
 
     public void pivUpAuto() {
 
-        mPivot.setPivotForHigh();
+        mPivot.setPivotForAutoHigh();
 
     }
 
     public void armExtendHighAuto() {
         mClaw.setPivotPosition(0);
-        mArm.setExtendForHigh();
+        mArm.setAutoExtendForHigh();
 
     }
 
     public void dropConeAuto() {
 
-        mClaw.openGrip();
+        mPeriodicIO.openingClaw = true;
 
+    }
+
+    public void getClawOpen() {
+        if (mPeriodicIO.openingClaw) {
+            mClaw.openGrip();
+        }
+        if (mClaw.getLimitSwitch()) {
+            mPeriodicIO.openingClaw = false;
+        }
     }
 
     public void pivPickupAuto() {
@@ -354,6 +364,11 @@ public class Superstructure extends Subsystem {
         mPivot.setPivotForPickup();
         mArm.setExtendForPickup();
 
+    }
+
+    public void pivDownAuto() {
+        mArm.setArmDown();
+        mPivot.setPivotDown();
     }
 
     public void clampCube() {
@@ -371,14 +386,18 @@ public class Superstructure extends Subsystem {
     }
 
     public void engageChargeStation() {
-        if (mPigeon.getPitch().getDegrees() > 2.0) {
-            mSwerve.drive(new Translation2d(0.1, 0.0), 0, true, false);
+
+        if (mPigeon.getPitch().getDegrees() > .02) {
+            mSwerve.drive(new Translation2d(1, 0), 0, true, true);
             engageChargeStation();
-        } else if (mPigeon.getPitch().getDegrees() < -2.0) {
-            mSwerve.drive(new Translation2d(-0.1, 0.0), 0, true, false);
+            SmartDashboard.putBoolean("ChargeStation", false);
+        } else if (mPigeon.getPitch().getDegrees() < -.02) {
+            mSwerve.drive(new Translation2d(-1, 0), 0, true, true);
             engageChargeStation();
+            SmartDashboard.putBoolean("ChargeStation", false);
         } else {
-            SmartDashboard.putString("ChargeStation", "Charge Station Engaged");
+            SmartDashboard.putBoolean("ChargeStation", true);
+            // SmartDashboard.putNumber("Pitch", mPigeon.getPitch().getDegrees());
         }
     }
 
@@ -441,21 +460,16 @@ public class Superstructure extends Subsystem {
         if (hasEmergency) {
             mState = State.EMERGENCY;
         } else {
-            // if (!mClimbMode) {
-            // if (getBallCount() == 2) {
-            // bottomState = State.SOLID_GREEN;
-            // } else if (getBallCount() == 1) {
-            // bottomState = State.SOLID_CYAN;
-            // } else {
-            // bottomState = State.SOLID_ORANGE;
-            // }
-            // if (getWantsSpit()) {
-            // topState = State.SOLID_ORANGE;
-            // } else if (getWantsFender()) {
-            // topState = State.SOLID_CYAN;
-            // } else if (mPeriodicIO.SHOOT) {
-            // topState = State.FLASHING_PINK;
-            // } else if (isAimed()) {
+            if (mClaw.mPeriodicIO.grip_motor_velocity < -0.2) {
+                mState = State.FLASHING_ORANGE;
+            } else if (mClaw.getWantRelease()) {
+                mState = State.FLASHING_CYAN;
+            } else if (Timer.getFPGATimestamp() > 135) {
+                mState = State.FLASHING_PINK;
+            } else {
+                mState = State.SOLID_YELLOW;
+            }
+            // else if (isAimed()) {
             // topState = State.FLASHING_GREEN;
             // } else if (hasTarget()) {
             // topState = State.SOLID_PURPLE;
@@ -478,7 +492,7 @@ public class Superstructure extends Subsystem {
             // }
             // }
         }
-        mState = State.FLASHING_CYAN;
+        // mState = State.FLASHING_CYAN;
 
         mLEDs.applyStates(mState);
     }

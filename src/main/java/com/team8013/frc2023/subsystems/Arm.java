@@ -229,6 +229,15 @@ public class Arm extends Subsystem {
         setArmPosition(Constants.ArmConstants.kHighTravelDistance);
     }
 
+    public void setAutoExtendForHigh() {
+        if (mArmControlState != ArmControlState.MOTION_MAGIC) {
+            mArmControlState = ArmControlState.MOTION_MAGIC;
+        }
+        mPeriodicIO.isPulledIn = false;
+        mPeriodicIO.arm_maxTravel = Constants.ArmConstants.kAutoHighTravelDistance;
+        setArmPosition(Constants.ArmConstants.kAutoHighTravelDistance);
+    }
+
     public void setArmDown() {
         if (mArmControlState != ArmControlState.MOTION_MAGIC) {
             mArmControlState = ArmControlState.MOTION_MAGIC;

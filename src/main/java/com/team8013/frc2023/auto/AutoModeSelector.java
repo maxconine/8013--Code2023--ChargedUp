@@ -7,16 +7,24 @@ import java.lang.StackWalker.Option;
 import java.util.Optional;
 
 import com.team8013.frc2023.auto.modes.*;
+import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.*;
+import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.HighConeMidfieldToBalance;
+import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.HighConeToBalanceMode;
+import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.RightConeStraightToBalance;
+import com.team8013.frc2023.auto.modes.StraightBackModes.LeftConeToStraightBack;
+import com.team8013.frc2023.auto.modes.StraightBackModes.RightConeToStraightBack;
 import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
 
 public class AutoModeSelector {
     enum DesiredMode {
         DO_NOTHING,
-        TEST_PATH_AUTO,
-        TOP_CONE_MODE,
-        DRIVE_FORWARD,
         CURVY_PATH,
-        HIGH_CONE_TO_BALANCE
+        HIGH_CONE_TO_BALANCE,
+        CONE_RIGHT_STRAIGHT_TO_BALANCE,
+        CONE_LEFT_STRAIGHT_TO_BALANCE,
+        RIGHT_CONE_EXIT_LAST_SECOND,
+        LEFT_CONE_EXIT_LAST_SECOND,
+        HIGH_CONE_MIDFIELD_TO_BALANCE
     }
 
     private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -28,11 +36,16 @@ public class AutoModeSelector {
     public AutoModeSelector() {
         mModeChooser = new SendableChooser<>();
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
-        mModeChooser.addOption("Test Path Mode", DesiredMode.TEST_PATH_AUTO);
-        mModeChooser.addOption("Top Cone Mode", DesiredMode.TOP_CONE_MODE);
-        mModeChooser.addOption("Drive Forward Mode", DesiredMode.DRIVE_FORWARD);
         mModeChooser.addOption("Curvy Path Mode", DesiredMode.CURVY_PATH);
         mModeChooser.addOption("High Cone To Balance Mode", DesiredMode.HIGH_CONE_TO_BALANCE);
+        mModeChooser.addOption("Cone RIGHT Straight To Balance Mode", DesiredMode.CONE_RIGHT_STRAIGHT_TO_BALANCE);
+        mModeChooser.addOption("Cone LEFT Straight To Balance Mode", DesiredMode.CONE_LEFT_STRAIGHT_TO_BALANCE);
+        mModeChooser.addOption("High Cone RIGHT to last second exit Mode",
+                DesiredMode.RIGHT_CONE_EXIT_LAST_SECOND);
+        mModeChooser.addOption("High Cone LEFT to last second exit Mode",
+                DesiredMode.LEFT_CONE_EXIT_LAST_SECOND);
+        mModeChooser.addOption("High Cone Mid TO Balance Mode",
+                DesiredMode.HIGH_CONE_MIDFIELD_TO_BALANCE);
 
         SmartDashboard.putData(mModeChooser);
         System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
@@ -55,29 +68,26 @@ public class AutoModeSelector {
             case DO_NOTHING:
                 return Optional.of(new DoNothingMode());
 
-            case TEST_PATH_AUTO:
-                return Optional.of(new TestPathMode());
-
-            case TOP_CONE_MODE:
-                return Optional.of(new TopConeAutoMode());
-
-            case DRIVE_FORWARD:
-                return Optional.of(new DriveForward());
-
             case CURVY_PATH:
                 return Optional.of(new CurvyPathMode());
 
             case HIGH_CONE_TO_BALANCE:
                 return Optional.of(new HighConeToBalanceMode());
 
-            // case TWO_BALL_AUTO:
-            // return Optional.of(new TwoBallMode());
+            case CONE_RIGHT_STRAIGHT_TO_BALANCE:
+                return Optional.of(new RightConeStraightToBalance());
 
-            // case TWO_BY_ONE_AUTO:
-            // return Optional.of(new TwobyOneMode());
+            case CONE_LEFT_STRAIGHT_TO_BALANCE:
+                return Optional.of(new LeftConeStraightToBalance());
 
-            // case TWO_BY_TWO_AUTO:
-            // return Optional.of(new TwobyTwoMode());
+            case LEFT_CONE_EXIT_LAST_SECOND:
+                return Optional.of(new LeftConeToStraightBack());
+
+            case RIGHT_CONE_EXIT_LAST_SECOND:
+                return Optional.of(new RightConeToStraightBack());
+
+            case HIGH_CONE_MIDFIELD_TO_BALANCE:
+                return Optional.of(new HighConeMidfieldToBalance());
 
             // case FIVE_BALL_AUTO:
             // return Optional.of(new FiveBallMode());
