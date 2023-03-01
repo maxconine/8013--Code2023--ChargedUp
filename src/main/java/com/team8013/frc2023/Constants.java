@@ -397,9 +397,9 @@ public class Constants {
                 public static final double grip_kMaxOutput = 0.95;
                 public static final double grip_kMinOutput = -0.95;
 
-                public static final double kClawOpenDistance = 5.5; // position for pickup
-                public static final double kClawMinDistance = -3; // encoder hard limit
-                public static final double kClawMaxDistance = 9; // encoder hard limit
+                public static final double kClawOpenDistance = 0; // position for pickup
+                public static final double kClawMinDistance = -8.5; // encoder hard limit
+                public static final double kClawMaxDistance = 10; // encoder hard limit
 
                 public static final double grip_rateDiff = 0.97; // Percent of max the speed needs to decrease from
 

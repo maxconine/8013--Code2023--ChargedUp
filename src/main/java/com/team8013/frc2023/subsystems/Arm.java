@@ -55,7 +55,7 @@ public class Arm extends Subsystem {
 
         // Set defaults
         mArm.set(ControlMode.PercentOutput, 0);
-        mArm.setInverted(true);
+        mArm.setInverted(false);
         mArm.setSelectedSensorPosition(0.0);
 
         mArm.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);

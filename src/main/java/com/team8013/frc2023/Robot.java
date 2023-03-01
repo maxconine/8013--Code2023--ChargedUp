@@ -198,6 +198,7 @@ public class Robot extends TimedRobot {
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
 			}
+
 			mClaw.stopPivot();
 			mClaw.setPivotTeleopInit();
 

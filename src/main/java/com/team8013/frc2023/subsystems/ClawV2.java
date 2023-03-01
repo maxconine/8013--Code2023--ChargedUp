@@ -13,6 +13,7 @@ import com.team8013.frc2023.logger.LoggingSystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +37,7 @@ public class ClawV2 extends Subsystem {
     VictorSPX m_PivotMotor;
     Encoder m_PivotEncoder;
     CANCoder m_ClawCANCoder;
+    DigitalInput m_LimitSwitch;
 
     PIDController m_GripPid;
     VictorSPX m_GripMotor;
@@ -56,6 +58,8 @@ public class ClawV2 extends Subsystem {
     public PeriodicIO mPeriodicIO = new PeriodicIO();
 
     private ClawV2() {
+        m_LimitSwitch = new DigitalInput(4);
+
         m_PivotEncoder = new Encoder(Ports.CLAW_PIV_ENCODER_A, Ports.CLAW_PIV_ENCODER_B);
 
         m_ClawCANCoder = new CANCoder(Ports.CLAW_CANCODER, "canivore1");
@@ -81,6 +85,7 @@ public class ClawV2 extends Subsystem {
         mPeriodicIO.wantedClosing = false;
         mPeriodicIO.encoderBroken = false;
         mPeriodicIO.maybeEncoderBroken = false;
+
     }
 
     @Override
@@ -97,6 +102,7 @@ public class ClawV2 extends Subsystem {
         mPeriodicIO.grip_current = m_GripMotor.getMotorOutputVoltage();
         mPeriodicIO.grip_motor_velocity = m_GripEncoder.getRate();
         mPeriodicIO.grip_motor_position = m_GripEncoder.getDistance();
+        mPeriodicIO.limitSwitchActivated = !(m_LimitSwitch.get());
 
         if (Timer.getFPGATimestamp() > 30 && Timer.getFPGATimestamp() < 60) {
             kClawOpenDistance = 6;
@@ -145,12 +151,11 @@ public class ClawV2 extends Subsystem {
 
                     m_GripMotor.set(VictorSPXControlMode.PercentOutput, -Constants.ClawConstants.grip_kMaxOutput);
 
-                    mPeriodicIO.grip_peakSpeed = Math.max(mPeriodicIO.grip_motor_velocity,
-                            mPeriodicIO.grip_peakSpeed);
+                    mPeriodicIO.grip_peakSpeed = 0;
 
                     // if grip rate slows down to ex: 70% of max speed greater than 2, or claw is
                     // too far in
-                    if ((mPeriodicIO.grip_motor_velocity > -2)
+                    if ((mPeriodicIO.grip_motor_velocity > -2.5)
                             && (mPeriodicIO.grip_motor_velocity < (mPeriodicIO.grip_peakSpeed
                                     * Constants.ClawConstants.grip_rateDiff))
                             || (mPeriodicIO.grip_motor_position <= Constants.ClawConstants.kClawMinDistance)) {
@@ -304,6 +309,11 @@ public class ClawV2 extends Subsystem {
             mPeriodicIO.grip_demand = .7;
         } else {
             mPeriodicIO.grip_demand = 0;
+        }
+
+        if (mPeriodicIO.limitSwitchActivated) {
+            mPeriodicIO.grip_demand = 0;
+            m_GripEncoder.reset();
         }
 
     }
@@ -461,6 +471,7 @@ public class ClawV2 extends Subsystem {
 
         SmartDashboard.putBoolean("Claw Encoders Broken", mPeriodicIO.encoderBroken);
         SmartDashboard.putBoolean("Claw Encoders MAYBE Broken", mPeriodicIO.maybeEncoderBroken);
+        SmartDashboard.putBoolean("Limit Switch Activated", mPeriodicIO.limitSwitchActivated);
     }
 
     public static class PeriodicIO {
@@ -484,6 +495,7 @@ public class ClawV2 extends Subsystem {
         public double grip_peakSpeed;
 
         public boolean wantedClosing;
+        public boolean limitSwitchActivated;
         // public boolean spedUp;
     }
 
