@@ -66,11 +66,11 @@ public class RightConeStraightToBalance extends AutoModeBase {
 
                 runAction(new LambdaAction(() -> mSuperstructure.armExtendHighAuto()));
 
-                runAction(new WaitAction(2));
+                runAction(new WaitAction(1.7));
 
                 runAction(new LambdaAction(() -> mSuperstructure.dropConeAuto()));
 
-                runAction(new WaitAction(1.5));
+                runAction(new WaitAction(.75));
 
                 System.out.println("reset odometry action run");
 
@@ -79,15 +79,19 @@ public class RightConeStraightToBalance extends AutoModeBase {
                 // reset odometry at the start of the trajectory
                 runAction(new LambdaAction(() -> mSwerve.resetOdometry(farRightTopNodeToPickup_a.getInitialPose())));
 
-                runAction(new WaitAction(2));
+                // runAction(new WaitAction(2));
 
-                runAction(new RaceAction(
-                                new SeriesAction(List.of(
-                                                farRightTopNodeToPickup_a)),
+                runAction(farRightTopNodeToPickup_a);
 
-                                new SeriesAction(List.of(
-                                                // new WaitAction(0.1),
-                                                new LambdaAction(() -> mSuperstructure.pivDownAuto())))));
+                // runAction(new RaceAction(
+                // new SeriesAction(List.of(
+                // farRightTopNodeToPickup_a)),
+
+                // new SeriesAction(List.of(
+                // // new WaitAction(0.1),
+                // new LambdaAction(() -> mSuperstructure.pivDownAuto())))));
+
+                runAction(new LambdaAction(() -> mSuperstructure.pivDownAuto()));
                 // ,new LambdaAction(() -> mSuperstructure.setWantIntake(true))))));
 
                 // runAction(new LambdaAction(() -> mSuperstructure.pivPickupAuto()));
@@ -110,7 +114,7 @@ public class RightConeStraightToBalance extends AutoModeBase {
 
                 System.out.println("charge station engaging");
 
-                runAction(new LambdaAction(() -> mSuperstructure.engageChargeStation()));
+                runAction(new LambdaAction(() -> mSuperstructure.engageChargeStation(true)));
 
                 System.out.println("Finished auto!");
         }

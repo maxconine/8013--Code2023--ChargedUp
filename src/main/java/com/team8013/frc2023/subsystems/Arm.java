@@ -132,29 +132,13 @@ public class Arm extends Subsystem {
     }
 
     public void pullArmIntoZero() {
-        // if (Math.abs(PeriodicIO.arm_motor_velocity) > 0.5)
-        // boolean zeroing = true;
-        // if (mPeriodicIO.isPulledIn == false) {
-        // SmartDashboard.putBoolean("isPulledIn", isPulledIn);
+
         if (mArmControlState != ArmControlState.OPEN_LOOP) {
             mArmControlState = ArmControlState.OPEN_LOOP;
         }
 
         mPeriodicIO.pullArmIntoZero = true;
 
-        // }
-
-        // if (zeroing) {
-        // // pull in until velocity is less than 0.5 and current is higher than current
-        // // limit, reset position
-        // if (isIn()) {
-        // resetClimberPosition();
-        // setArmPosition(10);
-        // mPeriodicIO.isPulledIn = true;
-        // System.out.println("arm Pulled in");
-        // zeroing = false;
-        // }
-        // }
     }
 
     public void setArmOpenLoop(double wantedDemand) {
@@ -186,10 +170,6 @@ public class Arm extends Subsystem {
      */
 
     // extend arm
-
-    // public void extendArmManual() {
-    // changeArmPosition(Constants.ArmConstants.changeArmManualAmount);
-    // }
 
     public void setExtendForPickup() {
         if (mArmControlState != ArmControlState.MOTION_MAGIC) {

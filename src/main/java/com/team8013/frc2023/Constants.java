@@ -209,7 +209,7 @@ public class Constants {
 
                 public static final double kPXController = 1; // og 1 0.2 works
                 public static final double kPYController = 1; // og 1 0.3 works
-                public static final double kPThetaController = 0.7; // 3.8; // og 5
+                public static final double kPThetaController = 0.2; // 3.8; // og 5
 
                 // Constraint for the motion profilied robot angle controller
                 public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -269,7 +269,7 @@ public class Constants {
                 public static final double kTrackAgeWeight = 10.0;
                 public static final double kTrackSwitchingWeight = 100.0;
 
-                public static final int kDefaultPipeline = 0;
+                // public static final int kDefaultPipeline = 0;
                 public static final double kGoalHeight = 2.63; // meters
                 public static final double kGoalRadius = Units.inchesToMeters(.5); // meters
 
@@ -305,7 +305,7 @@ public class Constants {
         }
 
         public static final class ArmConstants {
-                public static final double kStatorCurrentLimit = 20; // 80.0;
+                public static final double kStatorCurrentLimit = 25; // 80.0;
                 public static final double kZeroCurrentLimit = 50; // 80.0;
                 public static final double kTriggerThresholdCurrent = 60;
 
@@ -318,7 +318,7 @@ public class Constants {
                 // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final int kPickupTravelDistance = 140000;
+                public static final int kPickupTravelDistance = 155000;
                 public static final int kHybridTravelDistance = 100000; // kLeftTravelDistance * 0.75
                 public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
                 public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
@@ -371,7 +371,7 @@ public class Constants {
 
                 public static final double piv_kP = .0085;
                 public static final double piv_kI = 0;
-                public static final double piv_kD = 0.00025;
+                public static final double piv_kD = 0.0004;
 
                 public static final double piv_kMaxOutput = 0.95;
                 public static final double piv_kMinOutput = -0.95;
@@ -379,7 +379,7 @@ public class Constants {
                 public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
                 public static final double piv_MinRotation = -450;
 
-                public static final double piv_ZeroRotation = 0.1;
+                public static final double piv_ZeroRotation = 5;
                 public static final double piv_90Rotation = 87;
                 public static final double piv_180Rotation = 160;
                 public static final double piv_cancoderOffset = 241.38;

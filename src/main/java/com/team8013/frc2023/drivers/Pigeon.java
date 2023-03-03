@@ -21,7 +21,7 @@ public class Pigeon {
 
     // Configs
 
-    private Pigeon(int port) {        
+    private Pigeon(int port) {
         mGyro = new WPI_Pigeon2(port, "canivore1");
     }
 
@@ -46,6 +46,8 @@ public class Pigeon {
         mGyro.setYaw(angleDeg);
     }
 
-
+    public void zero() {
+        mGyro.reset();
+    }
 
 }

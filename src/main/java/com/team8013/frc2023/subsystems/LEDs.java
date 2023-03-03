@@ -168,43 +168,13 @@ public class LEDs extends Subsystem {
                 mColor.g,
                 mColor.b, 0, mStatus.startIDx,
                 mStatus.LEDCount);
-
-        // mCandle.setLEDs(
-        // mColor.r,
-        // mColor.g,
-        // mColor.b, 0, mBackStatus.startIDx,
-        // mBackStatus.LEDCount);
-
     }
-
-    // private void updateBackLeds() {
-    // // check if we need to cycle to next color
-    // if (mTopStatus.state.interval != Double.POSITIVE_INFINITY) {
-    // if (timestamp - mTopStatus.lastSwitchTime >= mTopStatus.state.interval) {
-    // mTopStatus.nextColor();
-    // mTopStatus.lastSwitchTime = timestamp;
-    // }
-    // }
-
-    // Color topColor = mTopStatus.getWantedColor();
-
-    // mCandle.setLEDs(topColor.r, topColor.g, topColor.b, 0, mTopStatus.startIDx,
-    // mTopStatus.LEDCount);
-    // }
 
     // setter functions
     public void applyStates(State state) {
         mStatus.setState(state);
         // mFrontStatus.setState(frontState);
     }
-
-    // public void applyFrontState(State state) {
-    // mFrontStatus.setState(state);
-    // }
-
-    // public void applyBackState(State state) {
-    // mBackStatus.setState(state);
-    // }
 
     // apply configuration to candle
     private void configureCandle() {

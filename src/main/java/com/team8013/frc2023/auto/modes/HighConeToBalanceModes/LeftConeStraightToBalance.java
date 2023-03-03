@@ -60,17 +60,17 @@ public class LeftConeStraightToBalance extends AutoModeBase {
 
         // runAction(new WaitAction(0.5));
 
-        runAction(new LambdaAction(() -> mSuperstructure.pivUpAuto()));
+                runAction(new LambdaAction(() -> mSuperstructure.pivUpAuto()));
 
-        runAction(new WaitAction(1.5));
+                runAction(new WaitAction(1.5));
 
-        runAction(new LambdaAction(() -> mSuperstructure.armExtendHighAuto()));
+                runAction(new LambdaAction(() -> mSuperstructure.armExtendHighAuto()));
 
-        runAction(new WaitAction(2));
+                runAction(new WaitAction(1.7));
 
-        runAction(new LambdaAction(() -> mSuperstructure.dropConeAuto()));
+                runAction(new LambdaAction(() -> mSuperstructure.dropConeAuto()));
 
-        runAction(new WaitAction(1.5));
+                runAction(new WaitAction(.75));
 
         System.out.println("reset odometry action run");
 
@@ -79,15 +79,17 @@ public class LeftConeStraightToBalance extends AutoModeBase {
         // reset odometry at the start of the trajectory
         runAction(new LambdaAction(() -> mSwerve.resetOdometry(farRightTopNodeToPickup_a.getInitialPose())));
 
-        runAction(new WaitAction(2));
+        runAction(farRightTopNodeToPickup_a);
 
-        runAction(new RaceAction(
-                new SeriesAction(List.of(
-                        farRightTopNodeToPickup_a)),
+        // runAction(new RaceAction(
+        // new SeriesAction(List.of(
+        // farRightTopNodeToPickup_a)),
 
-                new SeriesAction(List.of(
-                        // new WaitAction(0.1),
-                        new LambdaAction(() -> mSuperstructure.pivDownAuto())))));
+        // new SeriesAction(List.of(
+        // // new WaitAction(0.1),
+        // new LambdaAction(() -> mSuperstructure.pivDownAuto())))));
+
+        runAction(new LambdaAction(() -> mSuperstructure.pivDownAuto()));
         // ,new LambdaAction(() -> mSuperstructure.setWantIntake(true))))));
 
         // runAction(new LambdaAction(() -> mSuperstructure.pivPickupAuto()));
@@ -106,7 +108,7 @@ public class LeftConeStraightToBalance extends AutoModeBase {
 
         // runAction(rightPickupToBalance_b);
 
-        runAction(new LambdaAction(() -> mSuperstructure.engageChargeStation()));
+        runAction(new LambdaAction(() -> mSuperstructure.engageChargeStation(true)));
 
         System.out.println("Finished auto!");
     }

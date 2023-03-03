@@ -115,25 +115,6 @@ public class ClawV2 extends Subsystem {
         // set status variable for being enabled to true
         mIsEnabled = true;
 
-        // if (((mPeriodicIO.grip_current > 11) && (mPeriodicIO.grip_motor_position ==
-        // 0.0))
-        // || (mPeriodicIO.pivot_current > 11) && (mPeriodicIO.pivot_motor_position ==
-        // 0.0)
-        // && (!mPeriodicIO.maybeEncoderBroken)) {
-        // doubleCheckBrokenTime = Timer.getFPGATimestamp();
-        // mPeriodicIO.maybeEncoderBroken = true;
-        // }
-        // if ((Timer.getFPGATimestamp() + 0.5 > doubleCheckBrokenTime)
-        // && (((mPeriodicIO.grip_current > 11) && (mPeriodicIO.grip_motor_position ==
-        // 0.0))
-        // || (mPeriodicIO.pivot_current > 11) && (mPeriodicIO.pivot_motor_position ==
-        // 0.0))
-        // && (mPeriodicIO.maybeEncoderBroken)) {
-        // mPeriodicIO.encoderBroken = true;
-        // }
-
-        // if (mPeriodicIO.encoderBroken == false) {
-
         /* GRIP OUTPUT */
 
         switch (mGripControlState) {
@@ -162,18 +143,7 @@ public class ClawV2 extends Subsystem {
                 } else {
                     m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
                 }
-                // if trying to open manually, dont let the claw over extend out:
-                // else if ((mPeriodicIO.grip_demand < 0) // I changed signs around
-                // && (mPeriodicIO.grip_motor_position <
-                // Constants.ClawConstants.kClawMaxDistance)) {
-                // m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
-                // } else if ((mPeriodicIO.grip_demand > 0)
-                // && (mPeriodicIO.grip_motor_position >
-                // Constants.ClawConstants.kClawMinDistance)) {
-                // m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
-                // } else {
-                // m_GripMotor.set(VictorSPXControlMode.PercentOutput, 0);
-                // }
+
                 break;
             case CLOSED_LOOP:
 
@@ -196,17 +166,9 @@ public class ClawV2 extends Subsystem {
         /* PIVOT OUTPUT */
         switch (mPivotControlState) {
             case OPEN_LOOP:
-                // if ((mPeriodicIO.pivot_motor_position >
-                // Constants.ClawConstants.kPivotMaxDistance)
-                // && (mPeriodicIO.pivot_demand > 0)) {
-                // m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0);
-                // } else if ((mPeriodicIO.pivot_motor_position <
-                // Constants.ClawConstants.kPivotMinDistance)
-                // && (mPeriodicIO.pivot_demand < 0)) {
-                // m_PivotMotor.set(VictorSPXControlMode.PercentOutput, 0);
-                // } else {
+
                 m_PivotMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.pivot_demand);
-                // }
+
                 break;
             case CLOSED_LOOP:
                 m_PivotPid.setSetpoint(mPeriodicIO.pivot_demand);
@@ -234,7 +196,7 @@ public class ClawV2 extends Subsystem {
 
     public double getRelativeCancoder() {
         return (m_ClawCANCoder.getPosition()
-                - Constants.ClawConstants.piv_cancoderOffset + 301);// + 331 - 360); // +
+                - Constants.ClawConstants.piv_cancoderOffset + 301 - 720 + 346);// + 331 - 360); // +
         // 155.07);
     }
 
@@ -328,48 +290,6 @@ public class ClawV2 extends Subsystem {
         mPeriodicIO.wantedClosing = true;
         mPeriodicIO.grip_demand = 0;
         // mPeriodicIO.grip_demand = Constants.ClawConstants.grip_kMaxOutput;
-    }
-
-    // input: desired rotation(0-360)
-    public void drivePivot(double desiredRotation) {
-
-        double currentDegrees = m_PivotEncoder.getDistance() * 360;
-
-        // difference of desired rotation(0-360) to current position (0 to 1440)
-        double difference = (currentDegrees % 360) - desiredRotation;
-
-        double want = 1000;
-        if (difference > 180) {
-            if (currentDegrees + (360 - difference) <= Constants.ClawConstants.piv_MaxRotation) {
-                want = (currentDegrees + (360 - difference));
-            } else {
-                want = (currentDegrees - difference);
-            }
-
-        } else if (difference > 0) {
-            if (currentDegrees - difference >= Constants.ClawConstants.piv_MinRotation) {
-                want = (currentDegrees - difference);
-            } else {
-                want = (currentDegrees + (360 - difference));
-            }
-
-        } else if (difference < -180) {
-            if (currentDegrees - (360 + difference) >= Constants.ClawConstants.piv_MinRotation) { // -abs(difference)
-                want = (currentDegrees - (360 + difference));
-            } else {
-                want = (currentDegrees - difference); // +abs(difference)
-            }
-        } else if (difference < 0) {
-            if (currentDegrees - difference <= Constants.ClawConstants.piv_MaxRotation) {
-                want = (currentDegrees - difference);
-            } else {
-                want = (currentDegrees - (360 + difference));
-            }
-        }
-        if (want != 1000) {
-            m_PivotPid.setSetpoint(want / 360); // should just put this where ever the value
-                                                // of want is being changed
-        }
     }
 
     public enum GripControlState {

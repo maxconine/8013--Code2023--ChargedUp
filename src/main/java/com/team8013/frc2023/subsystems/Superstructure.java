@@ -12,6 +12,7 @@ import com.team8013.frc2023.loops.Loop;
 import com.team8013.frc2023.subsystems.LEDs.State;
 import com.team254.lib.geometry.Pose2d;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -72,6 +73,9 @@ public class Superstructure extends Subsystem {
         private boolean canControlArmManually = true;
         private int maxArmPosition = 0;
         private boolean openingClaw;
+
+        private boolean mEngage = false;
+        private boolean fromBack;
 
         // time measurements
         public double timestamp;
@@ -303,6 +307,10 @@ public class Superstructure extends Subsystem {
             // || (mControlBoard.getOperatorRightYaw() < -0.4)) {
             // mClaw.setGripOpenLoop(mControlBoard.getOperatorRightYaw() / 2);
 
+            if (mControlBoard.getZero()) {
+                mArm.pullArmIntoZero();
+            }
+
             // right bumper
             if (mControlBoard.getGrip()) {
                 mClaw.closeGrip();
@@ -311,20 +319,12 @@ public class Superstructure extends Subsystem {
             else if (mControlBoard.getRelease()) {
 
                 mClaw.openGrip();
-                // } else if (mControlBoard.operator.getController().getPOV() == 180) {
-                // mClaw.setPivotDemand(0.4);
-                // // System.out.println("trying to turn");
-                // // mClaw.setPivotPosition(mControlBoard.operator.getController().getPOV() *
-                // .5);
-                // } else if (mControlBoard.operator.getController().getPOV() == 0) {
-                // mClaw.setPivotDemand(0.0);
-                // } else {
+
             } else {
                 mClaw.stopGrip();
                 // mClaw.stop();
             }
         }
-        // System.out.println(mControlBoard.operator.getController().getPOV());
     }
 
     /*** RUMBLE OPERATOR CONTROLLERS ***/
@@ -385,69 +385,32 @@ public class Superstructure extends Subsystem {
         mPivot.setPivotDown();
     }
 
-    public void engageChargeStation() {
+    public void engageChargeStation(boolean fromBack) {
+        mPeriodicIO.fromBack = fromBack;
+        mPeriodicIO.mEngage = true;
 
-        if (mPigeon.getPitch().getDegrees() > .02) {
-            mSwerve.drive(new Translation2d(1, 0), 0, true, true);
-            engageChargeStation();
-            SmartDashboard.putBoolean("ChargeStation", false);
-        } else if (mPigeon.getPitch().getDegrees() < -.02) {
-            mSwerve.drive(new Translation2d(-1, 0), 0, true, true);
-            engageChargeStation();
-            SmartDashboard.putBoolean("ChargeStation", false);
-        } else {
-            SmartDashboard.putBoolean("ChargeStation", true);
-            // SmartDashboard.putNumber("Pitch", mPigeon.getPitch().getDegrees());
-        }
+        // if (mPigeon.getRoll().getDegrees() > 3) {
+        // mSwerve.drive(new Translation2d(.2, 0), 0, true, false);
+        // engageChargeStation();
+        // SmartDashboard.putBoolean("ChargeStation", false);
+        // SmartDashboard.putBoolean("going forwards balance", false);
+        // } else if (mPigeon.getRoll().getDegrees() < -3) {
+        // mSwerve.drive(new Translation2d(-.2, 0), 0, true, false);
+        // engageChargeStation();
+        // SmartDashboard.putBoolean("ChargeStation", false);
+        // SmartDashboard.putBoolean("going forwards balance", false);
+        // } else {
+        // mSwerve.setLocked(true);
+        // SmartDashboard.putBoolean("ChargeStation", true);
+        // // SmartDashboard.putBoolean("going forwards balance", true);
+        // // SmartDashboard.putNumber("Pitch", mPigeon.getPitch().getDegrees());
+        // }
     }
 
-    /***
-     * GET REAL AIMING PARAMETERS
-     * called in updateVisionAimingSetpoints()
-     */
-    // public Optional<AimingParameters> getRealAimingParameters() {
-    // Optional<AimingParameters> aiming_params =
-    // RobotState.getInstance().getAimingParameters(mTrackId,
-    // Constants.VisionConstants.kMaxGoalTrackAge);
-    // if (aiming_params.isPresent()) {
-    // return aiming_params;
-    // } else {
-    // Optional<AimingParameters> default_aiming_params =
-    // RobotState.getInstance().getDefaultAimingParameters();
-    // return default_aiming_params;
-    // }
-    // }
-
-    // /*** UPDATE VISION AIMING PARAMETERS FROM GOAL TRACKING ***/
-    // public void updateVisionAimingParameters() {
-    // // get aiming parameters from either vision-assisted goal tracking or
-    // // odometry-only tracking
-    // real_aiming_params_ = getRealAimingParameters();
-
-    // // predicted pose and target
-    // Pose2d predicted_field_to_vehicle = mRobotState
-    // .getPredictedFieldToVehicle(Constants.VisionConstants.kLookaheadTime);
-    // Pose2d predicted_vehicle_to_goal = predicted_field_to_vehicle.inverse()
-    // .transformBy(real_aiming_params_.get().getFieldToGoal());
-
-    // // update align delta from target and distance from target
-    // mTrackId = real_aiming_params_.get().getTrackId();
-    // mTargetAngle =
-    // predicted_vehicle_to_goal.getTranslation().direction().getRadians() +
-    // Math.PI;
-
-    // // send vision aligning target delta to swerve
-    // mSwerve.acceptLatestGoalTrackVisionAlignGoal(mTargetAngle);
-
-    // // update distance to target
-    // if (mLimelight.hasTarget() &&
-    // mLimelight.getLimelightDistanceToTarget().isPresent()) {
-    // mCorrectedDistanceToTarget = mLimelight.getLimelightDistanceToTarget().get();
-    // } else {
-    // mCorrectedDistanceToTarget =
-    // predicted_vehicle_to_goal.getTranslation().norm();
-    // }
-    // }
+    public boolean[] getAutoBalance() {
+        boolean[] booleanArray = { mPeriodicIO.mEngage, mPeriodicIO.fromBack };
+        return booleanArray;
+    }
 
     /*** UPDATE STATUS LEDS ON ROBOT ***/
     public void updateLEDs() {
@@ -466,31 +429,11 @@ public class Superstructure extends Subsystem {
                 mState = State.FLASHING_CYAN;
             } else if (Timer.getFPGATimestamp() > 135) {
                 mState = State.FLASHING_PINK;
+            } else if (mPeriodicIO.mEngage) {
+                mState = State.SOLID_PINK;
             } else {
                 mState = State.SOLID_YELLOW;
             }
-            // else if (isAimed()) {
-            // topState = State.FLASHING_GREEN;
-            // } else if (hasTarget()) {
-            // topState = State.SOLID_PURPLE;
-            // } else {
-            // topState = State.SOLID_ORANGE;
-            // }
-            // } else {
-            // if (mOpenLoopClimbControlMode) {
-            // topState = State.SOLID_YELLOW;
-            // bottomState = State.SOLID_YELLOW;
-            // } else if (mAutoTraversalClimb) {
-            // topState = State.FLASHING_ORANGE;
-            // bottomState = State.FLASHING_ORANGE;
-            // } else if (mAutoHighBarClimb) {
-            // topState = State.FLASHING_CYAN;
-            // bottomState = State.FLASHING_CYAN;
-            // } else {
-            // topState = State.SOLID_PINK;
-            // bottomState = State.SOLID_PINK;
-            // }
-            // }
         }
         // mState = State.FLASHING_CYAN;
 
@@ -534,35 +477,16 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void stop() {
-        // mPeriodicIO.INTAKE = false;
-        // mPeriodicIO.REVERSE = false;
-        // mPeriodicIO.REJECT = false;
+
     }
 
     /* Initial states for superstructure for teleop */
     public void setInitialTeleopStates() {
-        // mPeriodicIO.INTAKE = false;
-        // mPeriodicIO.REVERSE = false;
-        // mPeriodicIO.REJECT = false;
-        // mPeriodicIO.PREP = true; // stay spun up
-        // mPeriodicIO.SHOOT = false;
-        // mPeriodicIO.FENDER = false;
-        // mPeriodicIO.SPIT = false;
 
         // mClimbMode = false;
 
         System.out.println("Set initial teleop states!");
     }
-
-    /* Superstructure getters for action and goal statuses */
-    // get actions
-    // public boolean getIntaking() {
-    // return mPeriodicIO.INTAKE;
-    // }
-
-    // public boolean getReversing() {
-    // return mPeriodicIO.REVERSE;
-    // }
 
     // included to continue logging while disabled
     @Override

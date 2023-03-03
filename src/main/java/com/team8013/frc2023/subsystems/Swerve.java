@@ -352,60 +352,11 @@ public class Swerve extends Subsystem {
      *         >
      */
     public Pose2d getPose() {
-        // double currentTime = Timer.getFPGATimestamp() - mLimelight.getLatency(); //
-        // Adjusting time for latency
 
-        // If Limelight does not have target return pose according to swerve odometry
-        // if (!mLimelight.hasTarget()) {
         return swerveOdometry.getPoseMeters();
         // }
 
-        // // Creating botpose array from limelight data
-        // double[] limelightBotPoseArray = mLimelight.getBotPose().getDoubleArray(new
-        // double[] { 0.0,
-        // 0.0, 0.0, 0.0, 0.0, 0.0 });
-
-        // // Ensuring that the botpose array has all values
-        // if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) {
-        // setField(getPose());
-        // return swerveOdometry.getPoseMeters();
-        // }
-
-        // // Getting new Pose2d from botpose array (invert x)
-        // Pose2d pose = new Pose3d(
-        // new Translation3d(-limelightBotPoseArray[0], limelightBotPoseArray[1],
-        // limelightBotPoseArray[2]),
-        // new Rotation3d(Math.toRadians(limelightBotPoseArray[3]),
-        // Math.toRadians(limelightBotPoseArray[4]),
-        // Math.toRadians(limelightBotPoseArray[5])))
-        // .toPose2d();
-
-        // // If the pose from that is null, return pose from swerve
-        // if (pose == null) {
-        // setField(getPose());
-        // return swerveOdometry.getPoseMeters();
-        // }
-
-        // setField(pose); // Adjust pose on shuffleboard field
-        // updatePoseOdometry(pose); // Set swerve Odometry to Limelights pose
-        // // System.out.println("Tag pose " + pose);
-        // return pose;
     }
-
-    /**
-     * Sets the robot's pose on the field and outputs to smartdashboard.
-     * 
-     * @param pose - the robots pose
-     */
-    // public void setField(Pose2d pose) {
-    // // Transform pose from LL "field space" to pose2d
-    // pose = new Pose2d(pose.getTranslation().plus(new
-    // Translation2d(Constants.VisionConstants.fieldLength / 2.0,
-    // Constants.VisionConstants.fieldWidth / 2.0)), pose.getRotation());
-
-    // field.setRobotPose(pose);
-    // SmartDashboard.putData("Field2d", field);
-    // }
 
     @Override
     public void stop() {

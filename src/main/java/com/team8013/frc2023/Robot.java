@@ -91,6 +91,9 @@ public class Robot extends TimedRobot {
 	private AutoModeExecutor mAutoModeExecutor;
 	private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
+	public boolean[] autoBalance;
+	public Timer autoTimer = new Timer();
+
 	public Robot() {
 		CrashTracker.logRobotConstruction();
 		System.out.println("robots construction");
@@ -99,9 +102,11 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 
+		mPigeon.zero();
+
 		ctreConfigs = new CTREConfigs();
 		mShuffleBoardInteractions = ShuffleBoardInteractions.getInstance();
-		mLimelight.setPipeline(2);
+		mLimelight.setPipeline(3);
 
 		CameraServer.startAutomaticCapture();
 
@@ -187,6 +192,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+
+		SmartDashboard.putNumber("PIGEON Pitch", mPigeon.getPitch().getDegrees());
+		SmartDashboard.putNumber("PIGEON roll", mPigeon.getRoll().getDegrees());
 		// TODO;
 		mLimelight.setLed(Limelight.LedMode.ON);
 		mLEDs.updateState();
@@ -194,6 +202,36 @@ public class Robot extends TimedRobot {
 
 		SmartDashboard.putNumber("Pitch", mPigeon.getPitch().getDegrees());
 		System.out.println(mPigeon.getPitch().getDegrees());
+		autoBalance = mSuperstructure.getAutoBalance();
+
+		if (autoBalance[1]) {
+		}
+
+		if (autoBalance[0]) {
+			if (mPigeon.getRoll().getDegrees() > 3) {
+				if (autoBalance[1]) {
+					mSwerve.drive(new Translation2d(.1, 0), 0, true, false);
+				} else {
+					mSwerve.drive(new Translation2d(.7, 0), 0, true, false);
+				}
+				SmartDashboard.putBoolean("ChargeStation", false);
+				SmartDashboard.putBoolean("going forwards balance", false);
+			} else if (mPigeon.getRoll().getDegrees() < -3) {
+				if (autoBalance[1]) {
+					mSwerve.drive(new Translation2d(-.7, 0), 0, true, false);
+				} else {
+					mSwerve.drive(new Translation2d(-.1, 0), 0, true, false);
+				}
+				SmartDashboard.putBoolean("ChargeStation", false);
+				SmartDashboard.putBoolean("going forwards balance", false);
+			} else {
+				autoTimer.start();
+				if (autoTimer.get() > 1) {
+					mSwerve.setLocked(true);
+					SmartDashboard.putBoolean("ChargeStation", true);
+				}
+			}
+		}
 
 		// mLEDs.applyStates(State.SOLID_BLUE);
 	}
@@ -202,7 +240,7 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		try {
 
-			mLimelight.setPipeline(2);
+			mLimelight.setPipeline(3);
 
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
@@ -236,6 +274,8 @@ public class Robot extends TimedRobot {
 
 			// mClaw.resetGripEncoder();
 
+			SmartDashboard.putNumber("Timestamp", Timer.getFPGATimestamp());
+
 			// set states for teleop init
 			// mSuperstructure.setInitialTeleopStates();
 
@@ -249,6 +289,8 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		try {
 			// mSuperstructure.readPeriodicInputs();
+			SmartDashboard.putNumber("PIGEON Pitch", mPigeon.getPitch().getDegrees());
+			SmartDashboard.putNumber("PIGEON roll", mPigeon.getRoll().getDegrees());
 
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
