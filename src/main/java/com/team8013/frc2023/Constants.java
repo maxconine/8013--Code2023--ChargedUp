@@ -318,7 +318,7 @@ public class Constants {
                 // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final int kPickupTravelDistance = 155000;
+                public static final int kPickupTravelDistance = 144000;
                 public static final int kHybridTravelDistance = 100000; // kLeftTravelDistance * 0.75
                 public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
                 public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
@@ -358,11 +358,11 @@ public class Constants {
                 public static final int kMaxHeight = 0;
 
                 // pivot degree constants
-                public static final double kPickupTravelDistance = 40;
+                public static final double kPickupTravelDistance = 40 + 2;
                 public static final double kHybridTravelDistance = 47.37 + 5; // degrees
                 public static final double kMidTravelDistance = 95.47 + 5;
                 public static final double kHighTravelDistance = 106.2 + 5;
-                public static final double kAutoHighTravelDistance = 105;
+                public static final double kAutoHighTravelDistance = 105 + 5;
 
         }
 
@@ -379,9 +379,9 @@ public class Constants {
                 public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
                 public static final double piv_MinRotation = -450;
 
-                public static final double piv_ZeroRotation = 5;
+                public static final double piv_ZeroRotation = -10;
                 public static final double piv_90Rotation = 87;
-                public static final double piv_180Rotation = 160;
+                public static final double piv_180Rotation = 180;
                 public static final double piv_cancoderOffset = 241.38;
 
                 public static final double pivotGearRatio = 1.535714; // (86 / 56);

@@ -267,7 +267,7 @@ public class Pivot extends Subsystem {
     }
 
     public double getRelativeCancoder() {
-        return -1 * (angleEncoder.getPosition() - 138.25);
+        return -1 * (angleEncoder.getPosition() - 25.457 - 144 + 11.8 + 4 - 145.69);
     }
 
     public boolean hasEmergency = false;

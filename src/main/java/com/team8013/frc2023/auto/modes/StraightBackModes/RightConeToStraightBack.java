@@ -80,7 +80,7 @@ public class RightConeToStraightBack extends AutoModeBase {
 
                 runAction(new LambdaAction(() -> mSuperstructure.pivDownAuto()));
 
-                runAction(new WaitAction(5));
+                runAction(new WaitAction(0.5));
 
                 runAction(farRightTopNodeToPickup_a);
 

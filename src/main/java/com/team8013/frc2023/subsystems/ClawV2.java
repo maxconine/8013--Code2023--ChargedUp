@@ -196,7 +196,10 @@ public class ClawV2 extends Subsystem {
 
     public double getRelativeCancoder() {
         return (m_ClawCANCoder.getPosition()
-                - Constants.ClawConstants.piv_cancoderOffset + 301 - 720 + 346);// + 331 - 360); // +
+                - Constants.ClawConstants.piv_cancoderOffset + 301 - 720 + 346 + 360 - 380 + 15 + 50 - 26 + 21);// + 331
+                                                                                                                // -
+        // 360);
+        // // +
         // 155.07);
     }
 

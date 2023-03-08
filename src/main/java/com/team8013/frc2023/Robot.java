@@ -109,6 +109,7 @@ public class Robot extends TimedRobot {
 		mLimelight.setPipeline(3);
 
 		CameraServer.startAutomaticCapture();
+		CameraServer.startAutomaticCapture();
 
 		try {
 			CrashTracker.logRobotInit();
@@ -210,17 +211,17 @@ public class Robot extends TimedRobot {
 		if (autoBalance[0]) {
 			if (mPigeon.getRoll().getDegrees() > 3) {
 				if (autoBalance[1]) {
-					mSwerve.drive(new Translation2d(.1, 0), 0, true, false);
+					mSwerve.drive(new Translation2d(.4, 0), 0, true, false);
 				} else {
-					mSwerve.drive(new Translation2d(.7, 0), 0, true, false);
+					mSwerve.drive(new Translation2d(.6, 0), 0, true, false);
 				}
 				SmartDashboard.putBoolean("ChargeStation", false);
 				SmartDashboard.putBoolean("going forwards balance", false);
 			} else if (mPigeon.getRoll().getDegrees() < -3) {
 				if (autoBalance[1]) {
-					mSwerve.drive(new Translation2d(-.7, 0), 0, true, false);
+					mSwerve.drive(new Translation2d(-.6, 0), 0, true, false);
 				} else {
-					mSwerve.drive(new Translation2d(-.1, 0), 0, true, false);
+					mSwerve.drive(new Translation2d(-.3, 0), 0, true, false);
 				}
 				SmartDashboard.putBoolean("ChargeStation", false);
 				SmartDashboard.putBoolean("going forwards balance", false);
