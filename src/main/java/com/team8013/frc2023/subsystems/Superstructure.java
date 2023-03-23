@@ -67,6 +67,7 @@ public class Superstructure extends Subsystem {
         private boolean settingHybrid = false;
         private boolean settingMid = false;
         private boolean settingHigh = false;
+        private boolean settingDoubleSubstation = false;
         private boolean canControlArmManually = true;
         public int maxArmPosition = 0;
         public boolean openingClaw;
@@ -143,6 +144,8 @@ public class Superstructure extends Subsystem {
      * 
      * - press right bumper to grip
      * - press left bumper to ungrip
+     * 
+     * - hold both bumpers for 1 sec to go to double substation
      * 
      * - press A to getPickup
      * - press Y to getHigh
@@ -228,6 +231,12 @@ public class Superstructure extends Subsystem {
                 mPeriodicIO.canControlArmManually = true;
                 mPeriodicIO.maxArmPosition = Constants.ArmConstants.kHighTravelDistance;
             }
+            else if(mControlBoard.getWantDoubleSubstation()){
+                mArm.setArmDown();
+                mPeriodicIO.settingDoubleSubstation = true;
+                mPeriodicIO.canControlArmManually = false;
+                mPeriodicIO.maxArmPosition = Constants.ArmConstants.kDoubleSubstationTravelDistance;
+            }
 
             if (mPeriodicIO.settingDown) {
                 if (mArm.isIn()) {
@@ -272,6 +281,16 @@ public class Superstructure extends Subsystem {
                 if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
                     mArm.setExtendForHigh();
                     mPeriodicIO.settingHigh = false;
+                    mPeriodicIO.canControlArmManually = true;
+                }
+            }
+            if (mPeriodicIO.settingDoubleSubstation){
+                if (mArm.isIn()) {
+                    mPivot.setPivotForDoubleSubstation();
+                }
+                if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
+                    mArm.setExtendForDoubleSubstation();
+                    mPeriodicIO.settingDoubleSubstation = false;
                     mPeriodicIO.canControlArmManually = true;
                 }
             }
@@ -346,6 +365,7 @@ public class Superstructure extends Subsystem {
      * @return this sets the pivot and arm to high and drops the game piece, then returns to the down position
      */
     public void settingHighToDownAuto() {
+        mArm.setArmDown();
         mPeriodicIO.settingHigh = true;
     }
 
@@ -353,6 +373,7 @@ public class Superstructure extends Subsystem {
      * @return this sets the pivot and arm to hybrid and drops the game piece, then returns to the down position
      */
     public void settingHybridToDownAuto() {
+        mArm.setArmDown();
         mPeriodicIO.settingHybrid = true;
     }
 
@@ -360,6 +381,7 @@ public class Superstructure extends Subsystem {
      * @return sets the arm and pivot to the pickup position
      */
     public void settingPickupAuto(){
+        mArm.setArmDown();
         mPeriodicIO.settingPickup = true;
     }
 

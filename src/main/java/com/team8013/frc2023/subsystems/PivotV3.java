@@ -237,7 +237,7 @@ public class PivotV3 extends Subsystem {
 
     /**
      * 
-     * @return sets the pivot position to a highconstant
+     * @return sets the pivot position to a highc onstant
      */
     public void setPivotForHigh() {
         setPivotPosition(Constants.PivotConstants.kHighTravelDistance);
@@ -250,6 +250,15 @@ public class PivotV3 extends Subsystem {
     public void setPivotForAutoHigh() {
         setPivotPosition(Constants.PivotConstants.kAutoHighTravelDistance);
     }
+
+        /**
+     * 
+     * @return sets the pivot position to a double substation constant
+     */
+    public void setPivotForDoubleSubstation() {
+        setPivotPosition(Constants.PivotConstants.kDoubleSubstationTravelDistance);
+    }
+
 
     /**
      * 

@@ -192,6 +192,10 @@ public class ControlBoard {
         return (operator.getController().getPOV() == 270)||(m_driver.getRawButton(6)); //TODO: SET THIS
     }
 
+    public boolean getWantDoubleSubstation(){
+        return operator.getButton(Button.LB) && operator.getButton(Button.RB) && operator.getTrigger(Side.LEFT) && operator.getTrigger(Side.RIGHT);
+    }
+
     // // Intake Controls
     // public boolean getIntake() {
     // return operator.getTrigger(CustomXboxController.Side.RIGHT);

@@ -340,6 +340,7 @@ public class Constants {
                 public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
                 public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
                 public static final int kAutoHighTravelDistance = 290000; // kLeftTravelDistance * 0.75
+                public static final int kDoubleSubstationTravelDistance = 100000;
 
                 /* GENERAL CLIMBER CONSTANTS USED */
 
@@ -382,7 +383,7 @@ public class Constants {
 
                 // pivot constants
                 public static final double degreesOffToReset = 3; //degrees the motor is off by
-                public static final double ticksOffToReset = degreesOffToReset*oneDegreeOfroation*2048; //degrees the motor is off by
+                public static final double ticksOffToReset = degreesOffToReset*oneDegreeOfroation*2048; //ticks the motor is off by
 
                 public static final double degreesCanExtendArm = 4;
 
@@ -392,6 +393,7 @@ public class Constants {
                 public static final double kMidTravelDistance = 95.47 + 5;
                 public static final double kHighTravelDistance = 106.2 + 5;
                 public static final double kAutoHighTravelDistance = 105 + 5;
+                public static final double kDoubleSubstationTravelDistance = 130;
 
         }
 
