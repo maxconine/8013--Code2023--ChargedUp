@@ -1,8 +1,10 @@
 package com.team8013.frc2023.shuffleboard.tabs;
 
+import com.team8013.frc2023.drivers.Pigeon;
 import com.team8013.frc2023.drivers.SwerveModule;
 import com.team8013.frc2023.shuffleboard.ShuffleboardTabBase;
 import com.team8013.frc2023.subsystems.Swerve;
+
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
@@ -13,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 public class SwerveTab extends ShuffleboardTabBase {
 
     private Swerve mSwerve = Swerve.getInstance();
+    private Pigeon mPigeon = Pigeon.getInstance();
 
     private final SwerveModule[] mSwerveModules;
 
@@ -25,6 +28,9 @@ public class SwerveTab extends ShuffleboardTabBase {
     private GenericEntry mSwerveOdometryX;
     private GenericEntry mSwerveOdometryY;
     private GenericEntry mSwerveOdometryRot;
+    private GenericEntry mSwervePitch;
+    private GenericEntry mSwerveRoll;
+    private GenericEntry mSwerveLocked;
 
     public SwerveTab() {
         super();
@@ -77,6 +83,21 @@ public class SwerveTab extends ShuffleboardTabBase {
             .withPosition(4, 3)
             .withSize(2, 1)
             .getEntry();
+        mSwervePitch = mTab
+            .add("Pigeon Pitch", 0)
+            .withPosition(5, 3)
+            .withSize(2, 1)
+            .getEntry();
+        mSwerveRoll = mTab
+            .add("Pigeon Roll", 0)
+            .withPosition(6, 3)
+            .withSize(2, 1)
+            .getEntry();
+        mSwerveLocked = mTab
+            .add("Swerve is Locked", false)
+            .withPosition(7, 3)
+            .withSize(2, 1)
+            .getEntry();
     }
 
     @Override
@@ -90,7 +111,9 @@ public class SwerveTab extends ShuffleboardTabBase {
         mSwerveOdometryX.setDouble(truncate(mSwerve.getPose().getX()));
         mSwerveOdometryY.setDouble(truncate(mSwerve.getPose().getY()));
         mSwerveOdometryRot.setDouble(truncate(MathUtil.inputModulus(mSwerve.getPose().getRotation().getDegrees(), 0, 360)));
-
+        mSwervePitch.setDouble(truncate(mPigeon.getPitch().getDegrees()));
+        mSwerveRoll.setDouble(truncate(mPigeon.getRoll().getDegrees()));
+        mSwerveLocked.setBoolean(mSwerve.getLocked());
     }
 
 }

@@ -1,8 +1,6 @@
 package com.team8013.frc2023.subsystems;
 
-import com.team254.lib.vision.AimingParameters;
 import com.team8013.frc2023.Constants;
-import com.team8013.frc2023.RobotState;
 import com.team8013.frc2023.controlboard.ControlBoard;
 import com.team8013.frc2023.drivers.Pigeon;
 import com.team8013.frc2023.logger.LogStorage;
@@ -10,15 +8,14 @@ import com.team8013.frc2023.logger.LoggingSystem;
 import com.team8013.frc2023.loops.ILooper;
 import com.team8013.frc2023.loops.Loop;
 import com.team8013.frc2023.subsystems.LEDs.State;
-import com.team254.lib.geometry.Pose2d;
 
-import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class Superstructure extends Subsystem {
 
@@ -31,7 +28,7 @@ public class Superstructure extends Subsystem {
         }
 
         return mInstance;
-    };
+    }
 
     // logger
     LogStorage<PeriodicIO> mStorage = null;
@@ -40,20 +37,20 @@ public class Superstructure extends Subsystem {
     private final ControlBoard mControlBoard = ControlBoard.getInstance();
     private final Swerve mSwerve = Swerve.getInstance();
     private final ClawV2 mClaw = ClawV2.getInstance();
-    private final Pivot mPivot = Pivot.getInstance();
+    private final PivotV2 mPivot = PivotV2.getInstance();
     private final Arm mArm = Arm.getInstance();
     private final Limelight mLimelight = Limelight.getInstance();
     private final LEDs mLEDs = LEDs.getInstance();
     private final Pigeon mPigeon = Pigeon.getInstance();
 
     // robot state
-    private final RobotState mRobotState = RobotState.getInstance();
+    //private final RobotState mRobotState = RobotState.getInstance();
 
-    // timer for reversing the intake and then stopping it once we have two correct
-    // cargo
-    Timer mIntakeRejectTimer = new Timer();
-    // timer for asserting ball position
-    Timer mAssertBallPositionTimer = new Timer();
+    private double rollAdjust = 0;
+
+    // Timer autoBalanceTimer = new Timer();
+    
+    PIDController m_BalancePid;
 
     // PeriodicIO instance and paired csv writer
     public PeriodicIO mPeriodicIO = new PeriodicIO();
@@ -71,31 +68,42 @@ public class Superstructure extends Subsystem {
         private boolean settingMid = false;
         private boolean settingHigh = false;
         private boolean canControlArmManually = true;
-        private int maxArmPosition = 0;
-        private boolean openingClaw;
+        public int maxArmPosition = 0;
+        public boolean openingClaw;
 
-        private boolean mEngage = false;
-        private boolean fromBack;
+        //AUTO
+        public boolean mEngage = false;
+        public boolean fromBack;
+        public boolean clampClawAuto;
+        public boolean hasClosedGrip;
+        public boolean wantDropPieceAuto;
 
         // time measurements
         public double timestamp;
         public double dt;
+
+        //LEDs
+        public boolean wantedYellow;
+        public boolean wantedBlue;
     }
 
     // // OUTPUTS
     double mRoll = 0;
 
     // // aiming parameter vars
-    private Optional<AimingParameters> real_aiming_params_ = Optional.empty();
-    private int mTrackId = -1;
-    private double mTargetAngle = 0.0;
-    public double mCorrectedDistanceToTarget = 0.0;
+    // private Optional<AimingParameters> real_aiming_params_ = Optional.empty();
+    // private int mTrackId = -1;
+    // private double mTargetAngle = 0.0;
+    // public double mCorrectedDistanceToTarget = 0.0;
 
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
             public void onStart(double timestamp) {
+                m_BalancePid = new PIDController(Constants.AutoConstants.balance_kP, Constants.AutoConstants.balance_kI,
+                Constants.AutoConstants.balance_kD);
+                m_BalancePid.setTolerance(Constants.AutoConstants.balance_PositionTolerance);
             }
 
             @Override
@@ -130,8 +138,8 @@ public class Superstructure extends Subsystem {
      * Jack, feel free to change this!
      * 
      * 
-     * - hold right trigger to
-     * - hold left trigger to
+     * - press right trigger to move pivot up
+     * - press left trigger to move pivot down
      * 
      * - press right bumper to grip
      * - press left bumper to ungrip
@@ -149,9 +157,9 @@ public class Superstructure extends Subsystem {
      * 
      * - Use dpad to
      * --> 0 to set grip upright
-     * --> 90 to set grip sideways
+     * --> 90 to set grip sideways or for cone
      * --> 180 to flip upsidown
-     * --> 270 to set grip sideways other way
+     * --> 270 to set grip sideways other way or for cube
      * 
      * - press START button to bring arm and pivot down
      * - BACK/MENU/2 screens button button to getZero
@@ -281,6 +289,7 @@ public class Superstructure extends Subsystem {
             // mClaw.zeroSensors();
             // }
 
+            //TODO: uncomment this to find pivot kG
             // if ((mControlBoard.getOperatorRightThrottle() > 0.4)
             // || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
             // mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
@@ -290,11 +299,12 @@ public class Superstructure extends Subsystem {
 
             System.out.println(mClaw.getCanCoder());
             System.out.println(mClaw.getPivotDemand() + "&&" + mClaw.getPivotPosition());
-            if (mControlBoard.operator.getController().getPOV() == 90) {
+            // if (mControlBoard.operator.getController().getPOV() == 90) {
 
-                mClaw.setPivotPosition(Constants.ClawConstants.piv_90Rotation);
+            //     mClaw.setPivotPosition(Constants.ClawConstants.piv_90Rotation);
 
-            } else if (mControlBoard.operator.getController().getPOV() == 0) {
+            // } else 
+            if (mControlBoard.operator.getController().getPOV() == 0) {
 
                 mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
 
@@ -317,12 +327,9 @@ public class Superstructure extends Subsystem {
             }
             // left bumper
             else if (mControlBoard.getRelease()) {
-
                 mClaw.openGrip();
-
             } else {
                 mClaw.stopGrip();
-                // mClaw.stop();
             }
         }
     }
@@ -332,79 +339,180 @@ public class Superstructure extends Subsystem {
         mControlBoard.setOperatorRumble(false);
     }
 
-    public void pivUpAuto() {
 
-        mPivot.setPivotForAutoHigh();
+                                                /*AUTO COMMANDS */
 
+    /**
+     * @return this sets the pivot and arm to high and drops the game piece, then returns to the down position
+     */
+    public void settingHighToDownAuto() {
+        mPeriodicIO.settingHigh = true;
     }
 
-    public void armExtendHighAuto() {
-        mClaw.setPivotPosition(0);
+    /**
+     * @return this sets the pivot and arm to hybrid and drops the game piece, then returns to the down position
+     */
+    public void settingHybridToDownAuto() {
+        mPeriodicIO.settingHybrid = true;
+    }
+
+    /**
+     * @return sets the arm and pivot to the pickup position
+     */
+    public void settingPickupAuto(){
+        mPeriodicIO.settingPickup = true;
+    }
+
+    /**
+     * @return when called, this clamps the claw in auto (after the extended pickup position is reached) 
+     * and pulls the arm back into the down position after the game piece is clamped
+     */
+    public void clampClawAuto() {
+        mPeriodicIO.clampClawAuto = true;
+    }
+
+    /**
+     * @return when this is called it allows the robot to drop the game piece, so call it after the robot has reached its target position
+     */
+    public void wantDropPieceAuto(){
+        mPeriodicIO.wantDropPieceAuto = true;
+    }
+
+    /**
+     * @return this sets the arm and pivot to the down position
+     */
+    public void setDownAuto(){
+        mPeriodicIO.settingDown = true;
+    }
+
+  /**
+    * @return if the claw starts backwards during auto then it keeps it backwards otherwise it sets the claw pivot to 0 and extends the arm out
+    */
+    private void armExtendHighAuto() {
+        if ((Math.abs(mClaw.mPeriodicIO.pivot_motor_position)>120) && (Math.abs(mClaw.mPeriodicIO.pivot_motor_position)<210)){
+            mClaw.setPivotPosition(Constants.ClawConstants.piv_180Rotation);
+        }
+        else{
+            mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
+        }
         mArm.setAutoExtendForHigh();
-
     }
 
-    public void dropConeAuto() {
-
-        mPeriodicIO.openingClaw = true;
-
-    }
-
-    public void getClawOpen() {
+    // this method is called periodically through auto
+    public void autoPeriodic() {
+        //Claw open
         if (mPeriodicIO.openingClaw) {
             mClaw.openGrip();
+            mPeriodicIO.hasClosedGrip = false;
         }
         if (mClaw.getLimitSwitch()) {
             mPeriodicIO.openingClaw = false;
         }
+
+        //high drop setting
+        if (mPeriodicIO.settingHigh){
+            if (mArm.isIn()){
+                mPivot.setPivotForAutoHigh();
+            }
+
+            if (mPivot.canExtendArm(Constants.PivotConstants.kAutoHighTravelDistance)) {
+                armExtendHighAuto();
+            }
+
+            if ((mArm.canDropCone(Constants.ArmConstants.kAutoHighTravelDistance))&&(mPeriodicIO.wantDropPieceAuto)){
+                mPeriodicIO.openingClaw = true;
+                if (mClaw.getLimitSwitch()){
+                    mPeriodicIO.openingClaw = false;
+                    mPeriodicIO.settingHigh = false;
+                    mPeriodicIO.settingDown = true;
+                    mPeriodicIO.wantDropPieceAuto = false;
+                }
+            }
+        }
+
+        //hybrid drop setting
+        if (mPeriodicIO.settingHybrid){
+            if (mArm.isIn()){
+                mPivot.setPivotForHybrid();
+            }
+
+            if (mPivot.canExtendArm(Constants.PivotConstants.kHybridTravelDistance)) {
+                mArm.setExtendForHybrid();
+            }
+
+            if (mArm.canDropCone(Constants.ArmConstants.kHybridTravelDistance)){
+                mPeriodicIO.openingClaw = true;
+                if (mClaw.getLimitSwitch()){
+                    mPeriodicIO.openingClaw = false;
+                    mPeriodicIO.settingHybrid = false;
+                    mPeriodicIO.settingDown = true;
+                }
+            }
+        }
+        
+        //down setting
+        if (mPeriodicIO.settingDown){
+            mArm.setArmDown();
+
+            if (mArm.isIn()){
+                mPivot.setPivotDown();
+                mPeriodicIO.settingDown = false;
+            }
+        }
+
+        //pickup piece setting
+        if ((mPeriodicIO.settingPickup)&&(!mPeriodicIO.settingDown)){
+            if (mArm.isIn()){
+                mPivot.setPivotForPickup();
+            }
+            if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)){
+                mArm.setExtendForPickup();
+            }
+            //wait for routine to call clamp, clamp once, then end pickup by calling setting down
+            if ((mPeriodicIO.clampClawAuto)&&(mArm.canDropCone(Constants.ArmConstants.kPickupTravelDistance))){
+                if (!mPeriodicIO.hasClosedGrip){
+                    mClaw.closeGrip();
+                    mPeriodicIO.hasClosedGrip = true;
+                }
+                else if (!mClaw.mPeriodicIO.wantedClosing){
+                    mPeriodicIO.settingPickup = false;
+                    mPeriodicIO.settingDown = true;
+                }
+            }
+
+        }
+
     }
 
-    public void pivPickupAuto() {
+    // public void pivPickupAuto() {
 
-        mPivot.setPivotForPickup();
-        mArm.setExtendForPickup();
+    //     mPivot.setPivotForPickup();
+    //     mArm.setExtendForPickup();
 
-    }
+    // }
 
-    public void pivDownAuto() {
-        mArm.setArmDown();
-        mPivot.setPivotDown();
-    }
+    // public void pivDownAuto() {
+    //     mArm.setArmDown();
+    //     mPivot.setPivotDown();
+    // }
 
-    public void clampCube() {
+    // public void pullArmInAuto() {
+    //     mArm.setArmDown();
+    // }
 
-        mClaw.closeGrip();
+    // public void pullPivInAuto() {
+    //     mPivot.setPivotDown();
+    // }
 
-    }
+    // public void dropConeAuto() {
 
-    public void pullArmInAuto() {
-        mArm.setArmDown();
-    }
+    //     mPeriodicIO.openingClaw = true;
 
-    public void pullPivInAuto() {
-        mPivot.setPivotDown();
-    }
+    // }
 
     public void engageChargeStation(boolean fromBack) {
         mPeriodicIO.fromBack = fromBack;
         mPeriodicIO.mEngage = true;
-
-        // if (mPigeon.getRoll().getDegrees() > 3) {
-        // mSwerve.drive(new Translation2d(.2, 0), 0, true, false);
-        // engageChargeStation();
-        // SmartDashboard.putBoolean("ChargeStation", false);
-        // SmartDashboard.putBoolean("going forwards balance", false);
-        // } else if (mPigeon.getRoll().getDegrees() < -3) {
-        // mSwerve.drive(new Translation2d(-.2, 0), 0, true, false);
-        // engageChargeStation();
-        // SmartDashboard.putBoolean("ChargeStation", false);
-        // SmartDashboard.putBoolean("going forwards balance", false);
-        // } else {
-        // mSwerve.setLocked(true);
-        // SmartDashboard.putBoolean("ChargeStation", true);
-        // // SmartDashboard.putBoolean("going forwards balance", true);
-        // // SmartDashboard.putNumber("Pitch", mPigeon.getPitch().getDegrees());
-        // }
     }
 
     public boolean[] getAutoBalance() {
@@ -412,7 +520,72 @@ public class Superstructure extends Subsystem {
         return booleanArray;
     }
 
-    /*** UPDATE STATUS LEDS ON ROBOT ***/
+
+    // uses pid to engage
+    public void autoBalancePID(){
+        if (mPeriodicIO.mEngage){
+            m_BalancePid.setSetpoint(0);
+            
+            
+            double output = MathUtil.clamp(m_BalancePid.calculate(getAdjustedRoll()),
+                            Constants.AutoConstants.balance_kMinOutput,
+                            Constants.AutoConstants.balance_kMaxOutput);
+
+            SmartDashboard.putNumber("auto balance output", output);
+            
+            if (!m_BalancePid.atSetpoint()){
+                mSwerve.setLocked(false);
+                mSwerve.drive(new Translation2d(output, 0), 0, true, true);
+            }
+            else{
+                mSwerve.setLocked(true);
+            }
+        }
+    }
+
+
+    // if gyro is slanted drive until it changes to the negative angle, then drive slowly backward until it levels
+    public void autoBalanceNonPID(){
+        if (mPeriodicIO.mEngage) {
+
+            //if it is slanted, go at a higher speed until it goes past level
+            if ((getAdjustedRoll() > Constants.AutoConstants.firstAngle)&&(!mPeriodicIO.fromBack)) {
+                mSwerve.drive(new Translation2d(Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+            }
+            else if ((getAdjustedRoll() < -Constants.AutoConstants.firstAngle)&&(mPeriodicIO.fromBack)){
+                mSwerve.drive(new Translation2d(-Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+            }
+            //drive slower back until level
+            else if ((getAdjustedRoll() < -Constants.AutoConstants.secondAngle)&&(!mPeriodicIO.fromBack)){
+                mSwerve.setLocked(false);
+                mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+            }
+            else if ((getAdjustedRoll() > Constants.AutoConstants.secondAngle)&&(mPeriodicIO.fromBack)){
+                mSwerve.setLocked(false);
+                mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+            }
+            //when 'level' lock the wheels
+            else{
+                mSwerve.setLocked(true);
+            }
+
+            //SmartDashboard.putBoolean("Balance From Back", mPeriodicIO.fromBack);
+            //SmartDashboard.putBoolean("Swerve Locked", mSwerve.getLocked());
+			}
+		}
+    
+
+    public void zeroRollInit(){
+        rollAdjust = mPigeon.getRoll().getDegrees();
+        SmartDashboard.putNumber("PIGEON roll adjust", rollAdjust);
+    }
+
+    public double getAdjustedRoll(){
+        return mPigeon.getRoll().getDegrees() - rollAdjust;
+    }
+
+
+                                    /*** UPDATE STATUS LEDS ON ROBOT ***/
     public void updateLEDs() {
         if (mLEDs.getUsingSmartdash()) {
             return;
@@ -423,16 +596,33 @@ public class Superstructure extends Subsystem {
         if (hasEmergency) {
             mState = State.EMERGENCY;
         } else {
-            if (mClaw.mPeriodicIO.grip_motor_velocity < -0.2) {
-                mState = State.FLASHING_ORANGE;
-            } else if (mClaw.getWantRelease()) {
-                mState = State.FLASHING_CYAN;
+            if (mControlBoard.getWantCone()){
+                mState = State.FLASHING_YELLOW;
+                mPeriodicIO.wantedYellow = true;
+                mPeriodicIO.wantedBlue = false;
+                mLEDs.applyStates(mState);
+                return;
+            }
+            else if (mControlBoard.getWantCube()){
+                mState = State.FLASHING_BLUE;
+                mPeriodicIO.wantedBlue = true;
+                mPeriodicIO.wantedYellow = false;
+                mLEDs.applyStates(mState);
+                return;
+            }
+            else if (mClaw.mPeriodicIO.wantedClosing) {
+                mState = State.SOLID_ORANGE;
             } else if (Timer.getFPGATimestamp() > 135) {
-                mState = State.FLASHING_PINK;
-            } else if (mPeriodicIO.mEngage) {
                 mState = State.SOLID_PINK;
-            } else {
+            }
+            else if (mPeriodicIO.wantedBlue){
+                mState = State.SOLID_BLUE;
+            }
+            else if (mPeriodicIO.wantedYellow){
                 mState = State.SOLID_YELLOW;
+            }
+            else {
+                mState = State.OFF;
             }
         }
         // mState = State.FLASHING_CYAN;
@@ -483,7 +673,6 @@ public class Superstructure extends Subsystem {
     /* Initial states for superstructure for teleop */
     public void setInitialTeleopStates() {
 
-        // mClimbMode = false;
 
         System.out.println("Set initial teleop states!");
     }

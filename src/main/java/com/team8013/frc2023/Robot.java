@@ -27,7 +27,8 @@ import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
 import com.team8013.frc2023.subsystems.Arm;
 import com.team8013.frc2023.subsystems.ClawV2;
 import com.team8013.frc2023.subsystems.Limelight;
-import com.team8013.frc2023.subsystems.Pivot;
+//import com.team8013.frc2023.subsystems.Pivot;
+import com.team8013.frc2023.subsystems.PivotV2;
 import com.team8013.frc2023.subsystems.LEDs;
 import com.team8013.frc2023.subsystems.LEDs.State;
 import com.team8013.frc2023.subsystems.Limelight.LedMode;
@@ -71,7 +72,7 @@ public class Robot extends TimedRobot {
 	private final Superstructure mSuperstructure = Superstructure.getInstance();
 	private final Swerve mSwerve = Swerve.getInstance();
 	// private final Intake mIntake = Intake.getInstance();
-	private final Pivot mPivot = Pivot.getInstance();
+	private final PivotV2 mPivot = PivotV2.getInstance();
 	// private final Shooter mShooter = Shooter.getInstance();
 	// private final Trigger mTrigger = Trigger.getInstance();
 	// private final Hood mHood = Hood.getInstance();
@@ -146,7 +147,9 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		mEnabledLooper.outputToSmartDashboard();
 		mShuffleBoardInteractions.update();
-		// mClimber.outputTelemetry();
+		mClaw.outputTelemetry();
+		mArm.outputTelemetry();
+		mPivot.outputTelemetry();
 	}
 
 	@Override
@@ -179,9 +182,7 @@ public class Robot extends TimedRobot {
 			// set champs pride automation
 			mLEDs.setChampsAutoAnimation();
 
-			// mPigeon.resetPitch(); ????HOW DO WE RESET PITCH, LOOK IN METHOD
-
-			// mClaw.resetGripEncoder();
+			mSuperstructure.zeroRollInit();
 
 		} catch (Throwable t) {
 			System.out.println("crash tracker for auto");
@@ -199,47 +200,46 @@ public class Robot extends TimedRobot {
 		// TODO;
 		mLimelight.setLed(Limelight.LedMode.ON);
 		mLEDs.updateState();
-		mSuperstructure.getClawOpen();
 
-		SmartDashboard.putNumber("Pitch", mPigeon.getPitch().getDegrees());
-		System.out.println(mPigeon.getPitch().getDegrees());
-		autoBalance = mSuperstructure.getAutoBalance();
+		//stops the claw from opening too far, makes auto more efficient
+		mSuperstructure.autoPeriodic();
 
-		if (autoBalance[1]) {
-		}
+		mSuperstructure.autoBalanceNonPID();
+		
+		// autoBalance = mSuperstructure.getAutoBalance(); //2d array: want auto balance, fromBack
 
-		if (autoBalance[0]) {
-			if (mPigeon.getRoll().getDegrees() > 3) {
-				if (autoBalance[1]) {
-					mSwerve.drive(new Translation2d(.4, 0), 0, true, false);
-				} else {
-					mSwerve.drive(new Translation2d(.6, 0), 0, true, false);
-				}
-				SmartDashboard.putBoolean("ChargeStation", false);
-				SmartDashboard.putBoolean("going forwards balance", false);
-			} else if (mPigeon.getRoll().getDegrees() < -3) {
-				if (autoBalance[1]) {
-					mSwerve.drive(new Translation2d(-.6, 0), 0, true, false);
-				} else {
-					mSwerve.drive(new Translation2d(-.3, 0), 0, true, false);
-				}
-				SmartDashboard.putBoolean("ChargeStation", false);
-				SmartDashboard.putBoolean("going forwards balance", false);
-			} else {
-				autoTimer.start();
-				if (autoTimer.get() > 1) {
-					mSwerve.setLocked(true);
-					SmartDashboard.putBoolean("ChargeStation", true);
-				}
-			}
-		}
+		// if (autoBalance[0]) {
+		// 	if (mPigeon.getRoll().getDegrees() > 3) {
+		// 		if (autoBalance[1]) {
+		// 			mSwerve.drive(new Translation2d(.4, 0), 0, true, false);
+		// 		} else {
+		// 			mSwerve.drive(new Translation2d(.6, 0), 0, true, false);
+		// 		}
+		// 		SmartDashboard.putBoolean("ChargeStation", false);
+		// 		SmartDashboard.putBoolean("going forwards balance", false);
+		// 	} else if (mPigeon.getRoll().getDegrees() < -3) {
+		// 		if (autoBalance[1]) {
+		// 			mSwerve.drive(new Translation2d(-.6, 0), 0, true, false);
+		// 		} else {
+		// 			mSwerve.drive(new Translation2d(-.3, 0), 0, true, false);
+		// 		}
+		// 		SmartDashboard.putBoolean("ChargeStation", false);
+		// 		SmartDashboard.putBoolean("going forwards balance", false);
+		// 	} else {
+		// 		autoTimer.start();
+		// 		if (autoTimer.get() > 1) {
+		// 			mSwerve.setLocked(true);
+		// 			SmartDashboard.putBoolean("ChargeStation", true);
+		// 		}
+		// 	}
+		// }
 
-		// mLEDs.applyStates(State.SOLID_BLUE);
 	}
 
 	@Override
 	public void teleopInit() {
 		try {
+			mSwerve.zeroGyro();
 
 			mLimelight.setPipeline(3);
 
@@ -251,19 +251,16 @@ public class Robot extends TimedRobot {
 			mClaw.setPivotTeleopInit();
 
 			// mClaw.setPivotPosition(0);
-			mArm.pullArmIntoZero();
+			mArm.pullArmIntoZero(); //TODO: DO WE NEED THIS???
+
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
 			mLoggingLooper.start();
 
-			mPivot.setPivotPosToCancoder();
+			// mPivot.setPivotDown(); //TODO: CHANGED THiS IN CASE WE DON'T END AUTO DOWN IT DOESNT BRAKE THE ARM
+
 			mLimelight.setLed(LedMode.PIPELINE); // Set Limelight LED's to Pipeline settings (shield your eyes!)
 
-			// mPivot.setPivotDown();
-
-			// mSuperstructure.setWantEject(false, false);
-
-			// mSuperstructure.setEjectDisable(false);
 
 			// TODO:
 			// mLimelight.setLed(Limelight.LedMode.ON);
@@ -273,12 +270,9 @@ public class Robot extends TimedRobot {
 			mLEDs.clearAnimation();
 			mLEDs.applyStates(State.OFF);
 
-			// mClaw.resetGripEncoder();
-
-			SmartDashboard.putNumber("Timestamp", Timer.getFPGATimestamp());
 
 			// set states for teleop init
-			// mSuperstructure.setInitialTeleopStates();
+			mSuperstructure.setInitialTeleopStates();
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -290,8 +284,9 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		try {
 			// mSuperstructure.readPeriodicInputs();
-			SmartDashboard.putNumber("PIGEON Pitch", mPigeon.getPitch().getDegrees());
-			SmartDashboard.putNumber("PIGEON roll", mPigeon.getRoll().getDegrees());
+
+			// SmartDashboard.putNumber("PIGEON Pitch", mPigeon.getPitch().getDegrees());
+			// SmartDashboard.putNumber("PIGEON roll", mPigeon.getRoll().getDegrees());
 
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
@@ -344,10 +339,8 @@ public class Robot extends TimedRobot {
 			// }
 
 			/* Smart Dashboard outputs */
+			SmartDashboard.putNumber("FPGAT Timestamp", Timer.getFPGATimestamp());
 
-			mClaw.outputTelemetry();
-			mArm.outputTelemetry();
-			mPivot.outputTelemetry();
 
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -404,8 +397,6 @@ public class Robot extends TimedRobot {
 
 			mLEDs.updateColor(mLEDs.getAllianceColor());
 
-			// TODO
-			// mLimelight.setLed(Limelight.LedMode.ON);
 			mLimelight.writePeriodicOutputs();
 			// mLimelight.outputTelemetry();
 			mClaw.outputTelemetry();

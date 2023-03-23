@@ -82,9 +82,17 @@ public class ClawV2 extends Subsystem {
         m_GripPid = new PIDController(Constants.ClawConstants.grip_kP, Constants.ClawConstants.grip_kI,
                 Constants.ClawConstants.grip_kD);
 
+        m_PivotPid.enableContinuousInput(0, 360);
+
         mPeriodicIO.wantedClosing = false;
         mPeriodicIO.encoderBroken = false;
         mPeriodicIO.maybeEncoderBroken = false;
+
+        // if (mPivotControlState != PivotControlState.CLOSED_LOOP) {
+        //     mPivotControlState = PivotControlState.CLOSED_LOOP;
+        // }
+        
+        // mPeriodicIO.pivot_demand = getRelativeCancoder();
 
     }
 
@@ -187,7 +195,7 @@ public class ClawV2 extends Subsystem {
 
     private void configClawEncoder() {
         m_ClawCANCoder.configFactoryDefault();
-        m_ClawCANCoder.configAllSettings(CTREConfigs.swerveCancoderConfig());
+        m_ClawCANCoder.configAllSettings(CTREConfigs.clawPivotCancoderConfig());
     }
 
     public Rotation2d getCanCoder() {
@@ -195,12 +203,7 @@ public class ClawV2 extends Subsystem {
     }
 
     public double getRelativeCancoder() {
-        return (m_ClawCANCoder.getPosition()
-                - Constants.ClawConstants.piv_cancoderOffset + 301 - 720 + 346 + 360 - 380 + 15 + 50 - 26 + 21);// + 331
-                                                                                                                // -
-        // 360);
-        // // +
-        // 155.07);
+        return (m_ClawCANCoder.getPosition() - Constants.ClawConstants.canCoderOffset);
     }
 
     public synchronized void resetPositions() {
@@ -259,21 +262,26 @@ public class ClawV2 extends Subsystem {
         openGrip();
     }
 
+    /**
+     * @return this sets the grip demand to the max output constant until the limit switch is pressed or the position goes past 15
+     */
     public void openGrip() {
         if (mGripControlState != GripControlState.OPEN_LOOP) {
             mGripControlState = GripControlState.OPEN_LOOP;
         }
-
         mPeriodicIO.wantedClosing = false;
-        if (mPeriodicIO.grip_motor_position < 15) {
-            mPeriodicIO.grip_demand = .7;
-        } else {
-            mPeriodicIO.grip_demand = 0;
-        }
 
         if (mPeriodicIO.limitSwitchActivated) {
             mPeriodicIO.grip_demand = 0;
             m_GripEncoder.reset();
+        }
+        else{
+            if (mPeriodicIO.grip_motor_position < 15) {
+                mPeriodicIO.grip_demand = Constants.ClawConstants.grip_kMaxOutput;
+            } else {
+                mPeriodicIO.grip_demand = 0;
+            }
+
         }
 
     }
@@ -323,6 +331,7 @@ public class ClawV2 extends Subsystem {
         mPeriodicIO.grip_demand = 0;
     }
 
+    //never used
     public void stopPivot() {
         mPeriodicIO.pivot_demand = 0;
     }
@@ -365,6 +374,22 @@ public class ClawV2 extends Subsystem {
     // @return retruns current going to canSparkMax
     public double getGripCurrent() {
         return mPeriodicIO.grip_current;
+    }
+
+    public boolean wantedClosing(){
+        return mPeriodicIO.wantedClosing;
+    }
+
+    public GripControlState getClawGripControlState(){
+        return mGripControlState;
+    }
+
+    public PivotControlState getClawPivotControlState(){
+        return mPivotControlState;
+    }
+
+    public double getGripPeakSpeed(){
+        return mPeriodicIO.grip_peakSpeed;
     }
 
     public boolean getWantGrip() {

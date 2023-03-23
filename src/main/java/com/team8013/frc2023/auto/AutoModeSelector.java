@@ -3,28 +3,30 @@ package com.team8013.frc2023.auto;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.lang.StackWalker.Option;
 import java.util.Optional;
 
 import com.team8013.frc2023.auto.modes.*;
+import com.team8013.frc2023.auto.modes.ConeToPickupToBalanceModes.*;
 import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.*;
-import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.HighConeMidfieldToBalance;
-import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.HighConeToBalanceMode;
-import com.team8013.frc2023.auto.modes.HighConeToBalanceModes.RightConeStraightToBalance;
-import com.team8013.frc2023.auto.modes.StraightBackModes.LeftConeToStraightBack;
-import com.team8013.frc2023.auto.modes.StraightBackModes.RightConeToStraightBack;
-import com.team8013.frc2023.shuffleboard.ShuffleBoardInteractions;
+import com.team8013.frc2023.auto.modes.StraightBackModes.*;
+import com.team8013.frc2023.auto.modes.TwoPieceModes.*;
 
 public class AutoModeSelector {
     enum DesiredMode {
         DO_NOTHING,
-        CURVY_PATH,
-        HIGH_CONE_TO_BALANCE,
-        CONE_RIGHT_STRAIGHT_TO_BALANCE,
-        CONE_LEFT_STRAIGHT_TO_BALANCE,
-        RIGHT_CONE_EXIT_LAST_SECOND,
-        LEFT_CONE_EXIT_LAST_SECOND,
-        HIGH_CONE_MIDFIELD_TO_BALANCE
+        // CURVY_PATH,
+        RIGHT_STRAIGHT_TO_BALANCE,
+        LEFT_STRAIGHT_TO_BALANCE,
+        CONE_MIDFIELD_STRAIGHT_TO_BALANCE,
+        RIGHT_TO_PICKUP_TO_BALANCE,
+        LEFT_TO_PICKUP_TO_BALANCE,
+        RIGHT_TWO_PIECE,
+        LEFT_TWO_PIECE,
+        RIGHT_TWO_PIECE_TO_BALANCE,
+        LEFT_TWO_PIECE_TO_BALANCE,
+        RIGHT_CONE_EXIT,
+        LEFT_CONE_EXIT,
+
     }
 
     private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -36,19 +38,30 @@ public class AutoModeSelector {
     public AutoModeSelector() {
         mModeChooser = new SendableChooser<>();
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
-        mModeChooser.addOption("Curvy Path Mode", DesiredMode.CURVY_PATH);
-        mModeChooser.addOption("High Cone To Balance Mode", DesiredMode.HIGH_CONE_TO_BALANCE);
-        mModeChooser.addOption("Cone RIGHT Straight To Balance Mode", DesiredMode.CONE_RIGHT_STRAIGHT_TO_BALANCE);
-        mModeChooser.addOption("Cone LEFT Straight To Balance Mode", DesiredMode.CONE_LEFT_STRAIGHT_TO_BALANCE);
-        mModeChooser.addOption("High Cone RIGHT to last second exit Mode",
-                DesiredMode.RIGHT_CONE_EXIT_LAST_SECOND);
-        mModeChooser.addOption("High Cone LEFT to last second exit Mode",
-                DesiredMode.LEFT_CONE_EXIT_LAST_SECOND);
-        mModeChooser.addOption("High Cone Mid TO Balance Mode",
-                DesiredMode.HIGH_CONE_MIDFIELD_TO_BALANCE);
+        //mModeChooser.addOption("Curvy Path Mode", DesiredMode.CURVY_PATH);
+
+        /*Pickup to balance Modes */
+        mModeChooser.addOption("RIGHT TO PICKUP TO BALANCE Mode", DesiredMode.RIGHT_TO_PICKUP_TO_BALANCE);
+        mModeChooser.addOption("LEFT TO PICKUP TO BALANCE Mode", DesiredMode.LEFT_TO_PICKUP_TO_BALANCE);
+
+        /*Two Piece Modes */
+        mModeChooser.addOption("RIGHT Two Piece Mode", DesiredMode.RIGHT_TWO_PIECE);
+        mModeChooser.addOption("LEFT Two Piece Mode", DesiredMode.LEFT_TWO_PIECE);
+        mModeChooser.addOption("RIGHT Two Piece To Balance Mode", DesiredMode.RIGHT_TWO_PIECE_TO_BALANCE);
+        mModeChooser.addOption("LEFT Two Piece To Balance Mode", DesiredMode.LEFT_TWO_PIECE_TO_BALANCE);
+
+        /*Straight to balance Modes */
+        mModeChooser.addOption("RIGHT Straight To Balance Mode", DesiredMode.RIGHT_STRAIGHT_TO_BALANCE);
+        mModeChooser.addOption("LEFT Straight To Balance Mode", DesiredMode.LEFT_STRAIGHT_TO_BALANCE);
+        mModeChooser.addOption("CONE Mid Straight To Balance Mode", DesiredMode.CONE_MIDFIELD_STRAIGHT_TO_BALANCE);
+
+        /*Straight Out Modes */
+        mModeChooser.addOption("RIGHT Cone to exit Mode", DesiredMode.RIGHT_CONE_EXIT);
+        mModeChooser.addOption("LEFT Cone to exit Mode", DesiredMode.LEFT_CONE_EXIT);
+
 
         SmartDashboard.putData(mModeChooser);
-        System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
+        //System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
     }
 
     public void updateModeCreator() {
@@ -68,29 +81,45 @@ public class AutoModeSelector {
             case DO_NOTHING:
                 return Optional.of(new DoNothingMode());
 
-            case CURVY_PATH:
-                return Optional.of(new CurvyPathMode());
+            // case CURVY_PATH:
+            //     return Optional.of(new CurvyPathMode());
 
-            case HIGH_CONE_TO_BALANCE:
-                return Optional.of(new HighConeToBalanceMode());
+            /*Pickup To Balance Modes */
+            case RIGHT_TO_PICKUP_TO_BALANCE:
+                return Optional.of(new RightConeToPickupToBalanceMode());
 
-            case CONE_RIGHT_STRAIGHT_TO_BALANCE:
+            case LEFT_TO_PICKUP_TO_BALANCE:
+                return Optional.of(new LeftConeToPickupToBalanceMode());
+
+            /*Two Piece Modes */
+            case RIGHT_TWO_PIECE:
+                return Optional.of(new RightTwoPieceMode());
+
+            case LEFT_TWO_PIECE:
+                return Optional.of(new LeftTwoPieceMode());
+            
+            case RIGHT_TWO_PIECE_TO_BALANCE:
+                return Optional.of(new RightTwoPieceToBalanceMode());
+
+            case LEFT_TWO_PIECE_TO_BALANCE:
+                return Optional.of(new LeftTwoPieceToBalanceMode());
+
+            /*Straight to Balance Modes */
+            case RIGHT_STRAIGHT_TO_BALANCE:
                 return Optional.of(new RightConeStraightToBalance());
 
-            case CONE_LEFT_STRAIGHT_TO_BALANCE:
+            case LEFT_STRAIGHT_TO_BALANCE:
                 return Optional.of(new LeftConeStraightToBalance());
 
-            case LEFT_CONE_EXIT_LAST_SECOND:
-                return Optional.of(new LeftConeToStraightBack());
+            case CONE_MIDFIELD_STRAIGHT_TO_BALANCE:
+                return Optional.of(new MidConeStraightToBalance());
 
-            case RIGHT_CONE_EXIT_LAST_SECOND:
+            /*Straight Out Modes */
+            case RIGHT_CONE_EXIT:
                 return Optional.of(new RightConeToStraightBack());
 
-            case HIGH_CONE_MIDFIELD_TO_BALANCE:
-                return Optional.of(new HighConeMidfieldToBalance());
-
-            // case FIVE_BALL_AUTO:
-            // return Optional.of(new FiveBallMode());
+            case LEFT_CONE_EXIT:
+                return Optional.of(new LeftConeToStraightBack());
 
             default:
                 System.out.println("ERROR: unexpected auto mode: " + mode);

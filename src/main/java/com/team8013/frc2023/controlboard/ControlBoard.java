@@ -184,6 +184,14 @@ public class ControlBoard {
         return operator.getButton(Button.LB);
     }
 
+    public boolean getWantCone(){
+        return (operator.getController().getPOV() == 90)||(m_driver.getRawButton(5)); //TODO: SET THIS
+    }
+
+    public boolean getWantCube(){
+        return (operator.getController().getPOV() == 270)||(m_driver.getRawButton(6)); //TODO: SET THIS
+    }
+
     // // Intake Controls
     // public boolean getIntake() {
     // return operator.getTrigger(CustomXboxController.Side.RIGHT);

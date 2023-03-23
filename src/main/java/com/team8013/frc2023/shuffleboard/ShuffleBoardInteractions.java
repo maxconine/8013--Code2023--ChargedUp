@@ -5,11 +5,10 @@ import java.util.List;
 
 import com.team8013.frc2023.shuffleboard.tabs.SuperstructureTab;
 import com.team8013.frc2023.shuffleboard.tabs.SwerveTab;
-import com.team8013.frc2023.shuffleboard.tabs.SystemsTab;
-import com.team8013.frc2023.shuffleboard.tabs.VisionTab;
-//import com.team8013.frc2023.shuffleboard.tabs.OperatorTab;
-
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import com.team8013.frc2023.shuffleboard.tabs.ArmTab;
+import com.team8013.frc2023.shuffleboard.tabs.ClawTab;
+import com.team8013.frc2023.shuffleboard.tabs.LedTab;
+import com.team8013.frc2023.shuffleboard.tabs.PivotTab;
 
 public class ShuffleBoardInteractions {
 
@@ -33,23 +32,17 @@ public class ShuffleBoardInteractions {
 
     // instantiate subsystems, tabs, and widgets
     public ShuffleBoardInteractions() {
-        //mOperatorTab = new OperatorTab();
-        // mTabs.add(mOperatorTab);
 
-        if (mDebug) {
-            List<ShuffleboardTabBase> optionalTabs = List.of(
-                new SwerveTab(),
-                new SuperstructureTab(),
-                new VisionTab()
-                // new ColorSensorTab(),
-                // new ArmTab(),
-                // new IntakeTab(),
-                // new LedTab(),
+    List<ShuffleboardTabBase> optionalTabs = List.of(
+            new SwerveTab(),
+            new SuperstructureTab(),
+            new ClawTab(),
+            new ArmTab(),
+            new PivotTab(),
+            new LedTab()
             );
-            mTabs.addAll(optionalTabs);
-        } else {
-            mTabs.add(new SystemsTab());
-        }
+
+        mTabs.addAll(optionalTabs);
 
         for(ShuffleboardTabBase tab: mTabs) {
             tab.createEntries();
@@ -63,8 +56,5 @@ public class ShuffleBoardInteractions {
         mFieldView.update();
     }
 
-    //  public ShuffleboardTab getSwerveTab() {
-    //       return mSwerveTab.getTab();
-    //  }
 }
  

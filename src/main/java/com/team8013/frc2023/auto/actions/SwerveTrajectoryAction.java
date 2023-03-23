@@ -160,16 +160,16 @@ public class SwerveTrajectoryAction implements Action {
     var desiredState = m_trajectory.sample(curTime);
     Rotation2d desiredRotation = new Rotation2d();
 
-    if (m_wantsVisionAlign.get()) {
-      if (mLimelight.hasTarget()) {
-        desiredRotation = Rotation2d.fromDegrees(m_pose.get().getRotation().getDegrees() - mLimelight.getOffset()[0]);
-      } else {
-        //desiredRotation = Rotation2d.fromDegrees(Superstructure.getInstance().getRealAimingParameters().get().getVehicleToGoalRotation().getWPIRotation2d().getDegrees() + 180.0);
-        //System.out.println(Superstructure.getInstance().getRealAimingParameters().get().getVehicleToGoalRotation().getWPIRotation2d().getDegrees() + 180.0);
-      }
-    } else {
+    //if (m_wantsVisionAlign.get()) {
+      // if (mLimelight.hasTarget()) {
+      //   desiredRotation = Rotation2d.fromDegrees(m_pose.get().getRotation().getDegrees() - mLimelight.getOffset()[0]);
+      // } else {
+      //   //desiredRotation = Rotation2d.fromDegrees(Superstructure.getInstance().getRealAimingParameters().get().getVehicleToGoalRotation().getWPIRotation2d().getDegrees() + 180.0);
+      //   //System.out.println(Superstructure.getInstance().getRealAimingParameters().get().getVehicleToGoalRotation().getWPIRotation2d().getDegrees() + 180.0);
+      // }
+    // } else {
       desiredRotation = m_desiredRotation.get();
-    }
+    // }
 
     var targetChassisSpeeds =
         m_controller.calculate(m_pose.get(), desiredState, desiredRotation);

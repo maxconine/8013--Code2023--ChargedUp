@@ -234,6 +234,18 @@ public class Arm extends Subsystem {
         }
     }
 
+    /**
+     * @return returns true if the arm position is whithin a certain specified distance 
+     */
+    public boolean canDropCone(double distance){
+        if (Math.abs(getArmPosition() - distance) < Constants.ArmConstants.canDropConeDistance){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     // hold current position on arm
     // If arm is moving less than 0.5 m/s and arm current is greater than constant
     // stator current limit
@@ -307,6 +319,18 @@ public class Arm extends Subsystem {
 
     public boolean getPartialExtendArm() {
         return mPartialExtendArm;
+    }
+
+    public boolean getArmPullInToZero(){
+        return mPeriodicIO.pullArmIntoZero;
+    }
+
+    public boolean getIsPulledIn(){
+        return mPeriodicIO.isPulledIn;
+    }
+
+    public double getArmMaxTravel(){
+        return mPeriodicIO.arm_maxTravel;
     }
 
     public boolean hasEmergency = false;

@@ -1,39 +1,33 @@
 package com.team8013.frc2023.shuffleboard.tabs;
-// package com.team1678.frc2022.shuffleboard.tabs;
 
-// import com.team1678.frc2022.shuffleboard.ShuffleboardTabBase;
-// import com.team1678.frc2022.subsystems.LEDs;
+import com.team8013.frc2023.shuffleboard.ShuffleboardTabBase;
+import com.team8013.frc2023.subsystems.LEDs;
 
-// import edu.wpi.first.networktables.GenericEntry;
-// import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
-// public class LedTab extends ShuffleboardTabBase {
+public class LedTab extends ShuffleboardTabBase {
 
-// 	private LEDs mLEDs = LEDs.getInstance();
+	private LEDs mLEDs = LEDs.getInstance();
 
-// 	private GenericEntry mTopLEDState;
-// 	private GenericEntry mBottomLEDState;
+	private GenericEntry mLEDState;
 
-// 	@Override
-// 	public void createEntries() {
-// 		mTab = Shuffleboard.getTab("Leds");
-// 		/* CANdle */
-// 		mTopLEDState = mTab
-// 				.add("Top LEDs State", "N/A")
-// 				.withSize(2, 1)
-// 				.getEntry();
 
-// 		mBottomLEDState = mTab
-// 				.add("Bottom LEDs State", "N/A")
-// 				.withSize(2, 1)
-// 				.getEntry();
+	@Override
+	public void createEntries() {
+		mTab = Shuffleboard.getTab("Leds");
+		/* CANdle */
+		mLEDState = mTab
+				.add("LEDs State", "N/A")
+				.withSize(2, 1)
+				.getEntry();
 
-// 	}
+	}
 
-// 	@Override
-// 	public void update() {
-//         mTopLEDState.setString(mLEDs.getTopState().getName());
-//         mBottomLEDState.setString(mLEDs.getBottomState().getName());
-// 	}
+	@Override
+	public void update() {
+        mLEDState.setString(mLEDs.getState().getName());
 
-// }
+	}
+
+}

@@ -27,7 +27,7 @@ public class LeftConeToStraightBack extends AutoModeBase {
         String path_a = "paths/LeftStraightOutBlue.path";
 
         // trajectories
-        SwerveTrajectoryAction farRightTopNodeToPickup_a;
+        SwerveTrajectoryAction leftStraightOutBlue;
 
         public LeftConeToStraightBack() {
 
@@ -40,7 +40,7 @@ public class LeftConeToStraightBack extends AutoModeBase {
                 // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_a = AutoTrajectoryReader.generateTrajectoryFromFile(path_a,
                                 Constants.AutoConstants.slowSpeedConfig);
-                farRightTopNodeToPickup_a = new SwerveTrajectoryAction(traj_path_a,
+                                leftStraightOutBlue = new SwerveTrajectoryAction(traj_path_a,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -56,59 +56,19 @@ public class LeftConeToStraightBack extends AutoModeBase {
                 System.out.println("Running top Cone to Balance auto!");
 
                 // reset odometry at the start of the trajectory
-                runAction(new LambdaAction(() -> mSwerve.resetOdometry(farRightTopNodeToPickup_a.getInitialPose())));
+                runAction(new LambdaAction(() -> mSwerve.resetOdometry(leftStraightOutBlue.getInitialPose())));
 
-                // runAction(new WaitAction(0.5));
+                runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
 
-                runAction(new LambdaAction(() -> mSuperstructure.pivUpAuto()));
+                runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait));
 
-                runAction(new WaitAction(1.5));
-
-                runAction(new LambdaAction(() -> mSuperstructure.armExtendHighAuto()));
-
-                runAction(new WaitAction(2));
-
-                runAction(new LambdaAction(() -> mSuperstructure.dropConeAuto()));
-
-                runAction(new WaitAction(1.5));
-
-                System.out.println("reset odometry action run");
-
-                runAction(new LambdaAction(() -> mSuperstructure.pullArmInAuto()));
-
-                runAction(new WaitAction(3));
-
-                runAction(new LambdaAction(() -> mSuperstructure.pivDownAuto()));
-
-                runAction(new WaitAction(0.5));
-
-                runAction(farRightTopNodeToPickup_a);
-
-                // ,new LambdaAction(() -> mSuperstructure.setWantIntake(true))))));
-
-                // runAction(new LambdaAction(() -> mSuperstructure.pivPickupAuto()));
-
-                // runAction(farRightTopNodeToPickup_a);
-
-                // runAction(new LambdaAction(() -> mSuperstructure.clampCube()));
-
-                // runAction(new WaitAction(1));
-
-                // runAction(new LambdaAction(() -> mSuperstructure.pullArmInAuto()));
-
-                // runAction(new WaitAction(1));
-
-                // runAction(new LambdaAction(() -> mSuperstructure.pullPivInAuto()));
-
-                // runAction(rightPickupToBalance_b);
-
-                // runAction(new LambdaAction(() -> mSuperstructure.engageChargeStation()));
+                runAction(leftStraightOutBlue);
 
                 System.out.println("Finished auto!");
         }
 
         @Override
         public Pose2d getStartingPose() {
-                return farRightTopNodeToPickup_a.getInitialPose();
+                return leftStraightOutBlue.getInitialPose();
         }
 }

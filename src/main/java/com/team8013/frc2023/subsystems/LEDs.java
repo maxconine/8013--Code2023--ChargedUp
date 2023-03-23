@@ -80,6 +80,7 @@ public class LEDs extends Subsystem {
         FLASHING_PURPLE("FLASHING_PURPLE", 0.05, new Color(255, 0, 255), Color.off()),
         FLASHING_ORANGE("FLASHING_ORANGE", 0.05, new Color(255, 53, 0), Color.off()),
         FLASHING_YELLOW("FLASHING_YELLOW", 0.05, new Color(255, 247, 5), Color.off()),
+        FLASHING_BLUE("FLASHING_BLUE", 0.05, new Color(0, 0, 255), Color.off()),
         FLASHING_CYAN("FLASHING_CYAN", 0.05, new Color(0, 255, 255), Color.off());
 
         Color[] colors; // array of colors to iterate over
