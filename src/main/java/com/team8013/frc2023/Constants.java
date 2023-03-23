@@ -335,12 +335,12 @@ public class Constants {
                 // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final int kPickupTravelDistance = 144000;
-                public static final int kHybridTravelDistance = 100000; // kLeftTravelDistance * 0.75
-                public static final int kMidTravelDistance = 120000; // kLeftTravelDistance * 0.75
-                public static final int kHighTravelDistance = 270000; // kLeftTravelDistance * 0.75
-                public static final int kAutoHighTravelDistance = 290000; // kLeftTravelDistance * 0.75
-                public static final int kDoubleSubstationTravelDistance = 100000;
+                public static final double kPickupTravelDistance = 140000/1.5;
+                public static final double kHybridTravelDistance = 100000/1.5; // kLeftTravelDistance * 0.75
+                public static final double kMidTravelDistance = 120000/1.5; // kLeftTravelDistance * 0.75
+                public static final double kHighTravelDistance = 270000/1.5; // kLeftTravelDistance * 0.75
+                public static final double kAutoHighTravelDistance = 290000/1.5; // kLeftTravelDistance * 0.75
+                public static final double kDoubleSubstationTravelDistance = 100000/1.5;
 
                 /* GENERAL CLIMBER CONSTANTS USED */
 

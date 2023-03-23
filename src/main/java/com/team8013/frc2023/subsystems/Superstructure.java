@@ -69,7 +69,7 @@ public class Superstructure extends Subsystem {
         private boolean settingHigh = false;
         private boolean settingDoubleSubstation = false;
         private boolean canControlArmManually = true;
-        public int maxArmPosition = 0;
+        public double maxArmPosition = 0;
         public boolean openingClaw;
 
         //AUTO
