@@ -67,6 +67,7 @@ public class Superstructure extends Subsystem {
         private boolean settingHybrid = false;
         private boolean settingMid = false;
         private boolean settingHigh = false;
+        private boolean placingCube = false;
         private boolean settingDoubleSubstation = false;
         private boolean canControlArmManually = true;
         public double maxArmPosition = 0;
@@ -175,19 +176,19 @@ public class Superstructure extends Subsystem {
 
         /* MANUALLY CONTROL PIVOT */
         if (mControlBoard.getOperatorLeftThrottle() > 0.4) {
-            System.out.println(mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation);
-            // if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) >
-            // 0) {
-            // mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle());
-            System.out.println("down");
-            // }
+            // System.out.println(mPivot.getPivotDemand() /
+            // Constants.PivotConstants.oneDegreeOfroation);
+            if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) > 0) {
+                mPivot.changePivPosition(-0.3 * mControlBoard.getOperatorLeftThrottle());
+                System.out.println("down");
+            }
         } else if (mControlBoard.getOperatorLeftThrottle() < -0.4) {
-            System.out.println(mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation);
-            // if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) <
-            // 120) {
-            // mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle());
-            System.out.println("up");
-            // }
+            // System.out.println(mPivot.getPivotDemand() /
+            // Constants.PivotConstants.oneDegreeOfroation);
+            if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) < (2048 * 120)) {
+                mPivot.changePivPosition(-0.3 * mControlBoard.getOperatorLeftThrottle());
+                System.out.println("up");
+            }
         }
         /* MANUALLY CONTROL ARM */
         else if (mControlBoard.getOperatorLeftYaw() > 0.4) {
@@ -370,6 +371,15 @@ public class Superstructure extends Subsystem {
         mPeriodicIO.settingHigh = true;
     }
 
+    public void settingCubeDropHigh() {
+        mClaw.mPeriodicIO.wantedClosing = false;
+        mPeriodicIO.settingPickup = false;
+        mPeriodicIO.clampClawAuto = false;
+        mPeriodicIO.wantDropPieceAuto = true;
+        mArm.setArmDown();
+        mPeriodicIO.placingCube = true;
+    }
+
     /**
      * @return this sets the pivot and arm to hybrid and drops the game piece, then
      *         returns to the down position
@@ -403,6 +413,10 @@ public class Superstructure extends Subsystem {
      */
     public void wantDropPieceAuto() {
         mPeriodicIO.wantDropPieceAuto = true;
+    }
+
+    public void openOpenClaw() {
+        mPeriodicIO.openingClaw = true;
     }
 
     /**
@@ -478,6 +492,28 @@ public class Superstructure extends Subsystem {
             }
         }
 
+        if (mPeriodicIO.placingCube) {
+
+            if (mArm.isIn()) {
+                mPivot.setPivotForAutoHigh();
+            }
+
+            if (mPivot.canExtendArm(Constants.PivotConstants.kAutoHighTravelDistance)) {
+                armExtendHighAuto();
+            }
+
+            if ((mArm.canDropCone(Constants.ArmConstants.kAutoHighTravelDistance)) && (mPeriodicIO.wantDropPieceAuto)) {
+                mClaw.openGrip();
+                mPeriodicIO.clampClawAuto = false;
+                if (mClaw.getLimitSwitch()) {
+                    mPeriodicIO.openingClaw = false;
+                    mPeriodicIO.placingCube = false;
+                    mPeriodicIO.settingDown = true;
+                    mPeriodicIO.wantDropPieceAuto = false;
+                }
+            }
+        }
+
         // down setting
         if (mPeriodicIO.settingDown) {
             mArm.setArmDown();
@@ -499,10 +535,10 @@ public class Superstructure extends Subsystem {
             // wait for routine to call clamp, clamp once, then end pickup by calling
             // setting down
             if ((mPeriodicIO.clampClawAuto) && (mArm.canDropCone(Constants.ArmConstants.kPickupTravelDistance))) {
-                if (!mPeriodicIO.hasClosedGrip) {
-                    mClaw.closeGrip();
-                    mPeriodicIO.hasClosedGrip = true;
-                } else if (!mClaw.mPeriodicIO.wantedClosing) {
+                // if (!mPeriodicIO.hasClosedGrip) {
+                mClaw.closeGrip();
+                // mPeriodicIO.hasClosedGrip = true;
+                if (!mClaw.mPeriodicIO.wantedClosing) {
                     mPeriodicIO.settingPickup = false;
                     mPeriodicIO.settingDown = true;
                 }
@@ -632,7 +668,7 @@ public class Superstructure extends Subsystem {
             } else if (mClaw.mPeriodicIO.wantedClosing) {
                 mState = State.SOLID_ORANGE;
             } else if (Timer.getFPGATimestamp() > 135) {
-                mState = State.SOLID_PINK;
+                // mState = State.SOLID_PINK;
             } else if (mPeriodicIO.wantedBlue) {
                 mState = State.SOLID_BLUE;
             } else if (mPeriodicIO.wantedYellow) {

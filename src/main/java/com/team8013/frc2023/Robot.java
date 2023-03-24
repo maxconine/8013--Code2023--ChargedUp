@@ -201,37 +201,38 @@ public class Robot extends TimedRobot {
 		mLimelight.setLed(Limelight.LedMode.ON);
 		mLEDs.updateState();
 
-		//stops the claw from opening too far, makes auto more efficient
+		// stops the claw from opening too far, makes auto more efficient
 		mSuperstructure.autoPeriodic();
 
 		mSuperstructure.autoBalanceNonPID();
-		
-		// autoBalance = mSuperstructure.getAutoBalance(); //2d array: want auto balance, fromBack
+
+		// autoBalance = mSuperstructure.getAutoBalance(); //2d array: want auto
+		// balance, fromBack
 
 		// if (autoBalance[0]) {
-		// 	if (mPigeon.getRoll().getDegrees() > 3) {
-		// 		if (autoBalance[1]) {
-		// 			mSwerve.drive(new Translation2d(.4, 0), 0, true, false);
-		// 		} else {
-		// 			mSwerve.drive(new Translation2d(.6, 0), 0, true, false);
-		// 		}
-		// 		SmartDashboard.putBoolean("ChargeStation", false);
-		// 		SmartDashboard.putBoolean("going forwards balance", false);
-		// 	} else if (mPigeon.getRoll().getDegrees() < -3) {
-		// 		if (autoBalance[1]) {
-		// 			mSwerve.drive(new Translation2d(-.6, 0), 0, true, false);
-		// 		} else {
-		// 			mSwerve.drive(new Translation2d(-.3, 0), 0, true, false);
-		// 		}
-		// 		SmartDashboard.putBoolean("ChargeStation", false);
-		// 		SmartDashboard.putBoolean("going forwards balance", false);
-		// 	} else {
-		// 		autoTimer.start();
-		// 		if (autoTimer.get() > 1) {
-		// 			mSwerve.setLocked(true);
-		// 			SmartDashboard.putBoolean("ChargeStation", true);
-		// 		}
-		// 	}
+		// if (mPigeon.getRoll().getDegrees() > 3) {
+		// if (autoBalance[1]) {
+		// mSwerve.drive(new Translation2d(.4, 0), 0, true, false);
+		// } else {
+		// mSwerve.drive(new Translation2d(.6, 0), 0, true, false);
+		// }
+		// SmartDashboard.putBoolean("ChargeStation", false);
+		// SmartDashboard.putBoolean("going forwards balance", false);
+		// } else if (mPigeon.getRoll().getDegrees() < -3) {
+		// if (autoBalance[1]) {
+		// mSwerve.drive(new Translation2d(-.6, 0), 0, true, false);
+		// } else {
+		// mSwerve.drive(new Translation2d(-.3, 0), 0, true, false);
+		// }
+		// SmartDashboard.putBoolean("ChargeStation", false);
+		// SmartDashboard.putBoolean("going forwards balance", false);
+		// } else {
+		// autoTimer.start();
+		// if (autoTimer.get() > 1) {
+		// mSwerve.setLocked(true);
+		// SmartDashboard.putBoolean("ChargeStation", true);
+		// }
+		// }
 		// }
 
 	}
@@ -239,7 +240,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		try {
-			mSwerve.zeroGyro();
+			// mSwerve.zeroGyro();
 
 			mLimelight.setPipeline(3);
 
@@ -251,16 +252,16 @@ public class Robot extends TimedRobot {
 			mClaw.setPivotTeleopInit();
 
 			// mClaw.setPivotPosition(0);
-			mArm.pullArmIntoZero(); //TODO: DO WE NEED THIS???
+			mArm.pullArmIntoZero(); // TODO: DO WE NEED THIS???
 
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
 			mLoggingLooper.start();
 
-			// mPivot.setPivotDown(); //TODO: CHANGED THiS IN CASE WE DON'T END AUTO DOWN IT DOESNT BRAKE THE ARM
+			// mPivot.setPivotDown(); //TODO: CHANGED THiS IN CASE WE DON'T END AUTO DOWN IT
+			// DOESNT BRAKE THE ARM
 
 			mLimelight.setLed(LedMode.PIPELINE); // Set Limelight LED's to Pipeline settings (shield your eyes!)
-
 
 			// TODO:
 			// mLimelight.setLed(Limelight.LedMode.ON);
@@ -269,7 +270,6 @@ public class Robot extends TimedRobot {
 			// clear any previous automation from auto
 			mLEDs.clearAnimation();
 			mLEDs.applyStates(State.OFF);
-
 
 			// set states for teleop init
 			mSuperstructure.setInitialTeleopStates();
@@ -340,7 +340,6 @@ public class Robot extends TimedRobot {
 
 			/* Smart Dashboard outputs */
 			SmartDashboard.putNumber("FPGAT Timestamp", Timer.getFPGATimestamp());
-
 
 		} catch (Throwable t) {
 			t.printStackTrace();

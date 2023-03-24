@@ -71,10 +71,10 @@ public class PivotV2 extends Subsystem {
         mPivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
         mPivot.configMotionAcceleration(40000, Constants.kLongCANTimeoutMs);
         mPivot.configMotionCruiseVelocity(20000, Constants.kLongCANTimeoutMs);
-        mPivot.config_kP(0, 0.4);
+        mPivot.config_kP(0, 0.15);
         mPivot.config_kI(0, 0);
-        mPivot.config_kD(0, 0.00003);
-        mPivot.config_kF(0, 0.077); // Is this supposed to be 0?
+        mPivot.config_kD(0, 0);
+        mPivot.config_kF(0, 0.045); // Is this supposed to be 0?
 
         // mPivotPid = new PIDController(Constants.PivotConstants.kP,
         // Constants.PivotConstants.kI,

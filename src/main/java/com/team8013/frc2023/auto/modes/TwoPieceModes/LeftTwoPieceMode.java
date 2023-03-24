@@ -44,7 +44,7 @@ public class LeftTwoPieceMode extends AutoModeBase {
                 // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_a = AutoTrajectoryReader.generateTrajectoryFromFile(path_a,
                                 Constants.AutoConstants.defaultSpeedConfig);
-                                leftTwoPieceBlue_a = new SwerveTrajectoryAction(traj_path_a,
+                leftTwoPieceBlue_a = new SwerveTrajectoryAction(traj_path_a,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -56,7 +56,7 @@ public class LeftTwoPieceMode extends AutoModeBase {
                 // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_b = AutoTrajectoryReader.generateTrajectoryFromFile(path_b,
                                 Constants.AutoConstants.defaultSpeedConfig);
-                                leftTwoPieceBlue_b = new SwerveTrajectoryAction(traj_path_b,
+                leftTwoPieceBlue_b = new SwerveTrajectoryAction(traj_path_b,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -77,13 +77,14 @@ public class LeftTwoPieceMode extends AutoModeBase {
                 // runAction(new WaitAction(0.5));
 
                 runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
+                runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 
                 runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait));
 
-                //lets see if these actions run in series
+                // lets see if these actions run in series
                 runAction(new SeriesAction(List.of(leftTwoPieceBlue_a,
-                        new LambdaAction(() -> mSuperstructure.settingPickupAuto()))));
-                
+                                new LambdaAction(() -> mSuperstructure.settingPickupAuto()))));
+
                 // runAction(farRightTopNodeToPickup_a);
                 // runAction(new LambdaAction(() -> mSuperstructure.settingPickupAuto()));
 
@@ -93,7 +94,7 @@ public class LeftTwoPieceMode extends AutoModeBase {
 
                 runAction(leftTwoPieceBlue_b);
 
-                //can change this to drop hybrid if it is short on time
+                // can change this to drop hybrid if it is short on time
                 runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
 
                 System.out.println("Finished auto!");
