@@ -40,7 +40,7 @@ public class RightConeToStraightBack extends AutoModeBase {
                 // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_a = AutoTrajectoryReader.generateTrajectoryFromFile(path_a,
                                 Constants.AutoConstants.slowSpeedConfig);
-                        rightStraightOutBlue = new SwerveTrajectoryAction(traj_path_a,
+                rightStraightOutBlue = new SwerveTrajectoryAction(traj_path_a,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -61,6 +61,7 @@ public class RightConeToStraightBack extends AutoModeBase {
                 // runAction(new WaitAction(0.5));
 
                 runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
+                runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 
                 runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait));
 

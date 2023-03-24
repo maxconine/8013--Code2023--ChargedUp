@@ -184,16 +184,16 @@ public class ControlBoard {
         return operator.getButton(Button.LB);
     }
 
-    public boolean getWantCone(){
-        return (operator.getController().getPOV() == 90)||(m_driver.getRawButton(5)); //TODO: SET THIS
+    public boolean getWantCone() {
+        return (operator.getController().getPOV() == 90) || (m_driver.getRawButton(8));
     }
 
-    public boolean getWantCube(){
-        return (operator.getController().getPOV() == 270)||(m_driver.getRawButton(6)); //TODO: SET THIS
+    public boolean getWantCube() {
+        return (operator.getController().getPOV() == 270) || (m_driver.getRawButton(9));
     }
 
-    public boolean getWantDoubleSubstation(){
-        return operator.getButton(Button.LB) && operator.getButton(Button.RB) && operator.getTrigger(Side.LEFT) && operator.getTrigger(Side.RIGHT);
+    public boolean getWantDoubleSubstation() {
+        return operator.getTrigger(Side.RIGHT);
     }
 
     // // Intake Controls

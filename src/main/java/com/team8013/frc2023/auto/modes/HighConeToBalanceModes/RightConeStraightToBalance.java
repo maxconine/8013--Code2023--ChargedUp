@@ -39,7 +39,7 @@ public class RightConeStraightToBalance extends AutoModeBase {
                 // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_a = AutoTrajectoryReader.generateTrajectoryFromFile(path_a,
                                 Constants.AutoConstants.defaultSpeedConfig);
-                        rightConeToBalanceBlue = new SwerveTrajectoryAction(traj_path_a,
+                rightConeToBalanceBlue = new SwerveTrajectoryAction(traj_path_a,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -53,19 +53,20 @@ public class RightConeStraightToBalance extends AutoModeBase {
         @Override
         protected void routine() throws AutoModeEndedException {
                 System.out.println("Running top Cone to Balance auto!");
-                
+
                 // reset odometry at the start of the trajectory
                 runAction(new LambdaAction(() -> mSwerve.resetOdometry(rightConeToBalanceBlue.getInitialPose())));
 
                 // runAction(new WaitAction(0.5));
 
                 runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
+                runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 
                 runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait));
 
                 runAction(rightConeToBalanceBlue);
 
-                runAction(new WaitAction(0.5));
+                // runAction(new WaitAction(0.5));
 
                 System.out.println("charge station engaging");
 

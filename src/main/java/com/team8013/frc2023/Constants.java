@@ -96,8 +96,10 @@ public class Constants {
                 public static final double driveKV = (1.51 / 12);
                 public static final double driveKA = (0.27 / 12);
 
-                /* Swerve Profiling Values */ 
-                public static final double maxSpeed = 5.02; // meters per second MAX : 5.02 m/s Linear Speed (meters /sec) = motor speed (RPM) / gear ratio * pi * wheel diameter (meters) / 60
+                /* Swerve Profiling Values */
+                public static final double maxSpeed = 5.02; // meters per second MAX : 5.02 m/s Linear Speed
+                                                            // (meters /sec) = motor speed (RPM) / gear ratio * pi *
+                                                            // wheel diameter (meters) / 60
                 // LS = 6380/6.75*pi*0.1016/60 = 5.028
                 public static final double maxAngularVelocity = 8.0;
 
@@ -169,7 +171,8 @@ public class Constants {
 
                 // Constraints for the profiled angle controller
                 public static final double kMaxAngularSpeedRadiansPerSecond = 2.0 * Math.PI; // og 2.0 * pi
-                public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond,2);
+                public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math
+                                .pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
                 public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
                                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
@@ -208,7 +211,7 @@ public class Constants {
 
                 public static final double kPXController = 1; // og 1 0.2 works
                 public static final double kPYController = 1; // og 1 0.3 works
-                public static final double kPThetaController = 3.8; // 3.8; // og 5
+                public static final double kPThetaController = 0.0; // 3.8; // og 5
 
                 // Constraint for the motion profilied robot angle controller
                 public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -242,10 +245,10 @@ public class Constants {
                                 .setEndVelocity(0);
 
                 /* TIME CONSTANTS */
-                public static final double firstDropHighWait = 5; //wait 5 seconds for the cone to be dropped
+                public static final double firstDropHighWait = 5; // wait 5 seconds for the cone to be dropped
                 public static final double pickupPieceWait = 2;
 
-                /*BALANCE CONSTANTS*/
+                /* BALANCE CONSTANTS */
                 public static final double balance_kP = .2;
                 public static final double balance_kI = 0;
                 public static final double balance_kD = 0;
@@ -253,11 +256,11 @@ public class Constants {
                 public static final double balance_kMaxOutput = 0.8;
                 public static final double balance_PositionTolerance = 1;
 
-                //non pid
-                public static final double firstAngle = 5; //within +- degrees, turn around (11 to 15 degrees irl)
-                public static final double secondAngle = 5; //within +- degrees, then stop
-                public static final double firstSpeed = 1.0; // meters per second
-                public static final double secondSpeed = 0.4; // meters per second
+                // non pid
+                public static final double firstAngle = 5; // within +- degrees, turn around (11 to 15 degrees irl)
+                public static final double secondAngle = 5; // within +- degrees, then stop
+                public static final double firstSpeed = .75; // meters per second
+                public static final double secondSpeed = 0.2; // meters per second
         }
 
         public static final class VisionConstants {
@@ -335,12 +338,12 @@ public class Constants {
                 // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final double kPickupTravelDistance = 140000/1.5;
-                public static final double kHybridTravelDistance = 100000/1.5; // kLeftTravelDistance * 0.75
-                public static final double kMidTravelDistance = 120000/1.5; // kLeftTravelDistance * 0.75
-                public static final double kHighTravelDistance = 270000/1.5; // kLeftTravelDistance * 0.75
-                public static final double kAutoHighTravelDistance = 290000/1.5; // kLeftTravelDistance * 0.75
-                public static final double kDoubleSubstationTravelDistance = 100000/1.5;
+                public static final double kPickupTravelDistance = 140000 / 1.5;
+                public static final double kHybridTravelDistance = 100000 / 1.5; // kLeftTravelDistance * 0.75
+                public static final double kMidTravelDistance = 120000 / 1.5; // kLeftTravelDistance * 0.75
+                public static final double kHighTravelDistance = 290000 / 1.5; // kLeftTravelDistance * 0.75
+                public static final double kAutoHighTravelDistance = 290000 / 1.5; // kLeftTravelDistance * 0.75
+                public static final double kDoubleSubstationTravelDistance = 10000 / 1.5;
 
                 /* GENERAL CLIMBER CONSTANTS USED */
 
@@ -355,11 +358,14 @@ public class Constants {
         }
 
         public static final class PivotConstants {
-                public static final int kStatorCurrentLimit = 30; // 80 Amps for Neo motor
+                public static final int kStatorCurrentLimit = 60; // 80 Amps for Neo motor
                 public static final double kTriggerThresholdCurrent = 60;
 
-                public static final boolean canCoderInvert = true; // if false(default) is ccw+ when observing from the led side
-                public static final double canCoderOffset = 0; //program subtracts this value to the cancoder angle to make it 0
+                public static final boolean canCoderInvert = false; // if false(default) is ccw+ when observing from the
+                                                                    // led side
+                public static final double canCoderOffset = -12; // program subtracts this value to the cancoder angle
+                                                                 // to
+                                                                 // make it 0
 
                 public static final double neo_kP = 0.5;
                 public static final double neo_kI = 0.0;
@@ -372,28 +378,31 @@ public class Constants {
                 public static final double kP = 0.5;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
-                public static final double kGravity = 0.0; //percent output required to hold the arm horisontal
+                public static final double kGravity = 0.0; // percent output required to hold the arm horisontal
 
                 // gear ratio for one full rotation of the pivot
-                // (3*3*3)* (227/14) = 437.785714286 used to be 972.857 //TODO:Double check this
-                public static final double oneDegreeOfroation = 1.21607142857; // used to be 2.702381;
+                // (3*3*3)* (227/20) = 245.16 used to be 972.857 //TODO:Double check
+                // this
+                public static final double oneDegreeOfroation = 0.85125; // used to be 2.702381;
 
                 // 14 tooth to 226 tooth
                 // rotations*360 to get degrees
 
                 // pivot constants
-                public static final double degreesOffToReset = 3; //degrees the motor is off by
-                public static final double ticksOffToReset = degreesOffToReset*oneDegreeOfroation*2048; //ticks the motor is off by
+                public static final double degreesOffToReset = 4; // degrees the motor is off by
+                public static final double ticksOffToReset = degreesOffToReset * oneDegreeOfroation * 2048; // ticks the
+                                                                                                            // motor is
+                                                                                                            // off by
 
-                public static final double degreesCanExtendArm = 4;
+                public static final double degreesCanExtendArm = 5;
 
                 // pivot degree constants
-                public static final double kPickupTravelDistance = 40 + 2;
+                public static final double kPickupTravelDistance = 35 + 2;
                 public static final double kHybridTravelDistance = 47.37 + 5; // degrees
                 public static final double kMidTravelDistance = 95.47 + 5;
                 public static final double kHighTravelDistance = 106.2 + 5;
                 public static final double kAutoHighTravelDistance = 105 + 5;
-                public static final double kDoubleSubstationTravelDistance = 130;
+                public static final double kDoubleSubstationTravelDistance = 100.5;
 
         }
 
@@ -414,18 +423,17 @@ public class Constants {
                 public static final double piv_90Rotation = 87;
                 public static final double piv_180Rotation = 180;
 
-
-
                 public static final double pivotGearRatio = 1.535714; // (86 / 56);
 
                 public static final double kPivotMinDistance = -pivotGearRatio; // encoder hard limit one full rotation
                                                                                 // either side
                 public static final double kPivotMaxDistance = pivotGearRatio; // encoder hard limit
 
-
-                /*CAN CODER */
-                public static final double canCoderOffset = 208.38; //program subtracts this value to the cancoder angle to make it 0
-                public static final boolean canCoderInvert = false; //program subtracts this value to the cancoder angle to make it 0
+                /* CAN CODER */
+                public static final double canCoderOffset = 208.38 + 78; // program subtracts this value to the cancoder
+                                                                         // angle to make it 0
+                public static final boolean canCoderInvert = false; // program subtracts this value to the cancoder
+                                                                    // angle to make it 0
 
                 /* CLAW */
 

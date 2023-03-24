@@ -44,12 +44,12 @@ public class Superstructure extends Subsystem {
     private final Pigeon mPigeon = Pigeon.getInstance();
 
     // robot state
-    //private final RobotState mRobotState = RobotState.getInstance();
+    // private final RobotState mRobotState = RobotState.getInstance();
 
     private double rollAdjust = 0;
 
     // Timer autoBalanceTimer = new Timer();
-    
+
     PIDController m_BalancePid;
 
     // PeriodicIO instance and paired csv writer
@@ -72,7 +72,7 @@ public class Superstructure extends Subsystem {
         public double maxArmPosition = 0;
         public boolean openingClaw;
 
-        //AUTO
+        // AUTO
         public boolean mEngage = false;
         public boolean fromBack;
         public boolean clampClawAuto;
@@ -83,7 +83,7 @@ public class Superstructure extends Subsystem {
         public double timestamp;
         public double dt;
 
-        //LEDs
+        // LEDs
         public boolean wantedYellow;
         public boolean wantedBlue;
     }
@@ -103,7 +103,7 @@ public class Superstructure extends Subsystem {
             @Override
             public void onStart(double timestamp) {
                 m_BalancePid = new PIDController(Constants.AutoConstants.balance_kP, Constants.AutoConstants.balance_kI,
-                Constants.AutoConstants.balance_kD);
+                        Constants.AutoConstants.balance_kD);
                 m_BalancePid.setTolerance(Constants.AutoConstants.balance_PositionTolerance);
             }
 
@@ -176,16 +176,18 @@ public class Superstructure extends Subsystem {
         /* MANUALLY CONTROL PIVOT */
         if (mControlBoard.getOperatorLeftThrottle() > 0.4) {
             System.out.println(mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation);
-            if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) > 0) {
-                mPivot.changePivPosition(mControlBoard.getOperatorLeftThrottle() * -1);
-                System.out.println("down");
-            }
+            // if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) >
+            // 0) {
+            // mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle());
+            System.out.println("down");
+            // }
         } else if (mControlBoard.getOperatorLeftThrottle() < -0.4) {
             System.out.println(mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation);
-            if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) < 120) {
-                mPivot.changePivPosition(mControlBoard.getOperatorLeftThrottle() * -1);
-                System.out.println("up");
-            }
+            // if ((mPivot.getPivotDemand() / Constants.PivotConstants.oneDegreeOfroation) <
+            // 120) {
+            // mPivot.setPivotOpenLoop(mControlBoard.getOperatorLeftThrottle());
+            System.out.println("up");
+            // }
         }
         /* MANUALLY CONTROL ARM */
         else if (mControlBoard.getOperatorLeftYaw() > 0.4) {
@@ -230,8 +232,7 @@ public class Superstructure extends Subsystem {
                 mPeriodicIO.settingHigh = true;
                 mPeriodicIO.canControlArmManually = true;
                 mPeriodicIO.maxArmPosition = Constants.ArmConstants.kHighTravelDistance;
-            }
-            else if(mControlBoard.getWantDoubleSubstation()){
+            } else if (mControlBoard.getWantDoubleSubstation()) {
                 mArm.setArmDown();
                 mPeriodicIO.settingDoubleSubstation = true;
                 mPeriodicIO.canControlArmManually = false;
@@ -284,11 +285,11 @@ public class Superstructure extends Subsystem {
                     mPeriodicIO.canControlArmManually = true;
                 }
             }
-            if (mPeriodicIO.settingDoubleSubstation){
+            if (mPeriodicIO.settingDoubleSubstation) {
                 if (mArm.isIn()) {
                     mPivot.setPivotForDoubleSubstation();
                 }
-                if (mPivot.canExtendArm(Constants.PivotConstants.kHighTravelDistance)) {
+                if (mPivot.canExtendArm(Constants.PivotConstants.kDoubleSubstationTravelDistance)) {
                     mArm.setExtendForDoubleSubstation();
                     mPeriodicIO.settingDoubleSubstation = false;
                     mPeriodicIO.canControlArmManually = true;
@@ -308,7 +309,7 @@ public class Superstructure extends Subsystem {
             // mClaw.zeroSensors();
             // }
 
-            //TODO: uncomment this to find pivot kG
+            // TODO: uncomment this to find pivot kG
             // if ((mControlBoard.getOperatorRightThrottle() > 0.4)
             // || (mControlBoard.getOperatorRightThrottle() < -0.4)) {
             // mClaw.setPivotOpenLoop(mControlBoard.getOperatorRightThrottle() / 2);
@@ -320,9 +321,9 @@ public class Superstructure extends Subsystem {
             System.out.println(mClaw.getPivotDemand() + "&&" + mClaw.getPivotPosition());
             // if (mControlBoard.operator.getController().getPOV() == 90) {
 
-            //     mClaw.setPivotPosition(Constants.ClawConstants.piv_90Rotation);
+            // mClaw.setPivotPosition(Constants.ClawConstants.piv_90Rotation);
 
-            // } else 
+            // } else
             if (mControlBoard.operator.getController().getPOV() == 0) {
 
                 mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
@@ -358,11 +359,11 @@ public class Superstructure extends Subsystem {
         mControlBoard.setOperatorRumble(false);
     }
 
-
-                                                /*AUTO COMMANDS */
+    /* AUTO COMMANDS */
 
     /**
-     * @return this sets the pivot and arm to high and drops the game piece, then returns to the down position
+     * @return this sets the pivot and arm to high and drops the game piece, then
+     *         returns to the down position
      */
     public void settingHighToDownAuto() {
         mArm.setArmDown();
@@ -370,7 +371,8 @@ public class Superstructure extends Subsystem {
     }
 
     /**
-     * @return this sets the pivot and arm to hybrid and drops the game piece, then returns to the down position
+     * @return this sets the pivot and arm to hybrid and drops the game piece, then
+     *         returns to the down position
      */
     public void settingHybridToDownAuto() {
         mArm.setArmDown();
@@ -380,41 +382,45 @@ public class Superstructure extends Subsystem {
     /**
      * @return sets the arm and pivot to the pickup position
      */
-    public void settingPickupAuto(){
+    public void settingPickupAuto() {
         mArm.setArmDown();
         mPeriodicIO.settingPickup = true;
     }
 
     /**
-     * @return when called, this clamps the claw in auto (after the extended pickup position is reached) 
-     * and pulls the arm back into the down position after the game piece is clamped
+     * @return when called, this clamps the claw in auto (after the extended pickup
+     *         position is reached)
+     *         and pulls the arm back into the down position after the game piece is
+     *         clamped
      */
     public void clampClawAuto() {
         mPeriodicIO.clampClawAuto = true;
     }
 
     /**
-     * @return when this is called it allows the robot to drop the game piece, so call it after the robot has reached its target position
+     * @return when this is called it allows the robot to drop the game piece, so
+     *         call it after the robot has reached its target position
      */
-    public void wantDropPieceAuto(){
+    public void wantDropPieceAuto() {
         mPeriodicIO.wantDropPieceAuto = true;
     }
 
     /**
      * @return this sets the arm and pivot to the down position
      */
-    public void setDownAuto(){
+    public void setDownAuto() {
         mPeriodicIO.settingDown = true;
     }
 
-  /**
-    * @return if the claw starts backwards during auto then it keeps it backwards otherwise it sets the claw pivot to 0 and extends the arm out
-    */
+    /**
+     * @return if the claw starts backwards during auto then it keeps it backwards
+     *         otherwise it sets the claw pivot to 0 and extends the arm out
+     */
     private void armExtendHighAuto() {
-        if ((Math.abs(mClaw.mPeriodicIO.pivot_motor_position)>120) && (Math.abs(mClaw.mPeriodicIO.pivot_motor_position)<210)){
+        if ((Math.abs(mClaw.mPeriodicIO.pivot_motor_position) > 120)
+                && (Math.abs(mClaw.mPeriodicIO.pivot_motor_position) < 210)) {
             mClaw.setPivotPosition(Constants.ClawConstants.piv_180Rotation);
-        }
-        else{
+        } else {
             mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
         }
         mArm.setAutoExtendForHigh();
@@ -422,7 +428,7 @@ public class Superstructure extends Subsystem {
 
     // this method is called periodically through auto
     public void autoPeriodic() {
-        //Claw open
+        // Claw open
         if (mPeriodicIO.openingClaw) {
             mClaw.openGrip();
             mPeriodicIO.hasClosedGrip = false;
@@ -431,9 +437,9 @@ public class Superstructure extends Subsystem {
             mPeriodicIO.openingClaw = false;
         }
 
-        //high drop setting
-        if (mPeriodicIO.settingHigh){
-            if (mArm.isIn()){
+        // high drop setting
+        if (mPeriodicIO.settingHigh) {
+            if (mArm.isIn()) {
                 mPivot.setPivotForAutoHigh();
             }
 
@@ -441,9 +447,9 @@ public class Superstructure extends Subsystem {
                 armExtendHighAuto();
             }
 
-            if ((mArm.canDropCone(Constants.ArmConstants.kAutoHighTravelDistance))&&(mPeriodicIO.wantDropPieceAuto)){
+            if ((mArm.canDropCone(Constants.ArmConstants.kAutoHighTravelDistance)) && (mPeriodicIO.wantDropPieceAuto)) {
                 mPeriodicIO.openingClaw = true;
-                if (mClaw.getLimitSwitch()){
+                if (mClaw.getLimitSwitch()) {
                     mPeriodicIO.openingClaw = false;
                     mPeriodicIO.settingHigh = false;
                     mPeriodicIO.settingDown = true;
@@ -452,9 +458,9 @@ public class Superstructure extends Subsystem {
             }
         }
 
-        //hybrid drop setting
-        if (mPeriodicIO.settingHybrid){
-            if (mArm.isIn()){
+        // hybrid drop setting
+        if (mPeriodicIO.settingHybrid) {
+            if (mArm.isIn()) {
                 mPivot.setPivotForHybrid();
             }
 
@@ -462,41 +468,41 @@ public class Superstructure extends Subsystem {
                 mArm.setExtendForHybrid();
             }
 
-            if (mArm.canDropCone(Constants.ArmConstants.kHybridTravelDistance)){
+            if (mArm.canDropCone(Constants.ArmConstants.kHybridTravelDistance)) {
                 mPeriodicIO.openingClaw = true;
-                if (mClaw.getLimitSwitch()){
+                if (mClaw.getLimitSwitch()) {
                     mPeriodicIO.openingClaw = false;
                     mPeriodicIO.settingHybrid = false;
                     mPeriodicIO.settingDown = true;
                 }
             }
         }
-        
-        //down setting
-        if (mPeriodicIO.settingDown){
+
+        // down setting
+        if (mPeriodicIO.settingDown) {
             mArm.setArmDown();
 
-            if (mArm.isIn()){
+            if (mArm.isIn()) {
                 mPivot.setPivotDown();
                 mPeriodicIO.settingDown = false;
             }
         }
 
-        //pickup piece setting
-        if ((mPeriodicIO.settingPickup)&&(!mPeriodicIO.settingDown)){
-            if (mArm.isIn()){
+        // pickup piece setting
+        if ((mPeriodicIO.settingPickup) && (!mPeriodicIO.settingDown)) {
+            if (mArm.isIn()) {
                 mPivot.setPivotForPickup();
             }
-            if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)){
+            if (mPivot.canExtendArm(Constants.PivotConstants.kPickupTravelDistance)) {
                 mArm.setExtendForPickup();
             }
-            //wait for routine to call clamp, clamp once, then end pickup by calling setting down
-            if ((mPeriodicIO.clampClawAuto)&&(mArm.canDropCone(Constants.ArmConstants.kPickupTravelDistance))){
-                if (!mPeriodicIO.hasClosedGrip){
+            // wait for routine to call clamp, clamp once, then end pickup by calling
+            // setting down
+            if ((mPeriodicIO.clampClawAuto) && (mArm.canDropCone(Constants.ArmConstants.kPickupTravelDistance))) {
+                if (!mPeriodicIO.hasClosedGrip) {
                     mClaw.closeGrip();
                     mPeriodicIO.hasClosedGrip = true;
-                }
-                else if (!mClaw.mPeriodicIO.wantedClosing){
+                } else if (!mClaw.mPeriodicIO.wantedClosing) {
                     mPeriodicIO.settingPickup = false;
                     mPeriodicIO.settingDown = true;
                 }
@@ -508,27 +514,27 @@ public class Superstructure extends Subsystem {
 
     // public void pivPickupAuto() {
 
-    //     mPivot.setPivotForPickup();
-    //     mArm.setExtendForPickup();
+    // mPivot.setPivotForPickup();
+    // mArm.setExtendForPickup();
 
     // }
 
     // public void pivDownAuto() {
-    //     mArm.setArmDown();
-    //     mPivot.setPivotDown();
+    // mArm.setArmDown();
+    // mPivot.setPivotDown();
     // }
 
     // public void pullArmInAuto() {
-    //     mArm.setArmDown();
+    // mArm.setArmDown();
     // }
 
     // public void pullPivInAuto() {
-    //     mPivot.setPivotDown();
+    // mPivot.setPivotDown();
     // }
 
     // public void dropConeAuto() {
 
-    //     mPeriodicIO.openingClaw = true;
+    // mPeriodicIO.openingClaw = true;
 
     // }
 
@@ -542,72 +548,65 @@ public class Superstructure extends Subsystem {
         return booleanArray;
     }
 
-
     // uses pid to engage
-    public void autoBalancePID(){
-        if (mPeriodicIO.mEngage){
+    public void autoBalancePID() {
+        if (mPeriodicIO.mEngage) {
             m_BalancePid.setSetpoint(0);
-            
-            
+
             double output = MathUtil.clamp(m_BalancePid.calculate(getAdjustedRoll()),
-                            Constants.AutoConstants.balance_kMinOutput,
-                            Constants.AutoConstants.balance_kMaxOutput);
+                    Constants.AutoConstants.balance_kMinOutput,
+                    Constants.AutoConstants.balance_kMaxOutput);
 
             SmartDashboard.putNumber("auto balance output", output);
-            
-            if (!m_BalancePid.atSetpoint()){
+
+            if (!m_BalancePid.atSetpoint()) {
                 mSwerve.setLocked(false);
                 mSwerve.drive(new Translation2d(output, 0), 0, true, true);
-            }
-            else{
+            } else {
                 mSwerve.setLocked(true);
             }
         }
     }
 
-
-    // if gyro is slanted drive until it changes to the negative angle, then drive slowly backward until it levels
-    public void autoBalanceNonPID(){
+    // if gyro is slanted drive until it changes to the negative angle, then drive
+    // slowly backward until it levels
+    public void autoBalanceNonPID() {
         if (mPeriodicIO.mEngage) {
 
-            //if it is slanted, go at a higher speed until it goes past level
-            if ((getAdjustedRoll() > Constants.AutoConstants.firstAngle)&&(!mPeriodicIO.fromBack)) {
+            // if it is slanted, go at a higher speed until it goes past level
+            if ((getAdjustedRoll() > Constants.AutoConstants.firstAngle) && (!mPeriodicIO.fromBack)) {
                 mSwerve.drive(new Translation2d(Constants.AutoConstants.firstSpeed, 0), 0, true, false);
-            }
-            else if ((getAdjustedRoll() < -Constants.AutoConstants.firstAngle)&&(mPeriodicIO.fromBack)){
+            } else if ((getAdjustedRoll() < -Constants.AutoConstants.firstAngle) && (mPeriodicIO.fromBack)) {
                 mSwerve.drive(new Translation2d(-Constants.AutoConstants.firstSpeed, 0), 0, true, false);
             }
-            //drive slower back until level
-            else if ((getAdjustedRoll() < -Constants.AutoConstants.secondAngle)&&(!mPeriodicIO.fromBack)){
+            // drive slower back until level
+            else if ((getAdjustedRoll() < -Constants.AutoConstants.secondAngle) && (!mPeriodicIO.fromBack)) {
                 mSwerve.setLocked(false);
                 mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed, 0), 0, true, false);
-            }
-            else if ((getAdjustedRoll() > Constants.AutoConstants.secondAngle)&&(mPeriodicIO.fromBack)){
+            } else if ((getAdjustedRoll() > Constants.AutoConstants.secondAngle) && (mPeriodicIO.fromBack)) {
                 mSwerve.setLocked(false);
                 mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed, 0), 0, true, false);
             }
-            //when 'level' lock the wheels
-            else{
-                mSwerve.setLocked(true);
+            // when 'level' lock the wheels
+            else {
+                // mSwerve.setLocked(true);
             }
 
-            //SmartDashboard.putBoolean("Balance From Back", mPeriodicIO.fromBack);
-            //SmartDashboard.putBoolean("Swerve Locked", mSwerve.getLocked());
-			}
-		}
-    
+            // SmartDashboard.putBoolean("Balance From Back", mPeriodicIO.fromBack);
+            // SmartDashboard.putBoolean("Swerve Locked", mSwerve.getLocked());
+        }
+    }
 
-    public void zeroRollInit(){
+    public void zeroRollInit() {
         rollAdjust = mPigeon.getRoll().getDegrees();
         SmartDashboard.putNumber("PIGEON roll adjust", rollAdjust);
     }
 
-    public double getAdjustedRoll(){
+    public double getAdjustedRoll() {
         return mPigeon.getRoll().getDegrees() - rollAdjust;
     }
 
-
-                                    /*** UPDATE STATUS LEDS ON ROBOT ***/
+    /*** UPDATE STATUS LEDS ON ROBOT ***/
     public void updateLEDs() {
         if (mLEDs.getUsingSmartdash()) {
             return;
@@ -618,32 +617,27 @@ public class Superstructure extends Subsystem {
         if (hasEmergency) {
             mState = State.EMERGENCY;
         } else {
-            if (mControlBoard.getWantCone()){
+            if (mControlBoard.getWantCone()) {
                 mState = State.FLASHING_YELLOW;
                 mPeriodicIO.wantedYellow = true;
                 mPeriodicIO.wantedBlue = false;
                 mLEDs.applyStates(mState);
                 return;
-            }
-            else if (mControlBoard.getWantCube()){
+            } else if (mControlBoard.getWantCube()) {
                 mState = State.FLASHING_BLUE;
                 mPeriodicIO.wantedBlue = true;
                 mPeriodicIO.wantedYellow = false;
                 mLEDs.applyStates(mState);
                 return;
-            }
-            else if (mClaw.mPeriodicIO.wantedClosing) {
+            } else if (mClaw.mPeriodicIO.wantedClosing) {
                 mState = State.SOLID_ORANGE;
             } else if (Timer.getFPGATimestamp() > 135) {
                 mState = State.SOLID_PINK;
-            }
-            else if (mPeriodicIO.wantedBlue){
+            } else if (mPeriodicIO.wantedBlue) {
                 mState = State.SOLID_BLUE;
-            }
-            else if (mPeriodicIO.wantedYellow){
+            } else if (mPeriodicIO.wantedYellow) {
                 mState = State.SOLID_YELLOW;
-            }
-            else {
+            } else {
                 mState = State.OFF;
             }
         }
@@ -694,7 +688,6 @@ public class Superstructure extends Subsystem {
 
     /* Initial states for superstructure for teleop */
     public void setInitialTeleopStates() {
-
 
         System.out.println("Set initial teleop states!");
     }

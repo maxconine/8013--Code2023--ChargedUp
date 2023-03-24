@@ -12,15 +12,15 @@ public final class CTREConfigs {
     public static TalonFXConfiguration swerveDriveFXConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
         SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(
-            Constants.SwerveConstants.driveEnableCurrentLimit, 
-            Constants.SwerveConstants.driveContinuousCurrentLimit, 
-            Constants.SwerveConstants.drivePeakCurrentLimit, 
-            Constants.SwerveConstants.drivePeakCurrentDuration);
+                Constants.SwerveConstants.driveEnableCurrentLimit,
+                Constants.SwerveConstants.driveContinuousCurrentLimit,
+                Constants.SwerveConstants.drivePeakCurrentLimit,
+                Constants.SwerveConstants.drivePeakCurrentDuration);
 
         config.slot0.kP = Constants.SwerveConstants.driveKP;
         config.slot0.kI = Constants.SwerveConstants.driveKI;
         config.slot0.kD = Constants.SwerveConstants.driveKD;
-        config.slot0.kF = Constants.SwerveConstants.driveKF;        
+        config.slot0.kF = Constants.SwerveConstants.driveKF;
         config.supplyCurrLimit = driveSupplyLimit;
         config.initializationStrategy = SensorInitializationStrategy.BootToZero;
         config.openloopRamp = Constants.SwerveConstants.openLoopRamp;
@@ -31,10 +31,10 @@ public final class CTREConfigs {
     public static TalonFXConfiguration swerveAngleFXConfig() {
         TalonFXConfiguration angleConfig = new TalonFXConfiguration();
         SupplyCurrentLimitConfiguration angleSupplyLimit = new SupplyCurrentLimitConfiguration(
-            Constants.SwerveConstants.angleEnableCurrentLimit, 
-            Constants.SwerveConstants.angleContinuousCurrentLimit, 
-            Constants.SwerveConstants.anglePeakCurrentLimit, 
-            Constants.SwerveConstants.anglePeakCurrentDuration);
+                Constants.SwerveConstants.angleEnableCurrentLimit,
+                Constants.SwerveConstants.angleContinuousCurrentLimit,
+                Constants.SwerveConstants.anglePeakCurrentLimit,
+                Constants.SwerveConstants.anglePeakCurrentDuration);
 
         angleConfig.slot0.kP = Constants.SwerveConstants.angleKP;
         angleConfig.slot0.kI = Constants.SwerveConstants.angleKI;
@@ -53,7 +53,7 @@ public final class CTREConfigs {
         config.sensorTimeBase = SensorTimeBase.PerSecond;
         return config;
     }
-    
+
     public static CANCoderConfiguration pivotCancoderConfig() {
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;

@@ -1,6 +1,5 @@
 package com.team8013.frc2023.shuffleboard.tabs;
 
-
 import com.team8013.frc2023.shuffleboard.ShuffleboardTabBase;
 import com.team8013.frc2023.subsystems.Arm;
 
@@ -51,27 +50,27 @@ public class ArmTab extends ShuffleboardTabBase {
 		pullArmIntoZero = mTab
 				.add("Arm Zeroing", false)
 				.getEntry();
-		arm_maxTravel =  mTab
-			.add("Arm Max Travel", 0.0)
-			.getEntry();
+		arm_maxTravel = mTab
+				.add("Arm Max Travel", 0.0)
+				.getEntry();
 
 	}
 
 	@Override
 	public void update() {
-        pullArmIntoZero.setBoolean(mArm.getArmPullInToZero());
-        
+		pullArmIntoZero.setBoolean(mArm.getArmPullInToZero());
+
 		mArmControlState.setString(mArm.getControlState().toString());
 
-        mArmVelocity.setDouble(mArm.getArmVelocity());
-        
-        mArmDemand.setDouble(mArm.getArmDemand());
+		mArmVelocity.setDouble(mArm.getArmVelocity());
 
-        mArmPosition.setDouble(mArm.getArmPosition());
+		mArmDemand.setDouble(mArm.getArmDemand());
 
-        mArmCurrent.setDouble(mArm.getArmCurrent());
-        
-        isPulledIn.setBoolean(mArm.getIsPulledIn());
+		mArmPosition.setDouble(mArm.getArmPosition());
+
+		mArmCurrent.setDouble(mArm.getArmCurrent());
+
+		isPulledIn.setBoolean(mArm.isIn());
 
 		arm_maxTravel.setDouble(mArm.getArmMaxTravel());
 	}

@@ -82,16 +82,16 @@ public class ClawV2 extends Subsystem {
         m_GripPid = new PIDController(Constants.ClawConstants.grip_kP, Constants.ClawConstants.grip_kI,
                 Constants.ClawConstants.grip_kD);
 
-        m_PivotPid.enableContinuousInput(0, 360);
+        // m_PivotPid.enableContinuousInput(0, 360);
 
         mPeriodicIO.wantedClosing = false;
         mPeriodicIO.encoderBroken = false;
         mPeriodicIO.maybeEncoderBroken = false;
 
         // if (mPivotControlState != PivotControlState.CLOSED_LOOP) {
-        //     mPivotControlState = PivotControlState.CLOSED_LOOP;
+        // mPivotControlState = PivotControlState.CLOSED_LOOP;
         // }
-        
+
         // mPeriodicIO.pivot_demand = getRelativeCancoder();
 
     }
@@ -263,7 +263,8 @@ public class ClawV2 extends Subsystem {
     }
 
     /**
-     * @return this sets the grip demand to the max output constant until the limit switch is pressed or the position goes past 15
+     * @return this sets the grip demand to the max output constant until the limit
+     *         switch is pressed or the position goes past 15
      */
     public void openGrip() {
         if (mGripControlState != GripControlState.OPEN_LOOP) {
@@ -274,8 +275,7 @@ public class ClawV2 extends Subsystem {
         if (mPeriodicIO.limitSwitchActivated) {
             mPeriodicIO.grip_demand = 0;
             m_GripEncoder.reset();
-        }
-        else{
+        } else {
             if (mPeriodicIO.grip_motor_position < 15) {
                 mPeriodicIO.grip_demand = Constants.ClawConstants.grip_kMaxOutput;
             } else {
@@ -331,7 +331,7 @@ public class ClawV2 extends Subsystem {
         mPeriodicIO.grip_demand = 0;
     }
 
-    //never used
+    // never used
     public void stopPivot() {
         mPeriodicIO.pivot_demand = 0;
     }
@@ -376,19 +376,19 @@ public class ClawV2 extends Subsystem {
         return mPeriodicIO.grip_current;
     }
 
-    public boolean wantedClosing(){
+    public boolean wantedClosing() {
         return mPeriodicIO.wantedClosing;
     }
 
-    public GripControlState getClawGripControlState(){
+    public GripControlState getClawGripControlState() {
         return mGripControlState;
     }
 
-    public PivotControlState getClawPivotControlState(){
+    public PivotControlState getClawPivotControlState() {
         return mPivotControlState;
     }
 
-    public double getGripPeakSpeed(){
+    public double getGripPeakSpeed() {
         return mPeriodicIO.grip_peakSpeed;
     }
 

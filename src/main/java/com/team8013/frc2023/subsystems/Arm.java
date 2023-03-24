@@ -218,7 +218,7 @@ public class Arm extends Subsystem {
         setArmPosition(Constants.ArmConstants.kAutoHighTravelDistance);
     }
 
-    public void setExtendForDoubleSubstation(){
+    public void setExtendForDoubleSubstation() {
         if (mArmControlState != ArmControlState.MOTION_MAGIC) {
             mArmControlState = ArmControlState.MOTION_MAGIC;
         }
@@ -244,13 +244,13 @@ public class Arm extends Subsystem {
     }
 
     /**
-     * @return returns true if the arm position is whithin a certain specified distance 
+     * @return returns true if the arm position is whithin a certain specified
+     *         distance
      */
-    public boolean canDropCone(double distance){
-        if (Math.abs(getArmPosition() - distance) < Constants.ArmConstants.canDropConeDistance){
+    public boolean canDropCone(double distance) {
+        if (Math.abs(getArmPosition() - distance) < Constants.ArmConstants.canDropConeDistance) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
@@ -330,15 +330,15 @@ public class Arm extends Subsystem {
         return mPartialExtendArm;
     }
 
-    public boolean getArmPullInToZero(){
+    public boolean getArmPullInToZero() {
         return mPeriodicIO.pullArmIntoZero;
     }
 
-    public boolean getIsPulledIn(){
+    public boolean getIsPulledIn() {
         return mPeriodicIO.isPulledIn;
     }
 
-    public double getArmMaxTravel(){
+    public double getArmMaxTravel() {
         return mPeriodicIO.arm_maxTravel;
     }
 

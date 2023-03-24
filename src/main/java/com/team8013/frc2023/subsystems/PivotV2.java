@@ -35,7 +35,7 @@ public class PivotV2 extends Subsystem {
     }
 
     private final TalonFX mPivot;
-    //private final PIDController mPivotPid;
+    // private final PIDController mPivotPid;
 
     // logger
     LogStorage<PeriodicIO> mStorage = null;
@@ -52,27 +52,32 @@ public class PivotV2 extends Subsystem {
 
     private CANCoder angleEncoder;
 
-
     public StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT = new StatorCurrentLimitConfiguration(true,
             Constants.PivotConstants.kStatorCurrentLimit, 60, .2);
 
     private PivotV2() {
-        mPivot = TalonFXFactory.createDefaultTalon(Ports.PIVOT); //TODO:SET THE PORT
+        angleEncoder = new CANCoder(Ports.PIV_CANCODER, "canivore1");
+        configAngleEncoder();
+        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); // originally 255
+        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300); // originally 255
 
+        mPivot = TalonFXFactory.createDefaultTalon(Ports.PIVOT); // TODO:SET THE PORT
+        System.out.println("set the pivot port");
         // Set defaults
         mPivot.set(ControlMode.PercentOutput, 0);
-        mPivot.setInverted(false); //TODO: is this inverted?
+        mPivot.setInverted(false); // TODO: is this inverted?
         mPivot.setSelectedSensorPosition(getCANCoderToMotorTicks());
 
         mPivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
         mPivot.configMotionAcceleration(40000, Constants.kLongCANTimeoutMs);
         mPivot.configMotionCruiseVelocity(20000, Constants.kLongCANTimeoutMs);
-        mPivot.config_kP(0, 0.3);
+        mPivot.config_kP(0, 0.4);
         mPivot.config_kI(0, 0);
-        mPivot.config_kD(0, 0);
-        mPivot.config_kF(0, 0.077); //Is this supposed to be 0?
+        mPivot.config_kD(0, 0.00003);
+        mPivot.config_kF(0, 0.077); // Is this supposed to be 0?
 
-        // mPivotPid = new PIDController(Constants.PivotConstants.kP, Constants.PivotConstants.kI,
+        // mPivotPid = new PIDController(Constants.PivotConstants.kP,
+        // Constants.PivotConstants.kI,
         // Constants.PivotConstants.kD);
         // mPivotPid.disableContinuousInput();
 
@@ -84,10 +89,6 @@ public class PivotV2 extends Subsystem {
         // set current limits on motor
         mPivot.configStatorCurrentLimit(STATOR_CURRENT_LIMIT);
 
-        angleEncoder = new CANCoder(Ports.PIV_CANCODER, "canivore1");
-        configAngleEncoder();
-        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); // originally 255
-        angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300); // originally 255
     }
 
     @Override
@@ -113,23 +114,33 @@ public class PivotV2 extends Subsystem {
         // set status variable for being enabled to true
         mIsEnabled = true;
 
-        if (Math.abs(getCANCoderToMotorTicks() - mPeriodicIO.pivot_motor_position_ticks)<Constants.PivotConstants.ticksOffToReset){
+        // TODO:
+        if (Math.abs(getCANCoderToMotorTicks()
+                - mPeriodicIO.pivot_motor_position_ticks) > Constants.PivotConstants.ticksOffToReset) {
             mPivot.setSelectedSensorPosition(getCANCoderToMotorTicks());
         }
-        double feedForward = Constants.PivotConstants.kGravity * Math.cos(getRelativeCancoder()-90); //0 degrees is horisontal for this
+
+        // double feedForward = Constants.PivotConstants.kGravity *
+        // Math.cos(mPeriodicIO.pivot_cancoder - 90); // 0 degrees
+        // is
+        // horisontal for
+        // this
+
+        SmartDashboard.putNumber("Pivot Motor", mPeriodicIO.pivot_motor_position_ticks / 2048);
 
         switch (mPivotControlState) {
             case OPEN_LOOP:
-                mPivot.set(ControlMode.PercentOutput, mPeriodicIO.pivot_demand, DemandType.ArbitraryFeedForward, feedForward);
+                mPivot.set(ControlMode.PercentOutput, mPeriodicIO.pivot_demand);
                 break;
             case CLOSED_LOOP:
-            mPivot.set(ControlMode.MotionMagic, mPeriodicIO.pivot_demand, DemandType.ArbitraryFeedForward, feedForward);
+                mPivot.set(ControlMode.MotionMagic, mPeriodicIO.pivot_demand);
+                // , DemandType.ArbitraryFeedForward, feedForward);
 
-            // mPivotPid.setSetpoint(mPeriodicIO.pivot_demand);
-            // mPivot.set(ControlMode.PercentOutput,
-            //         MathUtil.clamp(mPivotPid.calculate(mPeriodicIO.pivot_cancoder),
-            //                 Constants.PivotConstants.kMinOutput,
-            //                 Constants.PivotConstants.kMaxOutput));
+                // mPivotPid.setSetpoint(mPeriodicIO.pivot_demand);
+                // mPivot.set(ControlMode.PercentOutput,
+                // MathUtil.clamp(mPivotPid.calculate(mPeriodicIO.pivot_cancoder),
+                // Constants.PivotConstants.kMinOutput,
+                // Constants.PivotConstants.kMaxOutput));
 
                 break;
             // case CLOSED_ENCODER: //use new pid controller that uses the encoder for input
@@ -159,6 +170,7 @@ public class PivotV2 extends Subsystem {
         }
         mPeriodicIO.pivot_demand = MathUtil.clamp(wantedDemand, -1, 1);
     }
+
     /**
      * @param wantedPositionDegrees degrees you want the pivot to go to
      * @return sets the position to that degrees
@@ -173,25 +185,26 @@ public class PivotV2 extends Subsystem {
     /**
      * @param wantedPositionDelta (wanted position change in degrees)
      * @return Sets the Pivot position to what its at + wantedPosition
-     */ 
+     */
     public void changePivPosition(double wantedPositionDelta) {
         if (mPivotControlState != PivotControlState.CLOSED_LOOP) {
             mPivotControlState = PivotControlState.CLOSED_LOOP;
 
             // mPeriodicIO.pivot_demand = mPeriodicIO.pivot_motor_position;
         }
-        mPeriodicIO.pivot_demand = mPeriodicIO.pivot_demand + (wantedPositionDelta * Constants.PivotConstants.oneDegreeOfroation * 2048.0);
+        mPeriodicIO.pivot_demand = mPeriodicIO.pivot_demand
+                + (wantedPositionDelta * Constants.PivotConstants.oneDegreeOfroation * 2048.0);
     }
 
-    //Basically does nothing
+    // Basically does nothing
     // public void setPivotPosToCancoder() {
-    //     if (mPivotControlState != PivotControlState.CLOSED_LOOP) {
-    //         mPivotControlState = PivotControlState.CLOSED_LOOP;
-    //     }
-    //     mPeriodicIO.pivot_demand = getRelativeCancoder();
+    // if (mPivotControlState != PivotControlState.CLOSED_LOOP) {
+    // mPivotControlState = PivotControlState.CLOSED_LOOP;
+    // }
+    // mPeriodicIO.pivot_demand = getRelativeCancoder();
     // }
 
-    /*Pivot METHODS*/
+    /* Pivot METHODS */
 
     /**
      * 
@@ -201,14 +214,16 @@ public class PivotV2 extends Subsystem {
         return Math.abs(mPeriodicIO.pivot_cancoder) > 30;
     }
 
-        /**
+    /**
      * @param degree the degree that you want the pivot to turn to
-     * @return true if the pivot is within 4 degrees of that degree you want it to turn
+     * @return true if the pivot is within 4 degrees of that degree you want it to
+     *         turn
      */
     public boolean canExtendArm(double degree) {
-        return (Math.abs((Math.abs(mPeriodicIO.pivot_cancoder) - Math.abs(degree))) < Constants.PivotConstants.degreesCanExtendArm);
+        return (Math.abs((Math.abs(mPeriodicIO.pivot_cancoder)
+                - Math.abs(degree))) < Constants.PivotConstants.degreesCanExtendArm);
     }
-    
+
     /**
      * 
      * @return sets the pivot position to a pickup constant
@@ -217,7 +232,7 @@ public class PivotV2 extends Subsystem {
         setPivotPosition(Constants.PivotConstants.kPickupTravelDistance);
     }
 
-        /**
+    /**
      * 
      * @return sets the pivot position to a hybrid constant
      */
@@ -257,8 +272,6 @@ public class PivotV2 extends Subsystem {
         setPivotPosition(Constants.PivotConstants.kDoubleSubstationTravelDistance);
     }
 
-
-
     /**
      * 
      * @return sets the pivot position to 0, down
@@ -272,11 +285,11 @@ public class PivotV2 extends Subsystem {
     // constant
     // stator current limit
     // public void maybeHoldCurrentPosition() {
-    //     if (Util.epsilonEquals(mPeriodicIO.pivot_motor_velocity, 0, 0.5)) {
+    // if (Util.epsilonEquals(mPeriodicIO.pivot_motor_velocity, 0, 0.5)) {
 
-    //         setPivotPosition(mPeriodicIO.pivot_motor_position);
-    //         // System.out.println("triggered Pivot");
-    //     }
+    // setPivotPosition(mPeriodicIO.pivot_motor_position);
+    // // System.out.println("triggered Pivot");
+    // }
     // }
 
     public enum PivotControlState {
@@ -297,7 +310,7 @@ public class PivotV2 extends Subsystem {
         return mPeriodicIO.pivot_demand;
     }
 
-        /**
+    /**
      * @return retruns the position of the pivot encoder
      */
     public double getPivotPosition() {
@@ -310,7 +323,7 @@ public class PivotV2 extends Subsystem {
     public double getPivotCurrent() {
         return mPeriodicIO.pivot_current;
     }
-    
+
     /**
      * @return retruns the PivotControlState
      */
@@ -323,7 +336,7 @@ public class PivotV2 extends Subsystem {
     }
 
     // public void setPivotDemand(double demand) {
-    //     mPeriodicIO.pivot_demand = demand;
+    // mPeriodicIO.pivot_demand = demand;
     // }
 
     private void configAngleEncoder() {
@@ -339,7 +352,7 @@ public class PivotV2 extends Subsystem {
         return angleEncoder.getPosition() - Constants.PivotConstants.canCoderOffset;
     }
 
-    public double getCANCoderToMotorTicks(){
+    public double getCANCoderToMotorTicks() {
         return getRelativeCancoder() * Constants.PivotConstants.oneDegreeOfroation * 2048;
     }
 
@@ -418,4 +431,3 @@ public class PivotV2 extends Subsystem {
         mStorage.addData(items);
     }
 }
-
