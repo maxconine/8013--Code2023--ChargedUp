@@ -35,7 +35,7 @@ public class ClawV2 extends Subsystem {
 
     PIDController m_PivotPid;
     VictorSPX m_PivotMotor;
-    Encoder m_PivotEncoder;
+    // Encoder m_PivotEncoder;
     CANCoder m_ClawCANCoder;
     DigitalInput m_LimitSwitch;
 
@@ -58,16 +58,18 @@ public class ClawV2 extends Subsystem {
     public PeriodicIO mPeriodicIO = new PeriodicIO();
 
     private ClawV2() {
-        m_LimitSwitch = new DigitalInput(4);
+        m_LimitSwitch = new DigitalInput(0);
 
-        m_PivotEncoder = new Encoder(Ports.CLAW_PIV_ENCODER_A, Ports.CLAW_PIV_ENCODER_B);
+        // m_PivotEncoder = new Encoder(Ports.CLAW_PIV_ENCODER_A,
+        // Ports.CLAW_PIV_ENCODER_B);
 
         m_ClawCANCoder = new CANCoder(Ports.CLAW_CANCODER, "canivore1");
         configClawEncoder();
         m_ClawCANCoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); // originally 255
         m_ClawCANCoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300);
 
-        m_PivotEncoder.setDistancePerPulse(1 / 44.4); // / Constants.ClawConstants.pivotGearRatio);
+        // m_PivotEncoder.setDistancePerPulse(1 / 44.4); // /
+        // Constants.ClawConstants.pivotGearRatio);
         m_PivotMotor = new VictorSPX(Ports.CLAW_PIV);
 
         m_GripEncoder = new Encoder(Ports.CLAW_GRIP_ENCODER_A, Ports.CLAW_GRIP_ENCODER_B);
@@ -75,12 +77,14 @@ public class ClawV2 extends Subsystem {
         m_GripMotor = new VictorSPX(Ports.CLAW_GRIP);
 
         m_GripEncoder.setReverseDirection(true); // in is positive, out is negative
-        m_PivotEncoder.setReverseDirection(false); // CCW+ in is positive
+        // m_PivotEncoder.setReverseDirection(false); // CCW+ in is positive
 
         m_PivotPid = new PIDController(Constants.ClawConstants.piv_kP, Constants.ClawConstants.piv_kI,
                 Constants.ClawConstants.piv_kD);
         m_GripPid = new PIDController(Constants.ClawConstants.grip_kP, Constants.ClawConstants.grip_kI,
                 Constants.ClawConstants.grip_kD);
+
+        // m_PivotPid.setTolerance(1);
 
         // m_PivotPid.enableContinuousInput(0, 360);
 
@@ -102,7 +106,7 @@ public class ClawV2 extends Subsystem {
         /* PIVOT MOTOR */
         mPeriodicIO.pivot_voltage = m_PivotMotor.getBusVoltage();
         mPeriodicIO.pivot_current = m_PivotMotor.getMotorOutputVoltage();
-        mPeriodicIO.pivot_motor_velocity = m_PivotEncoder.getRate();
+        mPeriodicIO.pivot_motor_velocity = m_ClawCANCoder.getVelocity();
         mPeriodicIO.pivot_motor_position = getRelativeCancoder();
 
         /* CLAW MOTOR */
@@ -208,7 +212,7 @@ public class ClawV2 extends Subsystem {
 
     public synchronized void resetPositions() {
         m_GripEncoder.reset();
-        m_PivotEncoder.reset();
+        // m_PivotEncoder.reset();
     }
 
     public void setPivotTeleopInit() {

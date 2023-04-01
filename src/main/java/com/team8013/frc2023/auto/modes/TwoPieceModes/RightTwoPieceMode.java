@@ -79,7 +79,7 @@ public class RightTwoPieceMode extends AutoModeBase {
                 // reset odometry at the start of the trajectory
                 runAction(new LambdaAction(() -> mSwerve.resetOdometry(rightTwoPieceBlue_a.getInitialPose())));
 
-                // runAction(new WaitAction(0.5));
+                runAction(new WaitAction(0.25));
 
                 runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
                 runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));

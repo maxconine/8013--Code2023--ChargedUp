@@ -157,8 +157,11 @@ public class Robot extends TimedRobot {
 		CrashTracker.logAutoInit();
 
 		try {
+
 			// reset states
 			mSuperstructure.stop();
+
+			mArm.pullArmIntoZero();
 
 			mDisabledLooper.stop();
 			mEnabledLooper.start();
@@ -359,6 +362,14 @@ public class Robot extends TimedRobot {
 			mDisabledLooper.start();
 
 			mLoggingLooper.stop();
+
+			mArm.setBrakeMode(true);
+
+			if (mControlBoard.getWantCone()) {
+				mPivot.setBrakeMode(true);
+			} else {
+				mPivot.setBrakeMode(false);
+			}
 
 			// TODO:
 			// mLimelight.setLed(Limelight.LedMode.ON);

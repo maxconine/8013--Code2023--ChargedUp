@@ -56,7 +56,7 @@ public class LeftConeStraightToBalance extends AutoModeBase {
 
         runAction(new LambdaAction(() -> mSwerve.resetOdometry(leftConeToBalanceBlue.getInitialPose())));
 
-        // runAction(new WaitAction(0.5));
+        runAction(new WaitAction(0.25));
 
         runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
         runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));

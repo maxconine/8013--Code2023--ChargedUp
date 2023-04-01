@@ -70,7 +70,7 @@ public class PivotV2 extends Subsystem {
 
         mPivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
         mPivot.configMotionAcceleration(40000, Constants.kLongCANTimeoutMs);
-        mPivot.configMotionCruiseVelocity(20000, Constants.kLongCANTimeoutMs);
+        mPivot.configMotionCruiseVelocity(21770, Constants.kLongCANTimeoutMs);
         mPivot.config_kP(0, 0.15);
         mPivot.config_kI(0, 0);
         mPivot.config_kD(0, 0);

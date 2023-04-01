@@ -58,12 +58,14 @@ public class LeftConeToStraightBack extends AutoModeBase {
                 // reset odometry at the start of the trajectory
                 runAction(new LambdaAction(() -> mSwerve.resetOdometry(leftStraightOutBlue.getInitialPose())));
 
+                runAction(new WaitAction(0.25));
+
                 runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
                 runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 
                 runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait));
 
-                runAction(leftStraightOutBlue);
+                // runAction(leftStraightOutBlue);
 
                 System.out.println("Finished auto!");
         }

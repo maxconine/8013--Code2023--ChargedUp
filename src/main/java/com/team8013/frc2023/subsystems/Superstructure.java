@@ -1,5 +1,6 @@
 package com.team8013.frc2023.subsystems;
 
+import com.fasterxml.jackson.databind.deser.std.MapEntryDeserializer;
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.controlboard.ControlBoard;
 import com.team8013.frc2023.drivers.Pigeon;
@@ -455,6 +456,7 @@ public class Superstructure extends Subsystem {
         if (mPeriodicIO.settingHigh) {
             if (mArm.isIn()) {
                 mPivot.setPivotForAutoHigh();
+                mArm.setArmDown();
             }
 
             if (mPivot.canExtendArm(Constants.PivotConstants.kAutoHighTravelDistance)) {
@@ -625,7 +627,7 @@ public class Superstructure extends Subsystem {
             }
             // when 'level' lock the wheels
             else {
-                // mSwerve.setLocked(true);
+                mSwerve.drive(new Translation2d(0, 0), 0, true, false);
             }
 
             // SmartDashboard.putBoolean("Balance From Back", mPeriodicIO.fromBack);
@@ -660,17 +662,19 @@ public class Superstructure extends Subsystem {
                 mLEDs.applyStates(mState);
                 return;
             } else if (mControlBoard.getWantCube()) {
-                mState = State.FLASHING_BLUE;
+                mState = State.FLASHING_PURPLE;
                 mPeriodicIO.wantedBlue = true;
                 mPeriodicIO.wantedYellow = false;
                 mLEDs.applyStates(mState);
                 return;
             } else if (mClaw.mPeriodicIO.wantedClosing) {
                 mState = State.SOLID_ORANGE;
-            } else if (Timer.getFPGATimestamp() > 135) {
-                // mState = State.SOLID_PINK;
-            } else if (mPeriodicIO.wantedBlue) {
-                mState = State.SOLID_BLUE;
+            }
+            // } else if (Timer.getFPGATimestamp() > 135) {
+            // // mState = State.SOLID_PINK;
+            // }
+            else if (mPeriodicIO.wantedBlue) {
+                mState = State.SOLID_PURPLE;
             } else if (mPeriodicIO.wantedYellow) {
                 mState = State.SOLID_YELLOW;
             } else {
@@ -724,7 +728,7 @@ public class Superstructure extends Subsystem {
 
     /* Initial states for superstructure for teleop */
     public void setInitialTeleopStates() {
-
+        mSwerve.drive(new Translation2d(0, 0), 0, true, false);
         System.out.println("Set initial teleop states!");
     }
 

@@ -245,7 +245,7 @@ public class Constants {
                                 .setEndVelocity(0);
 
                 /* TIME CONSTANTS */
-                public static final double firstDropHighWait = 5; // wait 5 seconds for the cone to be dropped
+                public static final double firstDropHighWait = 3.5; // wait 5 seconds for the cone to be dropped
                 public static final double pickupPieceWait = 2;
 
                 /* BALANCE CONSTANTS */
@@ -258,9 +258,9 @@ public class Constants {
 
                 // non pid
                 public static final double firstAngle = 5; // within +- degrees, turn around (11 to 15 degrees irl)
-                public static final double secondAngle = 5; // within +- degrees, then stop
-                public static final double firstSpeed = .75; // meters per second
-                public static final double secondSpeed = 0.2; // meters per second
+                public static final double secondAngle = 8; // within +- degrees, then stop
+                public static final double firstSpeed = .43; // meters per second
+                public static final double secondSpeed = 0.15; // meters per second
         }
 
         public static final class VisionConstants {
@@ -338,7 +338,7 @@ public class Constants {
                 // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final double kPickupTravelDistance = 140000 / 1.5;
+                public static final double kPickupTravelDistance = 125000 / 1.5;
                 public static final double kHybridTravelDistance = 100000 / 1.5; // kLeftTravelDistance * 0.75
                 public static final double kMidTravelDistance = 120000 / 1.5; // kLeftTravelDistance * 0.75
                 public static final double kHighTravelDistance = 290000 / 1.5; // kLeftTravelDistance * 0.75
@@ -397,12 +397,12 @@ public class Constants {
                 public static final double degreesCanExtendArm = 5;
 
                 // pivot degree constants
-                public static final double kPickupTravelDistance = 35 + 2;
+                public static final double kPickupTravelDistance = 35;
                 public static final double kHybridTravelDistance = 47.37 + 5; // degrees
                 public static final double kMidTravelDistance = 95.47 + 5;
                 public static final double kHighTravelDistance = 106.2 + 5;
                 public static final double kAutoHighTravelDistance = 105 + 5;
-                public static final double kDoubleSubstationTravelDistance = 100.5;
+                public static final double kDoubleSubstationTravelDistance = 102;
 
         }
 
@@ -411,7 +411,7 @@ public class Constants {
 
                 public static final double piv_kP = .0085;
                 public static final double piv_kI = 0;
-                public static final double piv_kD = 0.0004;
+                public static final double piv_kD = 0.0004; // 0.0004 works
 
                 public static final double piv_kMaxOutput = 0.95;
                 public static final double piv_kMinOutput = -0.95;
@@ -419,9 +419,9 @@ public class Constants {
                 public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
                 public static final double piv_MinRotation = -450;
 
-                public static final double piv_ZeroRotation = -10;
-                public static final double piv_90Rotation = 87;
-                public static final double piv_180Rotation = 180;
+                public static final double piv_ZeroRotation = 0;
+                public static final double piv_90Rotation = 90;
+                public static final double piv_180Rotation = 200;
 
                 public static final double pivotGearRatio = 1.535714; // (86 / 56);
 
@@ -430,8 +430,9 @@ public class Constants {
                 public static final double kPivotMaxDistance = pivotGearRatio; // encoder hard limit
 
                 /* CAN CODER */
-                public static final double canCoderOffset = 208.38 + 78; // program subtracts this value to the cancoder
-                                                                         // angle to make it 0
+                public static final double canCoderOffset = 208.38 + 78 - 180; // program subtracts this value to the
+                                                                               // cancoder
+                                                                               // angle to make it 0
                 public static final boolean canCoderInvert = false; // program subtracts this value to the cancoder
                                                                     // angle to make it 0
 

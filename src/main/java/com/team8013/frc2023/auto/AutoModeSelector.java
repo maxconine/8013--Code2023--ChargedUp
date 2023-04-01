@@ -26,7 +26,7 @@ public class AutoModeSelector {
         LEFT_TWO_PIECE_TO_BALANCE,
         RIGHT_CONE_EXIT,
         LEFT_CONE_EXIT,
-
+        JUST_TEST_BALANCE
     }
 
     private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -38,30 +38,31 @@ public class AutoModeSelector {
     public AutoModeSelector() {
         mModeChooser = new SendableChooser<>();
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
-        //mModeChooser.addOption("Curvy Path Mode", DesiredMode.CURVY_PATH);
+        // mModeChooser.addOption("Curvy Path Mode", DesiredMode.CURVY_PATH);
 
-        /*Pickup to balance Modes */
+        /* Pickup to balance Modes */
         mModeChooser.addOption("RIGHT TO PICKUP TO BALANCE Mode", DesiredMode.RIGHT_TO_PICKUP_TO_BALANCE);
         mModeChooser.addOption("LEFT TO PICKUP TO BALANCE Mode", DesiredMode.LEFT_TO_PICKUP_TO_BALANCE);
 
-        /*Two Piece Modes */
+        /* Two Piece Modes */
         mModeChooser.addOption("RIGHT Two Piece Mode", DesiredMode.RIGHT_TWO_PIECE);
         mModeChooser.addOption("LEFT Two Piece Mode", DesiredMode.LEFT_TWO_PIECE);
         mModeChooser.addOption("RIGHT Two Piece To Balance Mode", DesiredMode.RIGHT_TWO_PIECE_TO_BALANCE);
         mModeChooser.addOption("LEFT Two Piece To Balance Mode", DesiredMode.LEFT_TWO_PIECE_TO_BALANCE);
 
-        /*Straight to balance Modes */
+        /* Straight to balance Modes */
         mModeChooser.addOption("RIGHT Straight To Balance Mode", DesiredMode.RIGHT_STRAIGHT_TO_BALANCE);
         mModeChooser.addOption("LEFT Straight To Balance Mode", DesiredMode.LEFT_STRAIGHT_TO_BALANCE);
         mModeChooser.addOption("CONE Mid Straight To Balance Mode", DesiredMode.CONE_MIDFIELD_STRAIGHT_TO_BALANCE);
 
-        /*Straight Out Modes */
-        mModeChooser.addOption("RIGHT Cone to exit Mode", DesiredMode.RIGHT_CONE_EXIT);
-        mModeChooser.addOption("LEFT Cone to exit Mode", DesiredMode.LEFT_CONE_EXIT);
+        /* Straight Out Modes */
+        mModeChooser.addOption("Cone to exit Mode", DesiredMode.RIGHT_CONE_EXIT);
+        mModeChooser.addOption("Cone to stay still Mode", DesiredMode.LEFT_CONE_EXIT);
 
+        mModeChooser.addOption("JUST TEST BALANCE Mode", DesiredMode.JUST_TEST_BALANCE);
 
         SmartDashboard.putData(mModeChooser);
-        //System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
+        // System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
     }
 
     public void updateModeCreator() {
@@ -82,29 +83,29 @@ public class AutoModeSelector {
                 return Optional.of(new DoNothingMode());
 
             // case CURVY_PATH:
-            //     return Optional.of(new CurvyPathMode());
+            // return Optional.of(new CurvyPathMode());
 
-            /*Pickup To Balance Modes */
+            /* Pickup To Balance Modes */
             case RIGHT_TO_PICKUP_TO_BALANCE:
                 return Optional.of(new RightConeToPickupToBalanceMode());
 
             case LEFT_TO_PICKUP_TO_BALANCE:
                 return Optional.of(new LeftConeToPickupToBalanceMode());
 
-            /*Two Piece Modes */
+            /* Two Piece Modes */
             case RIGHT_TWO_PIECE:
                 return Optional.of(new RightTwoPieceMode());
 
             case LEFT_TWO_PIECE:
                 return Optional.of(new LeftTwoPieceMode());
-            
+
             case RIGHT_TWO_PIECE_TO_BALANCE:
                 return Optional.of(new RightTwoPieceToBalanceMode());
 
             case LEFT_TWO_PIECE_TO_BALANCE:
                 return Optional.of(new LeftTwoPieceToBalanceMode());
 
-            /*Straight to Balance Modes */
+            /* Straight to Balance Modes */
             case RIGHT_STRAIGHT_TO_BALANCE:
                 return Optional.of(new RightConeStraightToBalance());
 
@@ -114,12 +115,15 @@ public class AutoModeSelector {
             case CONE_MIDFIELD_STRAIGHT_TO_BALANCE:
                 return Optional.of(new MidConeStraightToBalance());
 
-            /*Straight Out Modes */
+            /* Straight Out Modes */
             case RIGHT_CONE_EXIT:
                 return Optional.of(new RightConeToStraightBack());
 
             case LEFT_CONE_EXIT:
                 return Optional.of(new LeftConeToStraightBack());
+
+            case JUST_TEST_BALANCE:
+                return Optional.of(new JustTestBalance());
 
             default:
                 System.out.println("ERROR: unexpected auto mode: " + mode);
