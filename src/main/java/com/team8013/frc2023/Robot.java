@@ -365,11 +365,12 @@ public class Robot extends TimedRobot {
 
 			mArm.setBrakeMode(true);
 
-			if (mControlBoard.getWantCone()) {
-				mPivot.setBrakeMode(true);
-			} else {
-				mPivot.setBrakeMode(false);
-			}
+			// if (mControlBoard.getWantCone()) {
+			// mPivot.setBrakeMode(true);
+			// } else {
+
+			// mPivot.setBrakeMode(false);
+			// }
 
 			// TODO:
 			// mLimelight.setLed(Limelight.LedMode.ON);

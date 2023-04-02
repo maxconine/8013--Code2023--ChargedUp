@@ -28,19 +28,23 @@ public class RightTwoPieceMode extends AutoModeBase {
         // required PathWeaver trajectory paths
         String path_a = "paths/RightTwoPieceBlue_A.path";
         String path_b = "paths/RightTwoPieceBlue_B.path";
+        String path_c = "paths/RightTwoPieceBlue_C.path";
+        String path_d = "paths/RightTwoPieceBlue_D.path";
 
         // trajectories
         SwerveTrajectoryAction rightTwoPieceBlue_a;
         SwerveTrajectoryAction rightTwoPieceBlue_b;
+        SwerveTrajectoryAction rightTwoPieceBlue_c;
+        SwerveTrajectoryAction rightTwoPieceBlue_d;
 
         public RightTwoPieceMode() {
 
                 var thetaController1 = new ProfiledPIDController(
-                                2.85, 0, 0,
+                                0, 0, 0.0,
                                 Constants.AutoConstants.kThetaControllerConstraints);
 
                 var thetaController2 = new ProfiledPIDController(
-                                1.2, 0, 0,
+                                1.60, 0, 0.3,
                                 Constants.AutoConstants.kThetaControllerConstraints);
 
                 thetaController1.enableContinuousInput(-Math.PI, Math.PI);
@@ -54,19 +58,41 @@ public class RightTwoPieceMode extends AutoModeBase {
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                                 thetaController1,
-                                () -> Rotation2d.fromDegrees(0),
+                                () -> Rotation2d.fromDegrees(180), // -72 degrees
                                 mSwerve::getWantAutoVisionAim,
                                 mSwerve::setModuleStates);
 
-                // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_b = AutoTrajectoryReader.generateTrajectoryFromFile(path_b,
-                                Constants.AutoConstants.defaultSpeedConfig);
+                                Constants.AutoConstants.slowSpeedConfig);
                 rightTwoPieceBlue_b = new SwerveTrajectoryAction(traj_path_b,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                                 thetaController2,
+                                () -> Rotation2d.fromDegrees(1), // -72 degrees
+                                mSwerve::getWantAutoVisionAim,
+                                mSwerve::setModuleStates);
+
+                // read trajectories from PathWeaver and generate trajectory actions
+                Trajectory traj_path_c = AutoTrajectoryReader.generateTrajectoryFromFile(path_c,
+                                Constants.AutoConstants.defaultSpeedConfig);
+                rightTwoPieceBlue_c = new SwerveTrajectoryAction(traj_path_c,
+                                mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
+                                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
+                                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
+                                thetaController1,
                                 () -> Rotation2d.fromDegrees(180),
+                                mSwerve::getWantAutoVisionAim,
+                                mSwerve::setModuleStates);
+
+                Trajectory traj_path_d = AutoTrajectoryReader.generateTrajectoryFromFile(path_d,
+                                Constants.AutoConstants.slowSpeedConfig);
+                rightTwoPieceBlue_d = new SwerveTrajectoryAction(traj_path_d,
+                                mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
+                                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
+                                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
+                                thetaController2,
+                                () -> Rotation2d.fromDegrees(180), // -72 degrees
                                 mSwerve::getWantAutoVisionAim,
                                 mSwerve::setModuleStates);
 
@@ -84,25 +110,36 @@ public class RightTwoPieceMode extends AutoModeBase {
                 runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
                 runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 
-                runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait));
+                runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait + 1));
 
                 // lets see if these actions run in series
-                runAction(new SeriesAction(List.of(rightTwoPieceBlue_a,
-                                new LambdaAction(() -> mSuperstructure.settingPickupAuto()))));
+                // runAction(new SeriesAction(List.of(rightTwoPieceBlue_a,
+                // new LambdaAction(() -> mSuperstructure.settingPickupAuto()))));
 
-                System.out.println("hello");
-                // runAction(farRightTopNodeToPickup_a);
-                // runAction(new LambdaAction(() -> mSuperstructure.settingPickupAuto()));
+                // System.out.println("hello");
+                runAction(rightTwoPieceBlue_a);
+                runAction(rightTwoPieceBlue_b);
+
+                runAction(new WaitAction(0.25));
+
+                // runAction(rightTwoPieceBlue_b);
+
+                runAction(new LambdaAction(() -> mSuperstructure.settingPickupAuto()));
 
                 runAction(new LambdaAction(() -> mSuperstructure.clampClawAuto()));
                 System.out.println("helloclamp");
 
                 runAction(new WaitAction(Constants.AutoConstants.pickupPieceWait));
 
-                runAction(rightTwoPieceBlue_b);
+                runAction(new LambdaAction(() -> mSuperstructure.setDownAuto()));
+
+                runAction(rightTwoPieceBlue_c);
+
+                runAction(rightTwoPieceBlue_d);
 
                 runAction(new LambdaAction(() -> mSuperstructure.settingCubeDropHigh()));
-                System.out.println("helloclamp");
+
+                // runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 
                 // can change this to drop hybrid if it is short on time
                 // runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));

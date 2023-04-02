@@ -23,7 +23,7 @@ public class MidConeStraightToBalance extends AutoModeBase {
         private final Superstructure mSuperstructure = Superstructure.getInstance();
 
         // required PathWeaver trajectory paths
-        String path_a = "paths/MidConeStraightToBalanceBlue.path";
+        String path_a = "paths/MidConeStraightToBalance_A.path";
 
         // trajectories
         SwerveTrajectoryAction midConeStraightToBalanceBlue;
@@ -38,13 +38,13 @@ public class MidConeStraightToBalance extends AutoModeBase {
 
                 // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_a = AutoTrajectoryReader.generateTrajectoryFromFile(path_a,
-                                Constants.AutoConstants.defaultSpeedConfig);
+                                Constants.AutoConstants.balanceSpeedConfig);
                 midConeStraightToBalanceBlue = new SwerveTrajectoryAction(traj_path_a,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                                 thetaController,
-                                () -> Rotation2d.fromDegrees(0),
+                                () -> Rotation2d.fromDegrees(180),
                                 mSwerve::getWantAutoVisionAim,
                                 mSwerve::setModuleStates);
 
@@ -69,7 +69,7 @@ public class MidConeStraightToBalance extends AutoModeBase {
 
                 System.out.println("charge station engaging");
 
-                runAction(new LambdaAction(() -> mSuperstructure.engageChargeStation(false)));
+                runAction(new LambdaAction(() -> mSuperstructure.engageChargeStation(true)));
 
                 System.out.println("Finished auto!");
         }

@@ -394,6 +394,12 @@ public class Superstructure extends Subsystem {
      * @return sets the arm and pivot to the pickup position
      */
     public void settingPickupAuto() {
+        if ((Math.abs(mClaw.mPeriodicIO.pivot_motor_position) > 120)
+                && (Math.abs(mClaw.mPeriodicIO.pivot_motor_position) < 210)) {
+            mClaw.setPivotPosition(Constants.ClawConstants.piv_180Rotation);
+        } else {
+            mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
+        }
         mArm.setArmDown();
         mPeriodicIO.settingPickup = true;
     }
@@ -432,12 +438,12 @@ public class Superstructure extends Subsystem {
      *         otherwise it sets the claw pivot to 0 and extends the arm out
      */
     private void armExtendHighAuto() {
-        if ((Math.abs(mClaw.mPeriodicIO.pivot_motor_position) > 120)
-                && (Math.abs(mClaw.mPeriodicIO.pivot_motor_position) < 210)) {
-            mClaw.setPivotPosition(Constants.ClawConstants.piv_180Rotation);
-        } else {
-            mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
-        }
+        // if ((Math.abs(mClaw.mPeriodicIO.pivot_motor_position) > 120)
+        // && (Math.abs(mClaw.mPeriodicIO.pivot_motor_position) < 210)) {
+        // mClaw.setPivotPosition(Constants.ClawConstants.piv_180Rotation);
+        // } else {
+        // mClaw.setPivotPosition(Constants.ClawConstants.piv_ZeroRotation);
+        // }
         mArm.setAutoExtendForHigh();
     }
 
@@ -504,9 +510,11 @@ public class Superstructure extends Subsystem {
                 armExtendHighAuto();
             }
 
-            if ((mArm.canDropCone(Constants.ArmConstants.kAutoHighTravelDistance)) && (mPeriodicIO.wantDropPieceAuto)) {
+            mPeriodicIO.clampClawAuto = false;
+
+            if ((mArm.canDropCone(Constants.ArmConstants.kAutoHighTravelDistance))) {
                 mClaw.openGrip();
-                mPeriodicIO.clampClawAuto = false;
+
                 if (mClaw.getLimitSwitch()) {
                     mPeriodicIO.openingClaw = false;
                     mPeriodicIO.placingCube = false;
@@ -519,6 +527,7 @@ public class Superstructure extends Subsystem {
         // down setting
         if (mPeriodicIO.settingDown) {
             mArm.setArmDown();
+            mPeriodicIO.settingPickup = false;
 
             if (mArm.isIn()) {
                 mPivot.setPivotDown();

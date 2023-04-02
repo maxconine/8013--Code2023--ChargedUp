@@ -194,8 +194,8 @@ public class Constants {
         }
 
         public static final class AutoConstants {
-                public static final double kSlowSpeedMetersPerSecond = 2.2; // 1.7
-                public static final double kSlowAccelerationMetersPerSecondSquared = 2.3; // 2.0
+                public static final double kSlowSpeedMetersPerSecond = 0.3; // 1.7
+                public static final double kSlowAccelerationMetersPerSecondSquared = 1.0; // 2.0
 
                 public static final double kMaxSpeedMetersPerSecond = 2.2; // og 2.2
                 public static final double kMaxAccelerationMetersPerSecondSquared = 2.3; // og 2.3
@@ -204,10 +204,10 @@ public class Constants {
                 public static final double kSlowMaxAngularSpeedRadiansPerSecondSquared = Math
                                 .pow(kSlowMaxAngularSpeedRadiansPerSecond, 2);
 
-                public static final double kMaxAngularSpeedRadiansPerSecond = 0.8 * Math.PI; // 0g
-                public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(
-                                kMaxAngularSpeedRadiansPerSecond,
-                                2);
+                public static final double kMaxAngularSpeedRadiansPerSecond = 0.2 * Math.PI; // og 0.8
+                public static final double kMaxAngularSpeedRadiansPerSecondSquared = 1.5 * Math.PI; // Math.pow(
+                // kMaxAngularSpeedRadiansPerSecond,
+                // 2);
 
                 public static final double kPXController = 1; // og 1 0.2 works
                 public static final double kPYController = 1; // og 1 0.3 works
@@ -244,9 +244,16 @@ public class Constants {
                                 .setStartVelocity(0)
                                 .setEndVelocity(0);
 
+                public static final TrajectoryConfig balanceSpeedConfig = new TrajectoryConfig(
+                                1.5,
+                                5.0)
+                                .setKinematics(Constants.SwerveConstants.swerveKinematics)
+                                .setStartVelocity(0)
+                                .setEndVelocity(0);
+
                 /* TIME CONSTANTS */
-                public static final double firstDropHighWait = 3.5; // wait 5 seconds for the cone to be dropped
-                public static final double pickupPieceWait = 2;
+                public static final double firstDropHighWait = 3.8; // wait 5 seconds for the cone to be dropped
+                public static final double pickupPieceWait = 3;
 
                 /* BALANCE CONSTANTS */
                 public static final double balance_kP = .2;
@@ -257,10 +264,10 @@ public class Constants {
                 public static final double balance_PositionTolerance = 1;
 
                 // non pid
-                public static final double firstAngle = 5; // within +- degrees, turn around (11 to 15 degrees irl)
-                public static final double secondAngle = 8; // within +- degrees, then stop
-                public static final double firstSpeed = .43; // meters per second
-                public static final double secondSpeed = 0.15; // meters per second
+                public static final double firstAngle = 10; // within +- degrees, turn around (11 to 15 degrees irl)
+                public static final double secondAngle = 12; // within +- degrees, then stop
+                public static final double firstSpeed = .8; // meters per second
+                public static final double secondSpeed = 0.2; // meters per second
         }
 
         public static final class VisionConstants {
@@ -394,7 +401,7 @@ public class Constants {
                                                                                                             // motor is
                                                                                                             // off by
 
-                public static final double degreesCanExtendArm = 5;
+                public static final double degreesCanExtendArm = 6;
 
                 // pivot degree constants
                 public static final double kPickupTravelDistance = 35;
