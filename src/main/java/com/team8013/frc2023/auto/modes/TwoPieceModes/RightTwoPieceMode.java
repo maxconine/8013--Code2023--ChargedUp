@@ -44,7 +44,7 @@ public class RightTwoPieceMode extends AutoModeBase {
                                 Constants.AutoConstants.kThetaControllerConstraints);
 
                 var thetaController2 = new ProfiledPIDController(
-                                1.60, 0, 0.3,
+                                1.5, 0, 0.2, // 1.6 and 0.3 kinda works (kd makes the earlier dlower)
                                 Constants.AutoConstants.kThetaControllerConstraints);
 
                 thetaController1.enableContinuousInput(-Math.PI, Math.PI);

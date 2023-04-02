@@ -44,7 +44,7 @@ public class LeftTwoPieceMode extends AutoModeBase {
                                 Constants.AutoConstants.kThetaControllerConstraints);
 
                 var thetaController2 = new ProfiledPIDController(
-                                1.60, 0, 0.3,
+                                1.55, 0, 0.2,
                                 Constants.AutoConstants.kThetaControllerConstraints);
 
                 thetaController1.enableContinuousInput(-Math.PI, Math.PI);
@@ -63,7 +63,7 @@ public class LeftTwoPieceMode extends AutoModeBase {
                                 mSwerve::setModuleStates);
 
                 Trajectory traj_path_b = AutoTrajectoryReader.generateTrajectoryFromFile(path_b,
-                                Constants.AutoConstants.slowSpeedConfig);
+                                Constants.AutoConstants.leftTwoPieceConfig);
                 leftTwoPieceBlue_b = new SwerveTrajectoryAction(traj_path_b,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),

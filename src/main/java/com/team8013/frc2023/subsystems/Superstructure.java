@@ -70,6 +70,7 @@ public class Superstructure extends Subsystem {
         private boolean settingHigh = false;
         private boolean placingCube = false;
         private boolean settingDoubleSubstation = false;
+        private boolean settingReadyPosition = false;
         private boolean canControlArmManually = true;
         public double maxArmPosition = 0;
         public boolean openingClaw;
@@ -239,6 +240,11 @@ public class Superstructure extends Subsystem {
                 mPeriodicIO.settingDoubleSubstation = true;
                 mPeriodicIO.canControlArmManually = false;
                 mPeriodicIO.maxArmPosition = Constants.ArmConstants.kDoubleSubstationTravelDistance;
+            } else if (mControlBoard.getWantReadyPosition()) {
+                mArm.setArmDown();
+                mPeriodicIO.settingReadyPosition = true;
+                mPeriodicIO.canControlArmManually = false;
+                mPeriodicIO.maxArmPosition = 10;
             }
 
             if (mPeriodicIO.settingDown) {
@@ -294,6 +300,16 @@ public class Superstructure extends Subsystem {
                 if (mPivot.canExtendArm(Constants.PivotConstants.kDoubleSubstationTravelDistance)) {
                     mArm.setExtendForDoubleSubstation();
                     mPeriodicIO.settingDoubleSubstation = false;
+                    mPeriodicIO.canControlArmManually = true;
+                }
+            }
+            if (mPeriodicIO.settingReadyPosition) {
+                if (mArm.isIn()) {
+                    mPivot.setPivotForReadyPosition();
+                }
+                if (mPivot.canExtendArm(Constants.PivotConstants.kReadyPositionTravelDistance)) {
+                    mArm.setArmDown();
+                    mPeriodicIO.settingReadyPosition = false;
                     mPeriodicIO.canControlArmManually = true;
                 }
             }
@@ -530,7 +546,7 @@ public class Superstructure extends Subsystem {
             mPeriodicIO.settingPickup = false;
 
             if (mArm.isIn()) {
-                mPivot.setPivotDown();
+                mPivot.setPivotForReadyPosition();
                 mPeriodicIO.settingDown = false;
             }
         }

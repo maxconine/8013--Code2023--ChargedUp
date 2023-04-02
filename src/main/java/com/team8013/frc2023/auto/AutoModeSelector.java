@@ -26,7 +26,7 @@ public class AutoModeSelector {
         LEFT_TWO_PIECE_TO_BALANCE,
         RIGHT_CONE_EXIT,
         LEFT_CONE_EXIT,
-        JUST_TEST_BALANCE
+        NO_TAXI_BALANCE
     }
 
     private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -59,7 +59,7 @@ public class AutoModeSelector {
         mModeChooser.addOption("Cone to exit Mode", DesiredMode.RIGHT_CONE_EXIT);
         mModeChooser.addOption("Cone to stay still Mode", DesiredMode.LEFT_CONE_EXIT);
 
-        mModeChooser.addOption("JUST TEST BALANCE Mode", DesiredMode.JUST_TEST_BALANCE);
+        mModeChooser.addOption("No Taxi BALANCE Mode", DesiredMode.NO_TAXI_BALANCE);
 
         SmartDashboard.putData(mModeChooser);
         // System.out.println("PUT AUTO MODE SELECTOR IN SMART DASHBOARD");
@@ -122,8 +122,8 @@ public class AutoModeSelector {
             case LEFT_CONE_EXIT:
                 return Optional.of(new LeftConeToStraightBack());
 
-            case JUST_TEST_BALANCE:
-                return Optional.of(new JustTestBalance());
+            case NO_TAXI_BALANCE:
+                return Optional.of(new MidConeStraightToBalanceNoTaxi());
 
             default:
                 System.out.println("ERROR: unexpected auto mode: " + mode);

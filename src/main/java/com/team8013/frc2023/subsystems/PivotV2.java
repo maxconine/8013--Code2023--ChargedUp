@@ -274,6 +274,14 @@ public class PivotV2 extends Subsystem {
 
     /**
      * 
+     * @return sets the pivot position to a double substation constant
+     */
+    public void setPivotForReadyPosition() {
+        setPivotPosition(Constants.PivotConstants.kReadyPositionTravelDistance);
+    }
+
+    /**
+     * 
      * @return sets the pivot position to 0, down
      */
     public void setPivotDown() {

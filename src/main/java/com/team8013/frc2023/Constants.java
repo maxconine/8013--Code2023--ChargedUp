@@ -251,6 +251,13 @@ public class Constants {
                                 .setStartVelocity(0)
                                 .setEndVelocity(0);
 
+                public static final TrajectoryConfig leftTwoPieceConfig = new TrajectoryConfig(
+                                0.4,
+                                1.0)
+                                .setKinematics(Constants.SwerveConstants.swerveKinematics)
+                                .setStartVelocity(0)
+                                .setEndVelocity(0);
+
                 /* TIME CONSTANTS */
                 public static final double firstDropHighWait = 3.8; // wait 5 seconds for the cone to be dropped
                 public static final double pickupPieceWait = 3;
@@ -267,7 +274,7 @@ public class Constants {
                 public static final double firstAngle = 10; // within +- degrees, turn around (11 to 15 degrees irl)
                 public static final double secondAngle = 12; // within +- degrees, then stop
                 public static final double firstSpeed = .8; // meters per second
-                public static final double secondSpeed = 0.2; // meters per second
+                public static final double secondSpeed = 0.17; // meters per second
         }
 
         public static final class VisionConstants {
@@ -410,6 +417,7 @@ public class Constants {
                 public static final double kHighTravelDistance = 106.2 + 5;
                 public static final double kAutoHighTravelDistance = 105 + 5;
                 public static final double kDoubleSubstationTravelDistance = 102;
+                public static final double kReadyPositionTravelDistance = 20;
 
         }
 

@@ -196,6 +196,10 @@ public class ControlBoard {
         return operator.getTrigger(Side.RIGHT);
     }
 
+    public boolean getWantReadyPosition() {
+        return operator.getTrigger(Side.LEFT);
+    }
+
     // // Intake Controls
     // public boolean getIntake() {
     // return operator.getTrigger(CustomXboxController.Side.RIGHT);
