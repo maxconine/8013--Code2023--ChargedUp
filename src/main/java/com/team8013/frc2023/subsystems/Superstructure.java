@@ -48,6 +48,7 @@ public class Superstructure extends Subsystem {
     // private final RobotState mRobotState = RobotState.getInstance();
 
     private double rollAdjust = 0;
+    private boolean hasBeenLevel = false;
 
     // Timer autoBalanceTimer = new Timer();
 
@@ -652,6 +653,46 @@ public class Superstructure extends Subsystem {
             }
             // when 'level' lock the wheels
             else {
+                mSwerve.drive(new Translation2d(0, 0), 0, true, false);
+            }
+
+            // SmartDashboard.putBoolean("Balance From Back", mPeriodicIO.fromBack);
+            // SmartDashboard.putBoolean("Swerve Locked", mSwerve.getLocked());
+        }
+    }
+
+        // if gyro is slanted drive until it changes to the negative angle, then drive
+    // slowly backward until it levels
+    public void autoBalanceNonPIDSlowSpeedOverTime() {
+        if (mPeriodicIO.mEngage) {
+
+            // if it is slanted, go at a higher speed until it goes past level
+            if ((getAdjustedRoll() > Constants.AutoConstants.firstAngle) && (!mPeriodicIO.fromBack)) {
+                if(hasBeenLevel){
+                    mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+                }
+                else{
+                mSwerve.drive(new Translation2d(Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+                }
+            } else if ((getAdjustedRoll() < -Constants.AutoConstants.firstAngle) && (mPeriodicIO.fromBack)) {
+                if(hasBeenLevel){
+                    mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+                }
+                else{
+                mSwerve.drive(new Translation2d(-Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+                }
+            }
+            // drive slower back until level
+            else if ((getAdjustedRoll() < -Constants.AutoConstants.secondAngle) && (!mPeriodicIO.fromBack)) {
+                mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+            } else if ((getAdjustedRoll() > Constants.AutoConstants.secondAngle) && (mPeriodicIO.fromBack)) {
+                mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+            }
+            // when 'level' lock the wheels
+            else {
+                if (!hasBeenLevel){
+                    hasBeenLevel = true;
+                }
                 mSwerve.drive(new Translation2d(0, 0), 0, true, false);
             }
 
