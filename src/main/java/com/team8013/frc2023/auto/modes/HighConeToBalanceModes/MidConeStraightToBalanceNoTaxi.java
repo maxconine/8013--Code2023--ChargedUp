@@ -61,7 +61,7 @@ public class MidConeStraightToBalanceNoTaxi extends AutoModeBase {
         runAction(new LambdaAction(() -> mSuperstructure.settingHighToDownAuto()));
         runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 
-        runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait));
+        runAction(new WaitAction(Constants.AutoConstants.firstDropHighWait + 1));
 
         runAction(midConeStraightToBalanceBlue);
 

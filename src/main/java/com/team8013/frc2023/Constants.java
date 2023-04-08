@@ -245,7 +245,7 @@ public class Constants {
                                 .setEndVelocity(0);
 
                 public static final TrajectoryConfig balanceSpeedConfig = new TrajectoryConfig(
-                                1.5,
+                                1.9,
                                 5.0)
                                 .setKinematics(Constants.SwerveConstants.swerveKinematics)
                                 .setStartVelocity(0)
