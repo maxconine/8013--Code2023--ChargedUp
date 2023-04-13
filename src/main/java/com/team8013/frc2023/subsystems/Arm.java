@@ -2,11 +2,11 @@ package com.team8013.frc2023.subsystems;
 
 import java.util.ArrayList;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenixpro.configs.TalonFXConfiguration;
+import com.ctre.phoenixpro.controls.DutyCycleOut;
+import com.ctre.phoenixpro.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenixpro.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenixpro.hardware.TalonFX;
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.Ports;
 import com.team8013.frc2023.logger.LogStorage;
@@ -47,8 +47,8 @@ public class Arm extends Subsystem {
 
     public PeriodicIO mPeriodicIO = new PeriodicIO();
 
-    public StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT = new StatorCurrentLimitConfiguration(true,
-            60, 60, .2);
+    // public StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT = new StatorCurrentLimitConfiguration(true,
+    //         60, 60, .2);
 
     private Arm() {
         mArm = TalonFXFactory.createDefaultTalon(Ports.ARM);

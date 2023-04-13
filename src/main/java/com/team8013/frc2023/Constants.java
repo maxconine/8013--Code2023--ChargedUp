@@ -1,6 +1,7 @@
 package com.team8013.frc2023;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenixpro.signals.SensorDirectionValue;
 import com.lib.util.SwerveModuleConstants;
 import com.team254.lib.geometry.Rotation2d;
 import com.team8013.frc2023.subsystems.Limelight.LimelightConstants;
@@ -69,15 +70,17 @@ public class Constants {
                                 swerveModuleLocations);
 
                 /* Swerve Current Limiting */
-                public static final int angleContinuousCurrentLimit = 25;
-                public static final int anglePeakCurrentLimit = 40;
-                public static final double anglePeakCurrentDuration = 0.1;
-                public static final boolean angleEnableCurrentLimit = true;
+                public static final int angleStatorCurrentLimit = 25;
+                public static final boolean angleEnableCurrentLimit = false;
+                public static final double angleSupplyCurrentLimit = 0.1;
+                public static final boolean angleSupplyCurrentLimitEnable = true;
 
-                public static final int driveContinuousCurrentLimit = 35;
-                public static final int drivePeakCurrentLimit = 60;
-                public static final double drivePeakCurrentDuration = 0.1;
-                public static final boolean driveEnableCurrentLimit = true;
+                public static final int StatorCurrentLimit = 35;
+                public static final boolean driveEnableCurrentLimit = false;
+                public static final int driveSupplyCurrentLimit = 60;
+                public static final boolean driveSupplyCurrentLimitEnable = false;
+                // public static final int drivePeakCurrentLimit = 60;
+                // public static final double drivePeakCurrentDuration = 0.1;
 
                 /* Angle Motor PID Values */
                 public static final double angleKP = 0.3;
@@ -112,7 +115,7 @@ public class Constants {
                 public static final boolean angleMotorInvert = true;
 
                 /* Angle Encoder Invert */
-                public static final boolean canCoderInvert = false;
+                public static final SensorDirectionValue canCoderInvert = SensorDirectionValue.CounterClockwise_Positive;
 
                 /* Controller Invert */
                 public static final boolean invertYAxis = false;
@@ -375,7 +378,7 @@ public class Constants {
                 public static final int kStatorCurrentLimit = 60; // 80 Amps for Neo motor
                 public static final double kTriggerThresholdCurrent = 60;
 
-                public static final boolean canCoderInvert = false; // if false(default) is ccw+ when observing from the
+                public static final SensorDirectionValue canCoderInvert = SensorDirectionValue.CounterClockwise_Positive; // if false(default) is ccw+ when observing from the
                                                                     // led side
                 public static final double canCoderOffset = -12; // program subtracts this value to the cancoder angle
                                                                  // to
@@ -448,7 +451,8 @@ public class Constants {
                 public static final double canCoderOffset = 208.38 + 78 - 180; // program subtracts this value to the
                                                                                // cancoder
                                                                                // angle to make it 0
-                public static final boolean canCoderInvert = false; // program subtracts this value to the cancoder
+                public static final SensorDirectionValue canCoderInvert = SensorDirectionValue.CounterClockwise_Positive;
+                // program subtracts this value to the cancoder
                                                                     // angle to make it 0
 
                 /* CLAW */

@@ -1,75 +1,126 @@
 package com.lib.util;
 
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.ctre.phoenix.sensors.SensorTimeBase;
+import com.ctre.phoenixpro.configs.CANcoderConfiguration;
+import com.ctre.phoenixpro.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenixpro.configs.CurrentLimitsConfigs;
+import com.ctre.phoenixpro.configs.MagnetSensorConfigs;
+import com.ctre.phoenixpro.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenixpro.configs.TalonFXConfiguration;
+import com.ctre.phoenixpro.signals.AbsoluteSensorRangeValue;
 import com.team8013.frc2023.Constants;
 
 public final class CTREConfigs {
     public static TalonFXConfiguration swerveDriveFXConfig() {
         TalonFXConfiguration config = new TalonFXConfiguration();
-        SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(
-                Constants.SwerveConstants.driveEnableCurrentLimit,
-                Constants.SwerveConstants.driveContinuousCurrentLimit,
-                Constants.SwerveConstants.drivePeakCurrentLimit,
-                Constants.SwerveConstants.drivePeakCurrentDuration);
+        CurrentLimitsConfigs driveSupplyLimit = new CurrentLimitsConfigs();
+        ClosedLoopRampsConfigs closedLoopRampsConfigs = new ClosedLoopRampsConfigs();
+        OpenLoopRampsConfigs openLoopRampsConfigs = new OpenLoopRampsConfigs();
 
-        config.slot0.kP = Constants.SwerveConstants.driveKP;
-        config.slot0.kI = Constants.SwerveConstants.driveKI;
-        config.slot0.kD = Constants.SwerveConstants.driveKD;
-        config.slot0.kF = Constants.SwerveConstants.driveKF;
-        config.supplyCurrLimit = driveSupplyLimit;
-        config.initializationStrategy = SensorInitializationStrategy.BootToZero;
-        config.openloopRamp = Constants.SwerveConstants.openLoopRamp;
-        config.closedloopRamp = Constants.SwerveConstants.closedLoopRamp;
+        driveSupplyLimit.StatorCurrentLimitEnable = Constants.SwerveConstants.driveEnableCurrentLimit;
+        driveSupplyLimit.StatorCurrentLimit = Constants.SwerveConstants.StatorCurrentLimit;
+        driveSupplyLimit.SupplyCurrentLimit = Constants.SwerveConstants.driveSupplyCurrentLimit;
+        driveSupplyLimit.SupplyCurrentLimitEnable = Constants.SwerveConstants.driveSupplyCurrentLimitEnable;
+
+        closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod = Constants.SwerveConstants.closedLoopRamp;
+        openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod = Constants.SwerveConstants.openLoopRamp;
+                // Constants.SwerveConstants.driveEnableCurrentLimit,
+                // Constants.SwerveConstants.driveContinuousCurrentLimit,
+                // Constants.SwerveConstants.drivePeakCurrentLimit,
+                // Constants.SwerveConstants.drivePeakCurrentDuration);
+
+        config.Slot0.kP = Constants.SwerveConstants.driveKP;
+        config.Slot0.kI = Constants.SwerveConstants.driveKI;
+        config.Slot0.kD = Constants.SwerveConstants.driveKD;
+        config.Slot0.kS = Constants.SwerveConstants.driveKS;
+        config.Slot0.kV = Constants.SwerveConstants.driveKV;
+        config.CurrentLimits = driveSupplyLimit;
+        // config. = SensorInitializationStrategy.BootToZero;
+        config.OpenLoopRamps = openLoopRampsConfigs;
+        config.ClosedLoopRamps = closedLoopRampsConfigs;
+
         return config;
     }
 
     public static TalonFXConfiguration swerveAngleFXConfig() {
         TalonFXConfiguration angleConfig = new TalonFXConfiguration();
-        SupplyCurrentLimitConfiguration angleSupplyLimit = new SupplyCurrentLimitConfiguration(
-                Constants.SwerveConstants.angleEnableCurrentLimit,
-                Constants.SwerveConstants.angleContinuousCurrentLimit,
-                Constants.SwerveConstants.anglePeakCurrentLimit,
-                Constants.SwerveConstants.anglePeakCurrentDuration);
+        CurrentLimitsConfigs angleSupplyLimit = new CurrentLimitsConfigs();
+        ClosedLoopRampsConfigs angleClosedLoopRampsConfigs = new ClosedLoopRampsConfigs();
+        OpenLoopRampsConfigs angleOpenLoopRampsConfigs = new OpenLoopRampsConfigs();
 
-        angleConfig.slot0.kP = Constants.SwerveConstants.angleKP;
-        angleConfig.slot0.kI = Constants.SwerveConstants.angleKI;
-        angleConfig.slot0.kD = Constants.SwerveConstants.angleKD;
-        angleConfig.slot0.kF = Constants.SwerveConstants.angleKF;
-        angleConfig.supplyCurrLimit = angleSupplyLimit;
-        angleConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
+        angleSupplyLimit.StatorCurrentLimitEnable = Constants.SwerveConstants.angleEnableCurrentLimit;
+        angleSupplyLimit.StatorCurrentLimit = Constants.SwerveConstants.angleStatorCurrentLimit;
+        angleSupplyLimit.SupplyCurrentLimit = Constants.SwerveConstants.angleSupplyCurrentLimit;
+        angleSupplyLimit.SupplyCurrentLimitEnable = Constants.SwerveConstants.angleSupplyCurrentLimitEnable;
+
+        angleClosedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod = Constants.SwerveConstants.closedLoopRamp;
+        angleOpenLoopRampsConfigs.DutyCycleOpenLoopRampPeriod = Constants.SwerveConstants.openLoopRamp;
+
+        angleConfig.Slot0.kP = Constants.SwerveConstants.angleKP;
+        angleConfig.Slot0.kI = Constants.SwerveConstants.angleKI;
+        angleConfig.Slot0.kD = Constants.SwerveConstants.angleKD;
+        // angleConfig.Slot0.kS = Constants.SwerveConstants.angleKS;
+        // angleConfig.Slot0.kV = Constants.SwerveConstants.angleKV;
+        angleConfig.CurrentLimits = angleSupplyLimit;
+        angleConfig.OpenLoopRamps = angleOpenLoopRampsConfigs;
+        angleConfig.ClosedLoopRamps = angleClosedLoopRampsConfigs;
+        // angleConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
         return angleConfig;
     }
 
-    public static CANCoderConfiguration swerveCancoderConfig() {
-        CANCoderConfiguration config = new CANCoderConfiguration();
-        config.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        config.sensorDirection = Constants.SwerveConstants.canCoderInvert;
-        config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        config.sensorTimeBase = SensorTimeBase.PerSecond;
+    public static CANcoderConfiguration swerveCancoderConfig() {
+        CANcoderConfiguration config = new CANcoderConfiguration();
+        MagnetSensorConfigs swerveCANcoderConfigs = new MagnetSensorConfigs();
+        swerveCANcoderConfigs.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+        swerveCANcoderConfigs.SensorDirection = Constants.SwerveConstants.canCoderInvert;
+
+        config.MagnetSensor = swerveCANcoderConfigs;
         return config;
     }
 
-    public static CANCoderConfiguration pivotCancoderConfig() {
-        CANCoderConfiguration config = new CANCoderConfiguration();
-        config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-        config.sensorDirection = Constants.PivotConstants.canCoderInvert;
-        config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        config.sensorTimeBase = SensorTimeBase.PerSecond;
+    public static CANcoderConfiguration pivotCancoderConfig() {
+        CANcoderConfiguration config = new CANcoderConfiguration();
+        MagnetSensorConfigs pivotCANcoderConfigs = new MagnetSensorConfigs();
+        pivotCANcoderConfigs.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        pivotCANcoderConfigs.SensorDirection = Constants.PivotConstants.canCoderInvert;
+
+        config.MagnetSensor = pivotCANcoderConfigs;
         return config;
     }
 
-    public static CANCoderConfiguration clawPivotCancoderConfig() {
-        CANCoderConfiguration config = new CANCoderConfiguration();
-        config.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        config.sensorDirection = Constants.ClawConstants.canCoderInvert;
-        config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        config.sensorTimeBase = SensorTimeBase.PerSecond;
+    public static CANcoderConfiguration clawPivotCancoderConfig() {
+        CANcoderConfiguration config = new CANcoderConfiguration();
+        MagnetSensorConfigs clawCANcoderConfigs = new MagnetSensorConfigs();
+        clawCANcoderConfigs.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+        clawCANcoderConfigs.SensorDirection = Constants.ClawConstants.canCoderInvert;
+
+        config.MagnetSensor = clawCANcoderConfigs;
         return config;
+    }
+
+    public static TalonFXConfiguration armPivotFXConfig() {
+        TalonFXConfiguration angleConfig = new TalonFXConfiguration();
+        CurrentLimitsConfigs angleSupplyLimit = new CurrentLimitsConfigs();
+        ClosedLoopRampsConfigs angleClosedLoopRampsConfigs = new ClosedLoopRampsConfigs();
+        OpenLoopRampsConfigs angleOpenLoopRampsConfigs = new OpenLoopRampsConfigs();
+
+        angleSupplyLimit.StatorCurrentLimitEnable = Constants.SwerveConstants.angleEnableCurrentLimit;
+        angleSupplyLimit.StatorCurrentLimit = Constants.SwerveConstants.angleStatorCurrentLimit;
+        angleSupplyLimit.SupplyCurrentLimit = Constants.SwerveConstants.angleSupplyCurrentLimit;
+        angleSupplyLimit.SupplyCurrentLimitEnable = Constants.SwerveConstants.angleSupplyCurrentLimitEnable;
+
+        angleClosedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod = Constants.SwerveConstants.closedLoopRamp;
+        angleOpenLoopRampsConfigs.DutyCycleOpenLoopRampPeriod = Constants.SwerveConstants.openLoopRamp;
+
+        angleConfig.Slot0.kP = Constants.SwerveConstants.angleKP;
+        angleConfig.Slot0.kI = Constants.SwerveConstants.angleKI;
+        angleConfig.Slot0.kD = Constants.SwerveConstants.angleKD;
+        // angleConfig.Slot0.kS = Constants.SwerveConstants.angleKS;
+        // angleConfig.Slot0.kV = Constants.SwerveConstants.angleKV;
+        angleConfig.CurrentLimits = angleSupplyLimit;
+        angleConfig.OpenLoopRamps = angleOpenLoopRampsConfigs;
+        angleConfig.ClosedLoopRamps = angleClosedLoopRampsConfigs;
+        // angleConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
+        return angleConfig;
     }
 
 }

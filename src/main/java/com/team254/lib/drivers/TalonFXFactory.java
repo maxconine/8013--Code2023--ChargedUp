@@ -1,8 +1,16 @@
 package com.team254.lib.drivers;
 
 import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenixpro.StatusCode;
+import com.ctre.phoenixpro.configs.TalonFXConfiguration;
+import com.ctre.phoenixpro.controls.Follower;
+import com.ctre.phoenixpro.controls.NeutralOut;
+import com.ctre.phoenixpro.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenixpro.controls.PositionVoltage;
+import com.ctre.phoenixpro.hardware.TalonFX;
+import com.ctre.phoenixpro.signals.ControlModeValue;
+import com.ctre.phoenixpro.signals.NeutralModeValue;
+
 
 /**
  * Creates CANTalon objects and configures all the parameters we care about to factory defaults. Closed-loop and sensor
@@ -13,7 +21,7 @@ public class TalonFXFactory {
     private final static int kTimeoutMs = 100;
 
     public static class Configuration {
-        public NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
+        public NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Coast;
         // factory default
         public double NEUTRAL_DEADBAND = 0.04;
 
@@ -34,11 +42,11 @@ public class TalonFXFactory {
         public int ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 1000;
         public int PULSE_WIDTH_STATUS_FRAME_RATE_MS = 1000;
 
-        public VelocityMeasPeriod VELOCITY_MEASUREMENT_PERIOD = VelocityMeasPeriod.Period_100Ms;
+        //public VelocityMeasPeriod VELOCITY_MEASUREMENT_PERIOD = VelocityMeasPeriod.Period_100Ms;
         public int VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW = 64;
 
-        public StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT = new StatorCurrentLimitConfiguration(false, 300, 700, 1);
-        public SupplyCurrentLimitConfiguration SUPPLY_CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(false, 40, 100, 1);
+        // public StatorCurrentLimitConfiguration STATOR_CURRENT_LIMIT = new StatorCurrentLimitConfiguration(false, 300, 700, 1);
+        // public SupplyCurrentLimitConfiguration SUPPLY_CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(false, 40, 100, 1);
 
         public double OPEN_LOOP_RAMP_RATE = 0.0;
         public double CLOSED_LOOP_RAMP_RATE = 0.0;
@@ -65,82 +73,83 @@ public class TalonFXFactory {
         return createTalon(id, kDefaultConfiguration);
     }
 
-    public static TalonFX createPermanentSlaveTalon(int id, int master_id) {
+    public static TalonFX createPermanentSlaveTalon(int id, int master_id, boolean opposeMasterDirection) {
         final TalonFX talon = createTalon(id, kSlaveConfiguration);
-        talon.set(ControlMode.Follower, master_id);
+        talon.setControl(new Follower(master_id, opposeMasterDirection));
         return talon;
     }
 
     public static TalonFX createTalon(int id, Configuration config) {
         TalonFX talon = new TalonFX(id, "canivore1");
-        talon.set(ControlMode.PercentOutput, 0.0);
+        talon.set(0.0);
 
-        talon.changeMotionControlFramePeriod(config.MOTION_CONTROL_FRAME_PERIOD_MS);
-        talon.clearMotionProfileHasUnderrun(kTimeoutMs);
-        talon.clearMotionProfileTrajectories();
+        // talon.changeMotionControlFramePeriod(config.MOTION_CONTROL_FRAME_PERIOD_MS);
+        // talon.clearMotionProfileHasUnderrun(kTimeoutMs);
+        // talon.clearMotionProfileTrajectories();
 
         talon.clearStickyFaults(kTimeoutMs);
 
-        talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-                LimitSwitchNormal.Disabled, kTimeoutMs);
-        talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-                LimitSwitchNormal.Disabled, kTimeoutMs);
-        talon.overrideLimitSwitchesEnable(config.ENABLE_LIMIT_SWITCH);
+        // talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        //         LimitSwitchNormal.Disabled, kTimeoutMs);
+        // talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        //         LimitSwitchNormal.Disabled, kTimeoutMs);
+        // talon.setLimit(config.ENABLE_LIMIT_SWITCH);
 
         // Turn off re-zeroing by default.
-        talon.configSetParameter(
-                ParamEnum.eClearPositionOnLimitF, 0, 0, 0, kTimeoutMs);
-        talon.configSetParameter(
-                ParamEnum.eClearPositionOnLimitR, 0, 0, 0, kTimeoutMs);
+        // talon.configSetParameter(
+        //         ParamEnum.eClearPositionOnLimitF, 0, 0, 0, kTimeoutMs);
+        // talon.configSetParameter(
+        //         ParamEnum.eClearPositionOnLimitR, 0, 0, 0, kTimeoutMs);
 
-        talon.configNominalOutputForward(0, kTimeoutMs);
-        talon.configNominalOutputReverse(0, kTimeoutMs);
-        talon.configNeutralDeadband(config.NEUTRAL_DEADBAND, kTimeoutMs);
+        // talon.configNominalOutputForward(0, kTimeoutMs);
+        // talon.configNominalOutputReverse(0, kTimeoutMs);
+        // talon.configNeutralDeadband(config.NEUTRAL_DEADBAND, kTimeoutMs);
 
-        talon.configPeakOutputForward(1.0, kTimeoutMs);
-        talon.configPeakOutputReverse(-1.0, kTimeoutMs);
+        // talon.configPeakOutputForward(1.0, kTimeoutMs);
+        // talon.configPeakOutputReverse(-1.0, kTimeoutMs);
 
-        talon.setNeutralMode(config.NEUTRAL_MODE);
+        talon.setControl(new NeutralOut());
 
-        talon.configForwardSoftLimitThreshold(config.FORWARD_SOFT_LIMIT, kTimeoutMs);
-        talon.configForwardSoftLimitEnable(config.ENABLE_SOFT_LIMIT, kTimeoutMs);
+        // talon.configForwardSoftLimitThreshold(config.FORWARD_SOFT_LIMIT, kTimeoutMs);
+        // talon.configForwardSoftLimitEnable(config.ENABLE_SOFT_LIMIT, kTimeoutMs);
 
-        talon.configReverseSoftLimitThreshold(config.REVERSE_SOFT_LIMIT, kTimeoutMs);
-        talon.configReverseSoftLimitEnable(config.ENABLE_SOFT_LIMIT, kTimeoutMs);
-        talon.overrideSoftLimitsEnable(config.ENABLE_SOFT_LIMIT);
+        // talon.configReverseSoftLimitThreshold(config.REVERSE_SOFT_LIMIT, kTimeoutMs);
+        // talon.configReverseSoftLimitEnable(config.ENABLE_SOFT_LIMIT, kTimeoutMs);
+        // talon.overrideSoftLimitsEnable(config.ENABLE_SOFT_LIMIT);
 
         talon.setInverted(config.INVERTED);
-        talon.setSensorPhase(config.SENSOR_PHASE);
 
-        talon.selectProfileSlot(0, 0);
+        //talon.setSensorPhase(config.SENSOR_PHASE);
+
+        //talon.selectProfileSlot(0, 0);
 
        //talon.configVelocityMeasurementPeriod(config.VELOCITY_MEASUREMENT_PERIOD, kTimeoutMs);
-        talon.configVelocityMeasurementWindow(config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW,
-                kTimeoutMs);
+        // talon.configVelocityMeasurementWindow(config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW,
+        //         kTimeoutMs);
 
-        talon.configOpenloopRamp(config.OPEN_LOOP_RAMP_RATE, kTimeoutMs);
-        talon.configClosedloopRamp(config.CLOSED_LOOP_RAMP_RATE, kTimeoutMs);
+        // talon.configOpenloopRamp(config.OPEN_LOOP_RAMP_RATE, kTimeoutMs);
+        // talon.configClosedloopRamp(config.CLOSED_LOOP_RAMP_RATE, kTimeoutMs);
 
-        talon.configVoltageCompSaturation(0.0, kTimeoutMs);
-        talon.configVoltageMeasurementFilter(32, kTimeoutMs);
-        talon.enableVoltageCompensation(false);
+        // talon.configVoltageCompSaturation(0.0, kTimeoutMs);
+        // talon.configVoltageMeasurementFilter(32, kTimeoutMs);
+        // talon.enableVoltageCompensation(false);
 
-        talon.configStatorCurrentLimit(config.STATOR_CURRENT_LIMIT);
-        talon.configSupplyCurrentLimit(config.SUPPLY_CURRENT_LIMIT);
+        // talon.configStatorCurrentLimit(config.STATOR_CURRENT_LIMIT);
+        // talon.configSupplyCurrentLimit(config.SUPPLY_CURRENT_LIMIT);
 
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,
-                config.GENERAL_STATUS_FRAME_RATE_MS, kTimeoutMs);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-                config.FEEDBACK_STATUS_FRAME_RATE_MS, kTimeoutMs);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,
+        //         config.GENERAL_STATUS_FRAME_RATE_MS, kTimeoutMs);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
+        //         config.FEEDBACK_STATUS_FRAME_RATE_MS, kTimeoutMs);
 
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature,
-                config.QUAD_ENCODER_STATUS_FRAME_RATE_MS, kTimeoutMs);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat,
-                config.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS, kTimeoutMs);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth,
-                config.PULSE_WIDTH_STATUS_FRAME_RATE_MS, kTimeoutMs);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature,
+        //         config.QUAD_ENCODER_STATUS_FRAME_RATE_MS, kTimeoutMs);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat,
+        //         config.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS, kTimeoutMs);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth,
+        //         config.PULSE_WIDTH_STATUS_FRAME_RATE_MS, kTimeoutMs);
 
-        talon.setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS);
+        // talon.setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS);
 
         return talon;
     }

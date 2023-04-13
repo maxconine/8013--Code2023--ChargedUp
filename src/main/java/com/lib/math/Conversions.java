@@ -8,7 +8,7 @@ public class Conversions {
      * @return Degrees of Rotation of Mechanism
      */
     public static double falconToDegrees(double counts, double gearRatio) {
-        return counts * (360.0 / (gearRatio * 2048.0));
+        return counts * (360.0 / (gearRatio));
     }
 
     /**
@@ -17,8 +17,13 @@ public class Conversions {
      * @return Falcon Counts
      */
     public static double degreesToFalcon(double degrees, double gearRatio) {
-        double ticks =  degrees / (360.0 / (gearRatio * 2048.0));
+        double ticks =  degrees / (360.0 / (gearRatio));
         return ticks;
+    }
+
+    public static double degreesToMotorRoation(double degrees, double gearRatio) {
+        double rotations =  (degrees / 360.0) * gearRatio;
+        return rotations;
     }
 
     /**
@@ -27,9 +32,10 @@ public class Conversions {
      * @return Falcon Counts
      */
     public static double rotationsToFalcon(double rotations) {
-        double ticks =  rotations * (2048.0);
+        double ticks =  rotations;
         return ticks;
     }
+
 
     /**
      * @param velocityCounts Falcon Velocity Counts
@@ -37,7 +43,7 @@ public class Conversions {
      * @return RPM of Mechanism
      */
     public static double falconToRPM(double velocityCounts, double gearRatio) {
-        double motorRPM = velocityCounts * (600.0 / 2048.0);        
+        double motorRPM = velocityCounts;        
         double mechRPM = motorRPM / gearRatio;
         return mechRPM;
     }
@@ -49,7 +55,7 @@ public class Conversions {
      */
     public static double RPMToFalcon(double RPM, double gearRatio) {
         double motorRPM = RPM * gearRatio;
-        double sensorCounts = motorRPM * (2048.0 / 600.0);
+        double sensorCounts = motorRPM;
         return sensorCounts;
     }
 
@@ -77,6 +83,12 @@ public class Conversions {
         return wheelVelocity;
     }
 
+    public static double MPSToMotorVelocity(double velocity, double circumference, double gearRatio){
+        double wheelRPM = ((velocity * 60) / circumference);
+        double wheelVelocity = wheelRPM * gearRatio;
+        return wheelVelocity;
+    }
+
     // Convert meters to inches
     public static double metersToInches(double meters) {
         return meters * (39.73701 / 1);
@@ -88,7 +100,7 @@ public class Conversions {
     }
 
     public static double falconToMeters(double integratedSensorPosition, double gearRatio, double circumference) {
-        double distance = (integratedSensorPosition/2048)* gearRatio * circumference;
+        double distance = (integratedSensorPosition / gearRatio) * circumference;
         return distance;
     }
 
