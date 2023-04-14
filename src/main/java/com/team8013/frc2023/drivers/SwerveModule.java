@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import com.ctre.phoenixpro.configs.TalonFXConfiguration;
 import com.ctre.phoenixpro.controls.DutyCycleOut;
+import com.ctre.phoenixpro.controls.PositionDutyCycle;
 import com.ctre.phoenixpro.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenixpro.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenixpro.hardware.TalonFX;
@@ -31,6 +32,7 @@ public class SwerveModule {
     private DutyCycleOut driveDutyCycleOut;
     private VelocityTorqueCurrentFOC driveVelocityTorqueCurrentFOC;
     PositionTorqueCurrentFOC anglePositionControl;
+    PositionDutyCycle anglePositionDutyCycle;
 
     private double anglekP;
     private double anglekI;
@@ -49,6 +51,9 @@ public class SwerveModule {
         configAngleEncoder();
         //angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); // originally 255
         //angleEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300); // originally 255
+        angleEncoder.getPosition().setUpdateFrequency(300);
+        angleEncoder.getVelocity().setUpdateFrequency(300);
+        angleEncoder.getAbsolutePosition().setUpdateFrequency(300);
 
         /* Angle Motor Config */
         mAngleMotor = TalonFXFactory.createDefaultTalon(moduleConstants.angleMotorID);
@@ -74,6 +79,11 @@ public class SwerveModule {
 
         anglePositionControl = new PositionTorqueCurrentFOC(0);
         anglePositionControl.Slot = 0;
+
+        //TODO: DOES THIS FOC CONTROL WORK OR THIS DUTY CYCLE CONTROL WORK?
+
+        anglePositionDutyCycle = new PositionDutyCycle(0);
+        anglePositionDutyCycle.Slot = 0;
 
         lastAngle = getState().angle.getDegrees();
     }
@@ -169,7 +179,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getCanCoder() {
-        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValue());
+        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValue()*360);
     }
 
     public double getTargetAngle() {

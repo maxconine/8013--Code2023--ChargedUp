@@ -2,16 +2,14 @@ package com.team8013.frc2023.subsystems;
 
 import java.util.ArrayList;
 
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.controls.DutyCycleOut;
-import com.ctre.phoenixpro.controls.PositionTorqueCurrentFOC;
-import com.ctre.phoenixpro.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenixpro.controls.MotionMagicDutyCycle;
 import com.ctre.phoenixpro.hardware.TalonFX;
+import com.ctre.phoenixpro.signals.NeutralModeValue;
+import com.lib.util.CTREConfigs;
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.Ports;
 import com.team8013.frc2023.logger.LogStorage;
 import com.team8013.frc2023.logger.LoggingSystem;
-//import com.team8013.frc2023.subsystems.ServoMotorSubsystem.ControlState;
 import com.team254.lib.drivers.TalonFXFactory;
 import com.team254.lib.util.Util;
 
@@ -44,6 +42,7 @@ public class Arm extends Subsystem {
 
     private boolean mExtendArm = false;
     private boolean mPartialExtendArm = false;
+    MotionMagicDutyCycle motionMagicDutyCycle;
 
     public PeriodicIO mPeriodicIO = new PeriodicIO();
 
@@ -52,30 +51,29 @@ public class Arm extends Subsystem {
 
     private Arm() {
         mArm = TalonFXFactory.createDefaultTalon(Ports.ARM);
+        configArmMotor();
+
 
         // Set defaults
-        mArm.set(ControlMode.PercentOutput, 0);
-        mArm.setInverted(false);
-        mArm.setSelectedSensorPosition(0.0);
 
-        mArm.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
 
-        mArm.configMotionAcceleration(40000, Constants.kLongCANTimeoutMs);
-        mArm.configMotionCruiseVelocity(20000, Constants.kLongCANTimeoutMs);
-        mArm.config_kP(0, 0.6);
-        mArm.config_kI(0, 0);
-        mArm.config_kD(0, 0);
-        mArm.config_kF(0, 0.077);
+        //mArm.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
 
-        mArm.setNeutralMode(NeutralMode.Brake);
 
-        mArm.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        mArm.enableVoltageCompensation(true);
+        // mArm.config_kF(0, 0.077);
+
+        // mArm.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
+        // mArm.enableVoltageCompensation(true);
 
         // set current limits on motor
-        mArm.configStatorCurrentLimit(STATOR_CURRENT_LIMIT);
+        // mArm.configStatorCurrentLimit(STATOR_CURRENT_LIMIT);
 
         mPeriodicIO.isPulledIn = false;
+
+        motionMagicDutyCycle = new MotionMagicDutyCycle(0);
+        // motionMagicDutyCycle.Slot = 0;
+        motionMagicDutyCycle.OverrideBrakeDurNeutral = true;
+        motionMagicDutyCycle.EnableFOC = false;
     }
 
     @Override
@@ -84,10 +82,10 @@ public class Arm extends Subsystem {
         // curr check for holding
         maybeHoldCurrentPosition();
 
-        mPeriodicIO.arm_voltage = mArm.getMotorOutputVoltage();
-        mPeriodicIO.arm_stator_current = mArm.getStatorCurrent();
-        mPeriodicIO.arm_motor_velocity = mArm.getSelectedSensorVelocity();
-        mPeriodicIO.arm_motor_position = mArm.getSelectedSensorPosition();
+        mPeriodicIO.arm_voltage = mArm.getSupplyVoltage().getValue();
+        mPeriodicIO.arm_stator_current = mArm.getStatorCurrent().getValue();
+        mPeriodicIO.arm_motor_velocity = mArm.getVelocity().getValue();
+        mPeriodicIO.arm_motor_position = mArm.getRotorPosition().getValue();
 
         // send log data
         SendLog();
@@ -101,34 +99,44 @@ public class Arm extends Subsystem {
         switch (mArmControlState) {
             case OPEN_LOOP:
                 if (mPeriodicIO.pullArmIntoZero) {
-                    mArm.set(ControlMode.PercentOutput, -0.3);
+                    mArm.set(-0.3);
 
                     if (mPeriodicIO.arm_stator_current > Constants.ArmConstants.kZeroCurrentLimit) {
                         mPeriodicIO.pullArmIntoZero = false;
                         resetArmPosition();
-                        mArm.set(ControlMode.PercentOutput, 0.0);
+                        mArm.set(0.0);
                         setArmPosition(10);
                     }
                 } else {
-                    mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand);
+                    mArm.set(mPeriodicIO.arm_demand);
                 }
                 break;
             case MOTION_MAGIC:
-                mArm.set(ControlMode.MotionMagic, mPeriodicIO.arm_demand);
+                motionMagicDutyCycle.Position = mPeriodicIO.arm_demand;
+                mArm.setControl(motionMagicDutyCycle);
                 break;
             default:
-                mArm.set(ControlMode.MotionMagic, 0.0);
+                motionMagicDutyCycle.Position = 0;
+                mArm.setControl(motionMagicDutyCycle);
                 break;
         }
 
     }
 
     public synchronized void setBrakeMode(boolean brake) {
-        mArm.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
+        CTREConfigs.armFXConfig().MotorOutput.NeutralMode = (brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        mArm.getConfigurator().apply(CTREConfigs.armFXConfig());
     }
 
     public synchronized void resetArmPosition() {
-        mArm.setSelectedSensorPosition(0.0);
+        mArm.setRotorPosition(0);
+    }
+
+    private void configArmMotor(){
+        mArm.getConfigurator().apply(CTREConfigs.armFXConfig());
+        mArm.setInverted(false);
+        mArm.set(0);
+        mArm.setRotorPosition(0);
     }
 
     public void pullArmIntoZero() {
@@ -275,7 +283,7 @@ public class Arm extends Subsystem {
 
     public void stop() {
         mIsEnabled = false;
-        mArm.set(ControlMode.PercentOutput, 0.0);
+        mArm.set(0.0);
     }
 
     public double getArmVelocity() {

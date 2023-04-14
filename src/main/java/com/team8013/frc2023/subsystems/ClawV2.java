@@ -2,9 +2,6 @@ package com.team8013.frc2023.subsystems;
 
 import java.util.ArrayList;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.Ports;
@@ -17,8 +14,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderStatusFrame;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenixpro.hardware.CANcoder;
 import com.lib.util.CTREConfigs;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -35,8 +35,7 @@ public class ClawV2 extends Subsystem {
 
     PIDController m_PivotPid;
     VictorSPX m_PivotMotor;
-    // Encoder m_PivotEncoder;
-    CANCoder m_ClawCANCoder;
+    CANcoder m_ClawCANCoder;
     DigitalInput m_LimitSwitch;
 
     PIDController m_GripPid;
@@ -60,16 +59,9 @@ public class ClawV2 extends Subsystem {
     private ClawV2() {
         m_LimitSwitch = new DigitalInput(0);
 
-        // m_PivotEncoder = new Encoder(Ports.CLAW_PIV_ENCODER_A,
-        // Ports.CLAW_PIV_ENCODER_B);
-
-        m_ClawCANCoder = new CANCoder(Ports.CLAW_CANCODER, "canivore1");
+        m_ClawCANCoder = new CANcoder(Ports.CLAW_CANCODER, "canivore1");
         configClawEncoder();
-        m_ClawCANCoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 300); // originally 255
-        m_ClawCANCoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 300);
 
-        // m_PivotEncoder.setDistancePerPulse(1 / 44.4); // /
-        // Constants.ClawConstants.pivotGearRatio);
         m_PivotMotor = new VictorSPX(Ports.CLAW_PIV);
 
         m_GripEncoder = new Encoder(Ports.CLAW_GRIP_ENCODER_A, Ports.CLAW_GRIP_ENCODER_B);
@@ -84,19 +76,10 @@ public class ClawV2 extends Subsystem {
         m_GripPid = new PIDController(Constants.ClawConstants.grip_kP, Constants.ClawConstants.grip_kI,
                 Constants.ClawConstants.grip_kD);
 
-        // m_PivotPid.setTolerance(1);
-
-        // m_PivotPid.enableContinuousInput(0, 360);
 
         mPeriodicIO.wantedClosing = false;
         mPeriodicIO.encoderBroken = false;
         mPeriodicIO.maybeEncoderBroken = false;
-
-        // if (mPivotControlState != PivotControlState.CLOSED_LOOP) {
-        // mPivotControlState = PivotControlState.CLOSED_LOOP;
-        // }
-
-        // mPeriodicIO.pivot_demand = getRelativeCancoder();
 
     }
 
@@ -106,7 +89,7 @@ public class ClawV2 extends Subsystem {
         /* PIVOT MOTOR */
         mPeriodicIO.pivot_voltage = m_PivotMotor.getBusVoltage();
         mPeriodicIO.pivot_current = m_PivotMotor.getMotorOutputVoltage();
-        mPeriodicIO.pivot_motor_velocity = m_ClawCANCoder.getVelocity();
+        mPeriodicIO.pivot_motor_velocity = m_ClawCANCoder.getVelocity().getValue();
         mPeriodicIO.pivot_motor_position = getRelativeCancoder();
 
         /* CLAW MOTOR */
@@ -198,16 +181,18 @@ public class ClawV2 extends Subsystem {
     }
 
     private void configClawEncoder() {
-        m_ClawCANCoder.configFactoryDefault();
-        m_ClawCANCoder.configAllSettings(CTREConfigs.clawPivotCancoderConfig());
+        m_ClawCANCoder.getConfigurator().apply(CTREConfigs.clawPivotCancoderConfig());
+        m_ClawCANCoder.getPosition().setUpdateFrequency(300);
+        m_ClawCANCoder.getVelocity().setUpdateFrequency(300);
+        m_ClawCANCoder.getAbsolutePosition().setUpdateFrequency(300);
     }
 
     public Rotation2d getCanCoder() {
-        return Rotation2d.fromDegrees(m_ClawCANCoder.getAbsolutePosition());
+        return Rotation2d.fromDegrees(m_ClawCANCoder.getAbsolutePosition().getValue()*360);
     }
 
     public double getRelativeCancoder() {
-        return (m_ClawCANCoder.getPosition() - Constants.ClawConstants.canCoderOffset);
+        return (m_ClawCANCoder.getPosition().getValue()*360 - Constants.ClawConstants.canCoderOffset);
     }
 
     public synchronized void resetPositions() {

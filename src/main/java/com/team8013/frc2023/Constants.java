@@ -104,7 +104,7 @@ public class Constants {
                                                             // (meters /sec) = motor speed (RPM) / gear ratio * pi *
                                                             // wheel diameter (meters) / 60
                 // LS = 6380/6.75*pi*0.1016/60 = 5.028
-                public static final double maxAngularVelocity = 8.0;
+                public static final double maxAngularVelocity = 10.0;
 
                 /* Neutral Modes */
                 public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
@@ -378,6 +378,9 @@ public class Constants {
                 public static final int kStatorCurrentLimit = 60; // 80 Amps for Neo motor
                 public static final double kTriggerThresholdCurrent = 60;
 
+                public static final double kMaxForwardTorque = 130;
+                public static final double kMaxReverseTorque = 130;
+
                 public static final SensorDirectionValue canCoderInvert = SensorDirectionValue.CounterClockwise_Positive; // if false(default) is ccw+ when observing from the
                                                                     // led side
                 public static final double canCoderOffset = -12; // program subtracts this value to the cancoder angle
@@ -392,7 +395,7 @@ public class Constants {
                 public static final double kMaxOutput = 1;
                 public static final double kMinOutput = -1;
 
-                public static final double kP = 0.5;
+                public static final double kP = 0.15;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
                 public static final double kGravity = 0.0; // percent output required to hold the arm horisontal
@@ -407,7 +410,7 @@ public class Constants {
 
                 // pivot constants
                 public static final double degreesOffToReset = 4; // degrees the motor is off by
-                public static final double ticksOffToReset = degreesOffToReset * oneDegreeOfroation * 2048; // ticks the
+                public static final double ticksOffToReset = degreesOffToReset * oneDegreeOfroation; // ticks the
                                                                                                             // motor is
                                                                                                             // off by
 
