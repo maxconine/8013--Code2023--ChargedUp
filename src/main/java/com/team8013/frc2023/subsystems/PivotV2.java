@@ -74,7 +74,7 @@ public class PivotV2 extends Subsystem {
         mPivot.config_kP(0, 0.15);
         mPivot.config_kI(0, 0);
         mPivot.config_kD(0, 0);
-        mPivot.config_kF(0, 0.045); // Is this supposed to be 0?
+        mPivot.config_kF(0, 0.031); // Is this supposed to be 0?
 
         // mPivotPid = new PIDController(Constants.PivotConstants.kP,
         // Constants.PivotConstants.kI,

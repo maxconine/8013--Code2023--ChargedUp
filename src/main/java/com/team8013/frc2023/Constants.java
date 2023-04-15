@@ -352,12 +352,13 @@ public class Constants {
                 // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final double kPickupTravelDistance = 125000 / 1.5;
-                public static final double kHybridTravelDistance = 100000 / 1.5; // kLeftTravelDistance * 0.75
-                public static final double kMidTravelDistance = 120000 / 1.5; // kLeftTravelDistance * 0.75
-                public static final double kHighTravelDistance = 290000 / 1.5; // kLeftTravelDistance * 0.75
-                public static final double kAutoHighTravelDistance = 290000 / 1.5; // kLeftTravelDistance * 0.75
-                public static final double kDoubleSubstationTravelDistance = 10000 / 1.5;
+                public static final double kPickupTravelDistance = (125000 / 1.5) / 1.38;
+                public static final double kHybridTravelDistance = (100000 / 1.5) / 1.38; // kLeftTravelDistance * 0.75
+                public static final double kMidTravelDistance = (120000 / 1.5) / 1.38; // kLeftTravelDistance * 0.75
+                public static final double kHighTravelDistance = (290000 / 1.5) / 1.38; // kLeftTravelDistance * 0.75
+                public static final double kAutoHighTravelDistance = (290000 / 1.5) / 1.38; // kLeftTravelDistance *
+                                                                                            // 0.75
+                public static final double kDoubleSubstationTravelDistance = (10000 / 1.5) / 1.38;
 
                 /* GENERAL CLIMBER CONSTANTS USED */
 
@@ -397,7 +398,7 @@ public class Constants {
                 // gear ratio for one full rotation of the pivot
                 // (3*3*3)* (227/20) = 245.16 used to be 972.857 //TODO:Double check
                 // this
-                public static final double oneDegreeOfroation = 0.85125; // used to be 2.702381;
+                public static final double oneDegreeOfroation = (0.85125 / 3); // used to be 2.702381;
 
                 // 14 tooth to 226 tooth
                 // rotations*360 to get degrees

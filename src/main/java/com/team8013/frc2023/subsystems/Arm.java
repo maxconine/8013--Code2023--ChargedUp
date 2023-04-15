@@ -60,12 +60,12 @@ public class Arm extends Subsystem {
 
         mArm.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
 
-        mArm.configMotionAcceleration(40000, Constants.kLongCANTimeoutMs);
-        mArm.configMotionCruiseVelocity(20000, Constants.kLongCANTimeoutMs);
+        mArm.configMotionAcceleration(50000, Constants.kLongCANTimeoutMs);
+        mArm.configMotionCruiseVelocity(30000, Constants.kLongCANTimeoutMs);
         mArm.config_kP(0, 0.6);
         mArm.config_kI(0, 0);
         mArm.config_kD(0, 0);
-        mArm.config_kF(0, 0.077);
+        mArm.config_kF(0, 0.067);
 
         mArm.setNeutralMode(NeutralMode.Brake);
 
