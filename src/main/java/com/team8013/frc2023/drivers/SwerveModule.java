@@ -31,7 +31,7 @@ public class SwerveModule {
     private double lastAngle;
     private DutyCycleOut driveDutyCycleOut;
     private VelocityTorqueCurrentFOC driveVelocityTorqueCurrentFOC;
-    PositionTorqueCurrentFOC anglePositionControl;
+    // PositionTorqueCurrentFOC anglePositionControl;
     PositionDutyCycle anglePositionDutyCycle;
 
     private double anglekP;
@@ -77,13 +77,12 @@ public class SwerveModule {
         driveVelocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
         driveVelocityTorqueCurrentFOC.OverrideCoastDurNeutral = true;
 
-        anglePositionControl = new PositionTorqueCurrentFOC(0);
-        anglePositionControl.Slot = 0;
+        // anglePositionControl = new PositionTorqueCurrentFOC(0);
+        // anglePositionControl.Slot = 0;
 
         //TODO: DOES THIS FOC CONTROL WORK OR THIS DUTY CYCLE CONTROL WORK?
 
-        anglePositionDutyCycle = new PositionDutyCycle(0);
-        anglePositionDutyCycle.Slot = 0;
+        anglePositionDutyCycle = new PositionDutyCycle(0, false, 0, 0, false);
 
         lastAngle = getState().angle.getDegrees();
     }
@@ -117,15 +116,15 @@ public class SwerveModule {
         // mAngleMotor.set(ControlMode.Position,
         //         Conversions.degreesToFalcon(angle, Constants.SwerveConstants.angleGearRatio));
 
-        anglePositionControl.Position = Conversions.degreesToMotorRoation(angle, Constants.SwerveConstants.angleGearRatio);
+        anglePositionDutyCycle.Position = Conversions.degreesToFalcon(angle, Constants.SwerveConstants.angleGearRatio);
         
-        mAngleMotor.setControl(anglePositionControl);
+        mAngleMotor.setControl(anglePositionDutyCycle);
 
         lastAngle = angle;
     }
 
     public void resetToAbsolute() {
-        double absolutePosition = Conversions.degreesToMotorRoation(getCanCoder().getDegrees() - angleOffset,
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset,
                 Constants.SwerveConstants.angleGearRatio);
         mAngleMotor.setRotorPosition(absolutePosition);
     }

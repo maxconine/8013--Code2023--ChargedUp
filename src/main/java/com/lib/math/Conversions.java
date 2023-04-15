@@ -21,10 +21,10 @@ public class Conversions {
         return ticks;
     }
 
-    public static double degreesToMotorRoation(double degrees, double gearRatio) {
-        double rotations =  (degrees / 360.0) * gearRatio;
-        return rotations;
-    }
+    // public static double degreesToMotorRoation(double degrees, double gearRatio) {
+    //     double rotations =  (degrees / 360.0) * gearRatio;
+    //     return rotations;
+    // }
 
     /**
      * @param degrees Degrees of rotation of Mechanism
