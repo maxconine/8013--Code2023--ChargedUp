@@ -429,8 +429,8 @@ public class Constants {
                 public static final double piv_kI = 0;
                 public static final double piv_kD = 0.0004; // 0.0004 works
 
-                public static final double piv_kMaxOutput = 0.95;
-                public static final double piv_kMinOutput = -0.95;
+                public static final double piv_kMaxOutput = 0.8;
+                public static final double piv_kMinOutput = -0.8;
 
                 public static final double piv_MaxRotation = 450; // how many degrees in either direction it can spin
                 public static final double piv_MinRotation = -450;
@@ -446,9 +446,9 @@ public class Constants {
                 public static final double kPivotMaxDistance = pivotGearRatio; // encoder hard limit
 
                 /* CAN CODER */
-                public static final double canCoderOffset = 208.38 + 78 - 180; // program subtracts this value to the
-                                                                               // cancoder
-                                                                               // angle to make it 0
+                public static final double canCoderOffset = 148.8; // program subtracts this value to the
+                                                                   // cancoder
+                                                                   // angle to make it 0
                 public static final boolean canCoderInvert = false; // program subtracts this value to the cancoder
                                                                     // angle to make it 0
 
@@ -459,8 +459,8 @@ public class Constants {
                 public static final double grip_kD = 0.001;
 
                 // how fast you can manually control claw (percent output)
-                public static final double grip_kMaxOutput = 0.95;
-                public static final double grip_kMinOutput = -0.95;
+                public static final double grip_kMaxOutput = -0.95;
+                public static final double grip_kMinOutput = 0.95;
 
                 public static final double kClawOpenDistance = 0; // position for pickup
                 public static final double kClawMinDistance = -10; // encoder hard limit
