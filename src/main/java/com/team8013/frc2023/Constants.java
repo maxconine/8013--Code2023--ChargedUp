@@ -74,7 +74,7 @@ public class Constants {
                 public static final double anglePeakCurrentDuration = 0.1;
                 public static final boolean angleEnableCurrentLimit = true;
 
-                public static final int driveContinuousCurrentLimit = 35;
+                public static final int driveContinuousCurrentLimit = 60; //og 35
                 public static final int drivePeakCurrentLimit = 60;
                 public static final double drivePeakCurrentDuration = 0.1;
                 public static final boolean driveEnableCurrentLimit = true;
@@ -101,7 +101,7 @@ public class Constants {
                                                             // (meters /sec) = motor speed (RPM) / gear ratio * pi *
                                                             // wheel diameter (meters) / 60
                 // LS = 6380/6.75*pi*0.1016/60 = 5.028
-                public static final double maxAngularVelocity = 8.0;
+                public static final double maxAngularVelocity = 10.0;
 
                 /* Neutral Modes */
                 public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
@@ -259,8 +259,8 @@ public class Constants {
                                 .setEndVelocity(0);
 
                 /* TIME CONSTANTS */
-                public static final double firstDropHighWait = 3.8; // wait 5 seconds for the cone to be dropped
-                public static final double pickupPieceWait = 3;
+                public static final double firstDropHighWait = 2.4; // wait 5 seconds for the cone to be dropped
+                public static final double pickupPieceWait = 2.0;
 
                 /* BALANCE CONSTANTS */
                 public static final double balance_kP = .2;
@@ -275,6 +275,11 @@ public class Constants {
                 public static final double secondAngle = 12; // within +- degrees, then stop
                 public static final double firstSpeed = .8; // meters per second
                 public static final double secondSpeed = 0.17; // meters per second
+
+                public static final double angleDivisionConstant = 1.4;
+                public static final double thirdAngle = firstAngle/angleDivisionConstant;
+                public static final double fourthAngle = secondAngle/angleDivisionConstant;
+
         }
 
         public static final class VisionConstants {
@@ -339,8 +344,8 @@ public class Constants {
         }
 
         public static final class ArmConstants {
-                public static final double kStatorCurrentLimit = 25; // 80.0;
-                public static final double kZeroCurrentLimit = 50; // 80.0;
+                public static final double kStatorCurrentLimit = 40; // 80.0;
+                public static final double kZeroCurrentLimit = 60; // 80.0;
                 public static final double kTriggerThresholdCurrent = 60;
 
                 // arm constants
@@ -352,13 +357,13 @@ public class Constants {
                 // ticks
 
                 // TODO I have no idea the max height ticks
-                public static final double kPickupTravelDistance = (125000 / 1.5) / 1.38;
-                public static final double kHybridTravelDistance = (100000 / 1.5) / 1.38; // kLeftTravelDistance * 0.75
-                public static final double kMidTravelDistance = (120000 / 1.5) / 1.38; // kLeftTravelDistance * 0.75
-                public static final double kHighTravelDistance = (290000 / 1.5) / 1.38; // kLeftTravelDistance * 0.75
-                public static final double kAutoHighTravelDistance = (290000 / 1.5) / 1.38; // kLeftTravelDistance *
+                public static final double kPickupTravelDistance = (125000 / 1.5) / (1.57 * 1.57);
+                public static final double kHybridTravelDistance = (10000 / 1.5) / (1.57 * 1.57); // kLeftTravelDistance * 0.75
+                public static final double kMidTravelDistance = (120000 / 1.5) / (1.57 * 1.57); // kLeftTravelDistance * 0.75
+                public static final double kHighTravelDistance = (290000 / 1.5) / (1.57 * 1.57); // kLeftTravelDistance * 0.75
+                public static final double kAutoHighTravelDistance = (290000 / 1.5) / (1.57 * 1.57); // kLeftTravelDistance *
                                                                                             // 0.75
-                public static final double kDoubleSubstationTravelDistance = (10000 / 1.5) / 1.38;
+                public static final double kDoubleSubstationTravelDistance = (10000 / 1.5) / (1.57 * 1.57);
 
                 /* GENERAL CLIMBER CONSTANTS USED */
 
@@ -417,12 +422,13 @@ public class Constants {
                 public static final double kMidTravelDistance = 95.47 + 5;
                 public static final double kHighTravelDistance = 106.2 + 5;
                 public static final double kAutoHighTravelDistance = 105 + 5;
-                public static final double kDoubleSubstationTravelDistance = 102;
+                public static final double kDoubleSubstationTravelDistance = 105;
                 public static final double kReadyPositionTravelDistance = 20;
 
         }
 
         public static final class ClawConstants {
+                public static final boolean originalClaw = false;
                 /* PIVOT */
 
                 public static final double piv_kP = .0085;
@@ -446,7 +452,7 @@ public class Constants {
                 public static final double kPivotMaxDistance = pivotGearRatio; // encoder hard limit
 
                 /* CAN CODER */
-                public static final double canCoderOffset = 148.8; // program subtracts this value to the
+                public static final double canCoderOffset = originalClaw? 299.8 : 299.8 ; // program subtracts this value to the  148.8
                                                                    // cancoder
                                                                    // angle to make it 0
                 public static final boolean canCoderInvert = false; // program subtracts this value to the cancoder
@@ -459,11 +465,13 @@ public class Constants {
                 public static final double grip_kD = 0.001;
 
                 // how fast you can manually control claw (percent output)
-                public static final double grip_kMaxOutput = -0.95;
-                public static final double grip_kMinOutput = 0.95;
+
+
+                public static final double grip_kMaxOutput = originalClaw? 0.95 : -1; //open/close
+                public static final double grip_kMinOutput = originalClaw? -1 : 0.85; //close/open
 
                 public static final double kClawOpenDistance = 0; // position for pickup
-                public static final double kClawMinDistance = -10; // encoder hard limit
+                public static final double kClawMinDistance = originalClaw? -10 : -30000; // encoder hard limit
                 public static final double kClawMaxDistance = 10; // encoder hard limit
 
                 public static final double grip_rateDiff = 0.97; // Percent of max the speed needs to decrease from

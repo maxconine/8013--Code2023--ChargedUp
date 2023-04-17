@@ -645,30 +645,76 @@ public class Superstructure extends Subsystem {
             if ((getAdjustedRoll() > Constants.AutoConstants.firstAngle) && (!mPeriodicIO.fromBack)) {
                 if (mPeriodicIO.hasPassedLevel) {
                     mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed / 1.15, 0), 0, true, false);
+                    hasStartedTimer = false;
                 } else {
                     mSwerve.drive(new Translation2d(Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+                    hasStartedTimer = false;
                 }
             } else if ((getAdjustedRoll() < -Constants.AutoConstants.firstAngle) && (mPeriodicIO.fromBack)) {
                 if (mPeriodicIO.hasPassedLevel) {
                     mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed / 1.15, 0), 0, true, false);
+                    hasStartedTimer = false;
                 } else {
                     mSwerve.drive(new Translation2d(-Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+                    hasStartedTimer = false;
                 }
             }
             // drive slower back until level
             else if ((getAdjustedRoll() < -Constants.AutoConstants.secondAngle) && (!mPeriodicIO.fromBack)) {
                 // mSwerve.setLocked(false);
                 mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+                hasStartedTimer = false;
             } else if ((getAdjustedRoll() > Constants.AutoConstants.secondAngle) && (mPeriodicIO.fromBack)) {
                 // mSwerve.setLocked(false);
                 mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+                hasStartedTimer = false;
             }
             // when 'level' lock the wheels
             else {
+                //TODO: code to make sure it is going to balance
                 mSwerve.drive(new Translation2d(0, 0), 0, true, false);
-                mPeriodicIO.hasPassedLevel = true;
+            
+            
+            if (!hasStartedTimer) {
+                mAutoTimer.reset();
+                mAutoTimer.start();
+                hasStartedTimer = true;
+            }
+            
+            //if nothing driving for 1 second and not balanced, keep going
+            if (mAutoTimer.get() > 1){
+                if ((getAdjustedRoll() > Constants.AutoConstants.thirdAngle) && (!mPeriodicIO.fromBack)) {
+                    if (mPeriodicIO.hasPassedLevel) {
+                        mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed / 1.15, 0), 0, true, false);
+                        hasStartedTimer = false;
+                    } else {
+                        mSwerve.drive(new Translation2d(Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+                        hasStartedTimer = false;
+                    }
+                } else if ((getAdjustedRoll() < -Constants.AutoConstants.thirdAngle) && (mPeriodicIO.fromBack)) {
+                    if (mPeriodicIO.hasPassedLevel) {
+                        mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed / 1.15, 0), 0, true, false);
+                        hasStartedTimer = false;
+                    } else {
+                        mSwerve.drive(new Translation2d(-Constants.AutoConstants.firstSpeed, 0), 0, true, false);
+                        hasStartedTimer = false;
+                    }
+                }
+                // drive slower back until level
+                else if ((getAdjustedRoll() < -Constants.AutoConstants.fourthAngle) && (!mPeriodicIO.fromBack)) {
+                    // mSwerve.setLocked(false);
+                    mSwerve.drive(new Translation2d(-Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+                    hasStartedTimer = false;
+                } else if ((getAdjustedRoll() > Constants.AutoConstants.fourthAngle) && (mPeriodicIO.fromBack)) {
+                    // mSwerve.setLocked(false);
+                    mSwerve.drive(new Translation2d(Constants.AutoConstants.secondSpeed, 0), 0, true, false);
+                    hasStartedTimer = false;
+                }
             }
 
+
+                // mPeriodicIO.hasPassedLevel = true;
+            }
             // SmartDashboard.putBoolean("Balance From Back", mPeriodicIO.fromBack);
             // SmartDashboard.putBoolean("Swerve Locked", mSwerve.getLocked());
         }
@@ -677,34 +723,34 @@ public class Superstructure extends Subsystem {
             gyroHasChanged = true;
         }
 
-        // if trying to engage and the gyro hasn't changed
-        if ((mPeriodicIO.mEngage) && (!gyroHasChanged)) {
-            if (!hasStartedTimer) {
-                mAutoTimer.reset();
-                mAutoTimer.start();
-                hasStartedTimer = true;
-            }
-            if (mAutoTimer.get() < 0.3) {
-                // positive
-                if (mPeriodicIO.fromBack) {
-                    mSwerve.drive(new Translation2d(1, 0), 0, true, false);
-                } else {
-                    mSwerve.drive(new Translation2d(-1, 0), 0, true, false);
-                }
-            } else if (mAutoTimer.get() > 0.3) {
-                if (mPeriodicIO.fromBack) {
-                    mSwerve.drive(new Translation2d(-1, 0), 0, true, false);
-                } else {
-                    mSwerve.drive(new Translation2d(1, 0), 0, true, false);
-                }
-            } else if (mAutoTimer.get() > 2) {
-                if (mPeriodicIO.fromBack) {
-                    mSwerve.drive(new Translation2d(0, 0), 0, true, false);
-                } else {
-                    mSwerve.drive(new Translation2d(0, 0), 0, true, false);
-                }
-            }
-        }
+        // // if trying to engage and the gyro hasn't changed
+        // if ((mPeriodicIO.mEngage) && (!gyroHasChanged)) {
+        //     if (!hasStartedTimer) {
+        //         mAutoTimer.reset();
+        //         mAutoTimer.start();
+        //         hasStartedTimer = true;
+        //     }
+        //     if (mAutoTimer.get() < 0.3) {
+        //         // positive
+        //         if (mPeriodicIO.fromBack) {
+        //             mSwerve.drive(new Translation2d(1, 0), 0, true, false);
+        //         } else {
+        //             mSwerve.drive(new Translation2d(-1, 0), 0, true, false);
+        //         }
+        //     } else if (mAutoTimer.get() > 0.3) {
+        //         if (mPeriodicIO.fromBack) {
+        //             mSwerve.drive(new Translation2d(-1, 0), 0, true, false);
+        //         } else {
+        //             mSwerve.drive(new Translation2d(1, 0), 0, true, false);
+        //         }
+        //     } else if (mAutoTimer.get() > 2) {
+        //         if (mPeriodicIO.fromBack) {
+        //             mSwerve.drive(new Translation2d(0, 0), 0, true, false);
+        //         } else {
+        //             mSwerve.drive(new Translation2d(0, 0), 0, true, false);
+        //         }
+        //     }
+        // }
     }
 
     public void zeroRollInit() {
@@ -801,6 +847,13 @@ public class Superstructure extends Subsystem {
     /* Initial states for superstructure for teleop */
     public void setInitialTeleopStates() {
         mSwerve.drive(new Translation2d(0, 0), 0, true, false);
+        mPeriodicIO.settingPickup = false;
+        mPeriodicIO.settingDown = false;
+        mPeriodicIO.settingHybrid = false;
+        mPeriodicIO.settingReadyPosition = false;
+        mPeriodicIO.settingMid = false;
+        mPeriodicIO.settingHigh = false;
+
         System.out.println("Set initial teleop states!");
     }
 

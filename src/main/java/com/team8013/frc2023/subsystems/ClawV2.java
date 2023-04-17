@@ -137,24 +137,24 @@ public class ClawV2 extends Subsystem {
 
                     m_GripMotor.set(VictorSPXControlMode.PercentOutput, Constants.ClawConstants.grip_kMinOutput);
 
-                    // // if grip rate slows down to ex: 70% of max speed greater than 2, or claw is
-                    // // too far in
-                    // if ((mPeriodicIO.grip_motor_velocity > -2.5)
-                    // && (mPeriodicIO.grip_motor_velocity < (mPeriodicIO.grip_peakSpeed
-                    // * Constants.ClawConstants.grip_rateDiff))
-                    // || (mPeriodicIO.grip_motor_position <=
-                    // Constants.ClawConstants.kClawMinDistance)) {
+                    // if grip rate slows down to ex: 70% of max speed greater than 2, or claw is
+                    // too far in
+                    if ((Constants.ClawConstants.originalClaw? (mPeriodicIO.grip_motor_velocity >  -2.5) : (mPeriodicIO.grip_motor_velocity <  20))
+                    && (mPeriodicIO.grip_motor_velocity < (mPeriodicIO.grip_peakSpeed
+                    * Constants.ClawConstants.grip_rateDiff))
+                    || (mPeriodicIO.grip_motor_position <=
+                    Constants.ClawConstants.kClawMinDistance)) {
 
-                    // m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
-                    // mPeriodicIO.wantedClosing = false;
-                    // mPeriodicIO.grip_peakSpeed = 0;
-                    // mPeriodicIO.grip_demand = 0;
-                    // // mPeriodicIO.spedUp = false;
-                    // } else {
-                    // if (mPeriodicIO.grip_motor_velocity > mPeriodicIO.grip_peakSpeed) {
-                    // mPeriodicIO.grip_peakSpeed = mPeriodicIO.grip_motor_velocity;
-                    // }
-                    // }
+                    m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
+                    mPeriodicIO.wantedClosing = false;
+                    mPeriodicIO.grip_peakSpeed = 0;
+                    mPeriodicIO.grip_demand = 0;
+                    // mPeriodicIO.spedUp = false;
+                    } else {
+                    if (mPeriodicIO.grip_motor_velocity > mPeriodicIO.grip_peakSpeed) {
+                    mPeriodicIO.grip_peakSpeed = mPeriodicIO.grip_motor_velocity;
+                    }
+                    }
                 } else {
                     m_GripMotor.set(VictorSPXControlMode.PercentOutput, mPeriodicIO.grip_demand);
                 }

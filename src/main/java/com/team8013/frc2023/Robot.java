@@ -255,7 +255,7 @@ public class Robot extends TimedRobot {
 			mClaw.setPivotTeleopInit();
 
 			// mClaw.setPivotPosition(0);
-			mArm.pullArmIntoZero(); // TODO: DO WE NEED THIS???
+			//mArm.pullArmIntoZero(); // TODO: DO WE NEED THIS???
 
 			mDisabledLooper.stop();
 			mEnabledLooper.start();

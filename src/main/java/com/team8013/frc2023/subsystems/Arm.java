@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.team8013.frc2023.Constants;
 import com.team8013.frc2023.Ports;
 import com.team8013.frc2023.logger.LogStorage;
@@ -60,12 +61,16 @@ public class Arm extends Subsystem {
 
         mArm.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
 
-        mArm.configMotionAcceleration(50000, Constants.kLongCANTimeoutMs);
-        mArm.configMotionCruiseVelocity(30000, Constants.kLongCANTimeoutMs);
+        mArm.configMotionAcceleration(40000, Constants.kLongCANTimeoutMs);
+        mArm.configMotionCruiseVelocity(21770, Constants.kLongCANTimeoutMs); //21770 is the max cruise velocity
         mArm.config_kP(0, 0.6);
         mArm.config_kI(0, 0);
         mArm.config_kD(0, 0);
-        mArm.config_kF(0, 0.067);
+        mArm.config_kF(0, 0.041);
+
+        // TalonFXConfiguration config = new TalonFXConfiguration();
+        // config.peakOutputForward = 0.8;
+        // config.peakOutputReverse = 1;
 
         mArm.setNeutralMode(NeutralMode.Brake);
 
@@ -107,7 +112,7 @@ public class Arm extends Subsystem {
                         mPeriodicIO.pullArmIntoZero = false;
                         resetArmPosition();
                         mArm.set(ControlMode.PercentOutput, 0.0);
-                        setArmPosition(10);
+                        setArmPosition(-5);
                     }
                 } else {
                     mArm.set(ControlMode.PercentOutput, mPeriodicIO.arm_demand);

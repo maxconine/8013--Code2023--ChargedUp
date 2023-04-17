@@ -234,8 +234,14 @@ public class ControlBoard {
         if (leftYaw < -1) {
             leftYaw = -1;
         }
+        if (leftYaw>=0){
+            leftYaw = Math.pow(leftYaw,1.2);
+        }
+        else{
+            leftYaw = -(Math.pow(Math.abs(leftYaw),1.2));
+        }
 
-        // SmartDashboard.putNumber("remote leftYaw", leftYaw);
+        SmartDashboard.putNumber("remote leftYaw", leftYaw);
         return leftYaw;
     }
 
@@ -288,15 +294,15 @@ public class ControlBoard {
                     + Constants.ControllerConstants.ControllerRightThrottleZero));
         }
 
-        if (rightThrottle > 1) {
+        if (rightThrottle > 0.96) {
             rightThrottle = 1;
         }
 
-        if (rightThrottle < -1) {
+        if (rightThrottle < -.96) {
             rightThrottle = -1;
         }
 
-        // SmartDashboard.putNumber("remote rightThrottle", rightThrottle);
+        SmartDashboard.putNumber("remote rightThrottle", rightThrottle);
         return rightThrottle;
     }
 
@@ -315,15 +321,15 @@ public class ControlBoard {
                     + Constants.ControllerConstants.ControllerRightYawZero));
         }
 
-        if (rightYaw > 1) {
+        if (rightYaw > 0.96) {
             rightYaw = 1;
         }
 
-        if (rightYaw < -1) {
+        if (rightYaw < -0.96) {
             rightYaw = -1;
         }
 
-        // SmartDashboard.putNumber("remote rightYaw", rightYaw);
+        SmartDashboard.putNumber("remote rightYaw", rightYaw);
         return rightYaw;
     }
 }

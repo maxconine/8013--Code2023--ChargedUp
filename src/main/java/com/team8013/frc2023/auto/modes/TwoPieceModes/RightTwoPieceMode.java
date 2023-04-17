@@ -124,20 +124,20 @@ public class RightTwoPieceMode extends AutoModeBase {
 
                 // runAction(rightTwoPieceBlue_b);
 
-                runAction(new LambdaAction(() -> mSuperstructure.settingPickupAuto()));
+                //runAction(new LambdaAction(() -> mSuperstructure.settingPickupAuto()));
 
-                runAction(new LambdaAction(() -> mSuperstructure.clampClawAuto()));
+                //runAction(new LambdaAction(() -> mSuperstructure.clampClawAuto()));
                 System.out.println("helloclamp");
 
                 runAction(new WaitAction(Constants.AutoConstants.pickupPieceWait));
 
-                runAction(new LambdaAction(() -> mSuperstructure.setDownAuto()));
+                // runAction(new LambdaAction(() -> mSuperstructure.setDownAuto()));
 
-                runAction(rightTwoPieceBlue_c);
+                // runAction(rightTwoPieceBlue_c);
 
-                runAction(rightTwoPieceBlue_d);
+                // runAction(rightTwoPieceBlue_d);
 
-                runAction(new LambdaAction(() -> mSuperstructure.settingCubeDropHigh()));
+                // runAction(new LambdaAction(() -> mSuperstructure.settingCubeDropHigh()));
 
                 // runAction(new LambdaAction(() -> mSuperstructure.wantDropPieceAuto()));
 

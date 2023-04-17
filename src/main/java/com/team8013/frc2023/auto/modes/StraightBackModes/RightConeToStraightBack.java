@@ -39,7 +39,7 @@ public class RightConeToStraightBack extends AutoModeBase {
 
                 // read trajectories from PathWeaver and generate trajectory actions
                 Trajectory traj_path_a = AutoTrajectoryReader.generateTrajectoryFromFile(path_a,
-                                Constants.AutoConstants.slowSpeedConfig);
+                                Constants.AutoConstants.balanceSpeedConfig);
                 rightStraightOutBlue = new SwerveTrajectoryAction(traj_path_a,
                                 mSwerve::getPose, Constants.SwerveConstants.swerveKinematics,
                                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
