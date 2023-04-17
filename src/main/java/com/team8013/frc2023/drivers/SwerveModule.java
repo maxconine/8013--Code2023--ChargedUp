@@ -72,7 +72,18 @@ public class SwerveModule {
 
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
+            if (percentOutput>0.96){
+                percentOutput = 1;
+            }
+            if (percentOutput<-0.96){
+                percentOutput = -1;
+            }
             SmartDashboard.putNumber("swerve percent output", percentOutput);
+            SmartDashboard.putNumber("swerve motor output percent", mDriveMotor.getMotorOutputPercent());
+            SmartDashboard.putNumber("swerve stator current", mDriveMotor.getStatorCurrent());
+            SmartDashboard.putNumber("swerve supply current", mDriveMotor.getSupplyCurrent());
+            SmartDashboard.putNumber("swerve motor velocity", mDriveMotor.getSelectedSensorVelocity());
+
             mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
         } else {
             double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond,

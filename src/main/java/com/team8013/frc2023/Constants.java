@@ -74,8 +74,8 @@ public class Constants {
                 public static final double anglePeakCurrentDuration = 0.1;
                 public static final boolean angleEnableCurrentLimit = true;
 
-                public static final int driveContinuousCurrentLimit = 60; //og 35
-                public static final int drivePeakCurrentLimit = 60;
+                public static final int driveContinuousCurrentLimit = 100; //og 35
+                public static final int drivePeakCurrentLimit = 100;
                 public static final double drivePeakCurrentDuration = 0.1;
                 public static final boolean driveEnableCurrentLimit = true;
 
