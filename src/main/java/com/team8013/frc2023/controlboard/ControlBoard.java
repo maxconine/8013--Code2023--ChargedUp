@@ -185,11 +185,11 @@ public class ControlBoard {
     }
 
     public boolean getWantCone() {
-        return (operator.getController().getPOV() == 90) || (m_driver.getRawButton(8));
+        return (operator.getController().getPOV() == 90) || (m_driver.getRawButton(10));
     }
 
     public boolean getWantCube() {
-        return (operator.getController().getPOV() == 270) || (m_driver.getRawButton(9));
+        return (operator.getController().getPOV() == 270) || (m_driver.getRawButton(11));
     }
 
     public boolean getWantDoubleSubstation() {

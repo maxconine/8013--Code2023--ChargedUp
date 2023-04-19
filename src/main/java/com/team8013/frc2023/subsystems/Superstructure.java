@@ -853,6 +853,7 @@ public class Superstructure extends Subsystem {
         mPeriodicIO.settingReadyPosition = false;
         mPeriodicIO.settingMid = false;
         mPeriodicIO.settingHigh = false;
+        mAutoTimer.stop();
 
         System.out.println("Set initial teleop states!");
     }

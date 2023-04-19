@@ -383,7 +383,7 @@ public class Constants {
 
                 public static final boolean canCoderInvert = false; // if false(default) is ccw+ when observing from the
                                                                     // led side
-                public static final double canCoderOffset = -12; // program subtracts this value to the cancoder angle
+                public static final double canCoderOffset = -25-12; // program subtracts this value to the cancoder angle
                                                                  // to
                                                                  // make it 0
 
