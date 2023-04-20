@@ -274,9 +274,9 @@ public class Constants {
                 public static final double firstAngle = 10; // within +- degrees, turn around (11 to 15 degrees irl)
                 public static final double secondAngle = 12; // within +- degrees, then stop
                 public static final double firstSpeed = .8; // meters per second
-                public static final double secondSpeed = 0.17; // meters per second
+                public static final double secondSpeed = 0.26; // meters per second
 
-                public static final double angleDivisionConstant = 1.4;
+                public static final double angleDivisionConstant = 2.0;
                 public static final double thirdAngle = firstAngle/angleDivisionConstant;
                 public static final double fourthAngle = secondAngle/angleDivisionConstant;
 
